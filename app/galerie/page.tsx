@@ -67,7 +67,7 @@ const collections = [
 export default function WorksPage() {
   return (
     <>
-      <Navigation />
+      <Navigation alwaysVisible />
       
       <main className="min-h-screen">
         {/* Horizontal Scroll Gallery */}

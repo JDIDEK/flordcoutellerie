@@ -4,7 +4,7 @@ import { TypingText } from '@/components/typing-text'
 
 export function HomeHeroSection() {
   return (
-    <section className="relative min-h-[80vh] md:min-h-screen overflow-hidden text-white">
+    <section className="relative min-h-screen overflow-hidden text-white">
       <div className="absolute inset-0">
         <img
           src="/assets/images/artisan-knife-blade-damascus-steel-dark-workshop.jpg"
@@ -17,7 +17,7 @@ export function HomeHeroSection() {
       <div className="absolute inset-0 bg-black/55" />
       <div className="absolute inset-0 bg-gradient-to-b from-black/40 via-transparent to-black/80" />
 
-      <div className="relative z-10 flex flex-col min-h-[80vh] md:min-h-screen">
+      <div className="relative z-10 flex flex-col min-h-screen">
         <div className="flex flex-1 flex-col items-center justify-center px-6 pt-24 pb-12 text-center md:px-0 md:pt-0">
           <div className="w-full max-w-5xl">
             <h1 className="font-serif font-light leading-[0.9] tracking-tight">

@@ -35,46 +35,69 @@ export function SignatureKnivesSection() {
   const [activeKnife, setActiveKnife] = useState(knives[0])
 
   return (
-    <section className="relative min-h-screen flex items-center overflow-hidden py-12 md:py-20">
-      <div className="container mx-auto px-6">
-        <div className="flex flex-col gap-12 lg:grid lg:grid-cols-[1.4fr_minmax(0,1fr)] lg:gap-12 items-stretch">
-          {/* Left Side - Image dynamique */}
-          <div className="relative bg-secondary/30 rounded-sm overflow-hidden min-h-[420px] lg:min-h-[70vh]">
-            <div className="absolute inset-0 transition-all duration-700">
-              <img
-                src={activeKnife.image}
-                alt={activeKnife.title}
-                className="w-full h-full object-cover"
-              />
-            </div>
-            <div className="absolute inset-0 bg-gradient-to-b from-black/20 via-black/30 to-black/80" />
-
-            <div className="relative z-10 flex flex-col h-full justify-between p-8 md:p-12 text-white">
-              <div className="space-y-4">
-                <p className="text-sm tracking-[0.2em] uppercase text-white/80">
-                  Pièces signature
-                </p>
-                <h3 className="text-4xl md:text-6xl font-serif font-light tracking-tight leading-tight">
-                  {activeKnife.title}
-                </h3>
-              </div>
-              <div className="space-y-2">
-                <p className="text-lg font-light">{activeKnife.price}</p>
-                <p className="text-sm text-white/80">{activeKnife.steel}</p>
-              </div>
-            </div>
+    <section
+      className="relative min-h-screen overflow-hidden w-screen"
+      style={{ marginLeft: 'calc(50% - 50vw)', marginRight: 'calc(50% - 50vw)' }}
+    >
+      <div className="w-full min-h-screen flex flex-col lg:grid lg:grid-cols-2">
+        {/* Left Side - Image dynamique */}
+        <div className="relative flex-1 lg:h-full bg-secondary/30 flex items-center justify-center overflow-hidden min-h-[45vh] lg:min-h-screen order-1 lg:order-none">
+          <div className="absolute inset-0 transition-opacity duration-500">
+            <img
+              src={activeKnife.image}
+              alt={activeKnife.title}
+              className="w-full h-full object-cover transition-transform duration-700"
+            />
           </div>
+          <div className="absolute inset-0 bg-black/40" />
+          <div className="relative z-10 text-center text-white px-8">
+            <h3 className="text-5xl md:text-6xl lg:text-7xl font-serif font-light tracking-tight">
+              {activeKnife.title}
+            </h3>
+          </div>
+        </div>
 
-          {/* Right Side - Menu des couteaux */}
-          <div className="bg-primary/90 rounded-sm p-5 md:p-6 text-primary-foreground h-fit max-h-[60vh] flex flex-col">
-            <div className="space-y-2 mb-8">
-              <p className="text-xs tracking-[0.4em] uppercase text-primary-foreground/70">
-                Sélection
-              </p>
-              <h2 className="text-3xl md:text-4xl font-serif font-light">Couteaux signature</h2>
+        {/* Right Side - Menu des couteaux */}
+        <div className="bg-primary/80 flex flex-col justify-center px-6 lg:px-16 py-12 text-primary-foreground min-h-[55vh] lg:min-h-screen order-2 lg:order-none overflow-hidden">
+          <div className="max-w-xl w-full space-y-6 mx-auto">
+            {/* Titre */}
+            <div className="space-y-4">
+              <h2 className="text-4xl md:text-5xl font-serif font-light tracking-tight">
+                COUTEAUX
+                <br />
+                SIGNATURE
+              </h2>
             </div>
 
-            <div className="space-y-3 overflow-y-auto pr-3 custom-scrollbar flex-1 relative" style={{ maxHeight: '18vh' }}>
+            {/* Liste desktop */}
+            <div className="space-y-1 pt-8 hidden lg:block">
+              {knives.map((knife, index) => (
+                <div 
+                  key={index}
+                  onMouseEnter={() => setActiveKnife(knife)}
+                  className={`border-b border-primary-foreground/20 py-6 transition-all duration-300 cursor-pointer px-4 -mx-4 ${
+                    activeKnife.title === knife.title 
+                      ? 'bg-primary-foreground/10' 
+                      : 'hover:bg-primary-foreground/5'
+                  }`}
+                >
+                  <div className="flex items-baseline justify-between gap-4 mb-2">
+                    <h3 className="text-xl md:text-2xl font-serif font-light">
+                      {knife.title}
+                    </h3>
+                    <span className="text-base font-light whitespace-nowrap">
+                      {knife.price}
+                    </span>
+                  </div>
+                  <p className="text-sm opacity-80 leading-relaxed">
+                    {knife.steel}
+                  </p>
+                </div>
+              ))}
+            </div>
+
+            {/* Liste mobile scrollable */}
+            <div className="lg:hidden space-y-3 overflow-y-auto pr-3" style={{ maxHeight: '22vh' }}>
               {knives.map((knife, index) => (
                 <button
                   key={index}
@@ -93,7 +116,7 @@ export function SignatureKnivesSection() {
                       <p
                         className={`text-sm ${
                           activeKnife.title === knife.title
-                            ? 'text-black/80'
+                            ? 'text-black/70'
                             : 'text-primary-foreground/80'
                         }`}
                       >
@@ -104,20 +127,15 @@ export function SignatureKnivesSection() {
                   </div>
                 </button>
               ))}
-              <div className="pointer-events-none absolute top-3 right-0 h-[calc(100%-1.5rem)] w-1 rounded-full bg-primary-foreground/10">
-                <span
-                  className="block w-full rounded-full bg-primary-foreground/50"
-                  style={{ height: '25%' }}
-                />
-              </div>
             </div>
 
-            <div className="pt-8">
-              <Link
+            {/* CTA */}
+            <div className="pt-4">
+              <Link 
                 href="/pieces"
-                className="group inline-flex items-center gap-3 text-sm tracking-wide hover:opacity-80 transition-opacity duration-300"
+                className="group inline-flex items-center gap-3 text-sm tracking-wide hover:opacity-70 transition-opacity duration-300"
               >
-                <span>Voir toutes les pièces</span>
+                <span>Voir Toutes les Pièces</span>
                 <ArrowRight className="w-4 h-4 group-hover:translate-x-2 transition-transform duration-300" />
               </Link>
             </div>

@@ -4,12 +4,20 @@ import Link from 'next/link'
 import { useState, useEffect, useRef } from 'react'
 import { Menu, X } from 'lucide-react'
 
-export function Navigation() {
+interface NavigationProps {
+  alwaysVisible?: boolean
+}
+
+export function Navigation({ alwaysVisible = false }: NavigationProps) {
   const [isVisible, setIsVisible] = useState(true)
   const lastScrollYRef = useRef(0)
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false)
 
   useEffect(() => {
+    if (alwaysVisible) {
+      return
+    }
+
     const handleScroll = () => {
       const currentScrollY = window.scrollY
       const lastScrollY = lastScrollYRef.current
@@ -40,7 +48,7 @@ export function Navigation() {
     
     window.addEventListener('scroll', onScroll, { passive: true })
     return () => window.removeEventListener('scroll', onScroll)
-  }, [])
+  }, [alwaysVisible])
 
   const navLinks = [
     { href: '/pieces', label: 'Pièces' },
@@ -51,9 +59,9 @@ export function Navigation() {
   ]
 
   return (
-    <nav 
+    <nav
       className={`fixed left-0 right-0 z-40 transition-all duration-500 ease-in-out bg-transparent ${
-        isVisible ? 'top-0' : '-top-32'
+        alwaysVisible || isVisible ? 'top-0' : '-top-32'
       }`}
     >
       <div className="container mx-auto px-6 py-6">
