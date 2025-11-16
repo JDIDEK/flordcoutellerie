@@ -5,6 +5,8 @@ import Link from 'next/link'
 import Image from 'next/image'
 import Lenis from 'lenis'
 
+import { useIsMobile } from '@/hooks/use-mobile'
+
 interface Collection {
   id: number
   title: string
@@ -27,16 +29,11 @@ export function HorizontalScrollGallery({ collections }: HorizontalScrollGallery
 
   // Carte survolée (pour le blur des autres)
   const [hoveredId, setHoveredId] = useState<number | null>(null)
-  const [isMobile, setIsMobile] = useState(false)
+  const isMobile = useIsMobile()
 
   useEffect(() => {
-    const updateIsMobile = () => setIsMobile(window.innerWidth < 768)
-    updateIsMobile()
-    window.addEventListener('resize', updateIsMobile)
-    return () => window.removeEventListener('resize', updateIsMobile)
-  }, [])
+    if (isMobile) return
 
-  useEffect(() => {
     const container = containerRef.current
     const scrollContent = scrollRef.current
     if (!container || !scrollContent || collections.length === 0) return
@@ -165,13 +162,52 @@ export function HorizontalScrollGallery({ collections }: HorizontalScrollGallery
     }
   }, [collections.length, isMobile])
 
-  const containerHeight = isMobile ? '280vh' : '400vh'
-  const horizontalPadding = isMobile ? '12vw' : '20vw'
+  if (isMobile) {
+    return (
+      <section className="bg-background px-6 py-12 space-y-10">
+        {collections.map((collection) => (
+          <article key={collection.id} className="space-y-4">
+            <div className="relative w-full aspect-[4/3] overflow-hidden rounded-sm">
+              <Image
+                src={collection.image || '/placeholder.svg'}
+                alt={collection.title}
+                fill
+                sizes="90vw"
+                className="object-cover"
+                priority={collection.id === collections[0]?.id}
+              />
+              <div className="absolute inset-0 bg-gradient-to-b from-black/20 via-black/10 to-black/75" />
+              <div className="absolute inset-0 flex flex-col justify-between px-5 py-6 text-white">
+                <p className="text-[0.6rem] uppercase tracking-[0.35em] text-neutral-200/80">
+                  {collection.category} • {collection.year}
+                </p>
+                <div>
+                  <h3 className="font-serif font-light text-3xl tracking-[0.1em]">
+                    {collection.title}
+                  </h3>
+                  <p className="mt-2 text-sm text-neutral-100/90">{collection.subtitle}</p>
+                </div>
+              </div>
+            </div>
+            <Link
+              href="/galerie"
+              className="inline-flex items-center gap-2 text-xs uppercase tracking-[0.35em] text-white"
+            >
+              Découvrir la collection
+              <span aria-hidden="true">→</span>
+            </Link>
+          </article>
+        ))}
+      </section>
+    )
+  }
+
+  const horizontalPadding = '20vw'
 
   return (
     <div
       ref={containerRef}
-      style={{ height: containerHeight }}
+      style={{ height: '400vh' }}
       className="relative"
     >
       <div className="sticky top-0 h-screen flex items-center overflow-hidden bg-background">
@@ -185,7 +221,7 @@ export function HorizontalScrollGallery({ collections }: HorizontalScrollGallery
           }}
         >
           {collections.map((collection, index) => {
-            const isDimmed = !isMobile && hoveredId !== null && hoveredId !== collection.id
+            const isDimmed = hoveredId !== null && hoveredId !== collection.id
 
             return (
               <article
@@ -199,8 +235,8 @@ export function HorizontalScrollGallery({ collections }: HorizontalScrollGallery
                   cursor-pointer
                   origin-center
                 "
-                onMouseEnter={!isMobile ? () => setHoveredId(collection.id) : undefined}
-                onMouseLeave={!isMobile ? () => setHoveredId(null) : undefined}
+                onMouseEnter={() => setHoveredId(collection.id)}
+                onMouseLeave={() => setHoveredId(null)}
                 style={{
                   filter: isDimmed ? 'blur(4px) grayscale(0.6)' : 'none',
                   opacity: isDimmed ? 0.45 : 1,

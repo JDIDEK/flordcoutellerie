@@ -1,23 +1,72 @@
 'use client'
 
+import Image from 'next/image'
+
 import { TypingText } from '@/components/typing-text'
+import { useIsMobile } from '@/hooks/use-mobile'
 
 export function HomeHeroSection() {
+  const isMobile = useIsMobile()
+  const desktopHeroImage = '/assets/images/artisan-knife-blade-damascus-steel-dark-workshop.jpg'
+  const mobileHeroImage = '/assets/images/folding-pocket-knife-damascus-premium.jpg'
+
+  if (isMobile) {
+    return (
+      <section className="bg-black text-white">
+        <div className="relative w-full aspect-[3/4]">
+          <Image
+            src={mobileHeroImage}
+            alt="Atelier Flo RD Coutellerie"
+            fill
+            priority
+            sizes="100vw"
+            className="object-cover"
+          />
+          <div className="absolute inset-0 bg-black/45" />
+          <div className="absolute inset-0 bg-gradient-to-b from-black/10 via-transparent to-black/85" />
+
+          <div className="absolute inset-0 flex flex-col justify-between px-6 pt-24 pb-8 text-center">
+            <p className="text-[0.6rem] uppercase tracking-[0.35em] text-neutral-200">
+              Atelier sur-mesure • Fabrication artisanale
+            </p>
+            <div className="space-y-4">
+              <h1 className="font-serif font-light text-3xl leading-[1.05] tracking-tight space-y-1">
+                <span className="block">LAMES</span>
+                <span className="block">QUI TRAVERSENT</span>
+                <span className="block">LES GÉNÉRATIONS.</span>
+              </h1>
+              <p className="text-sm text-neutral-100 leading-relaxed">
+                Dans mon atelier, chaque couteau est une pièce unique façonnée dans les aciers les plus
+                nobles. Des commandes sur mesure pour chefs, collectionneurs et passionnés qui
+                recherchent une âme dans la lame.
+              </p>
+            </div>
+            <p className="text-[0.6rem] uppercase tracking-[0.35em] text-neutral-300">
+              Service sur-mesure • Pièces uniques
+            </p>
+          </div>
+        </div>
+      </section>
+    )
+  }
+
   return (
-    <section className="relative min-h-screen overflow-hidden text-white">
+    <section className="relative overflow-hidden text-white min-h-[85vh] md:min-h-screen">
       <div className="absolute inset-0">
-        <img
-          src="/assets/images/artisan-knife-blade-damascus-steel-dark-workshop.jpg"
+        <Image
+          src={desktopHeroImage}
           alt="Atelier Flo RD Coutellerie"
-          className="w-full h-full object-cover"
-          loading="lazy"
+          fill
+          priority
+          sizes="100vw"
+          className="object-cover"
         />
       </div>
 
       <div className="absolute inset-0 bg-black/55" />
       <div className="absolute inset-0 bg-gradient-to-b from-black/40 via-transparent to-black/80" />
 
-      <div className="relative z-10 flex flex-col min-h-screen">
+      <div className="relative z-10 flex flex-col min-h-[85vh] md:min-h-screen">
         <div className="flex flex-1 flex-col items-center justify-center px-6 pt-24 pb-12 text-center md:px-0 md:pt-0">
           <div className="w-full max-w-5xl">
             <h1 className="font-serif font-light leading-[0.9] tracking-tight">
@@ -27,6 +76,7 @@ export function HomeHeroSection() {
                 lineClassName="block text-4xl sm:text-5xl md:text-7xl lg:text-[5.5rem]"
                 speed={50}
                 startDelay={500}
+                disabled={isMobile}
               />
               <TypingText
                 lines={['QUI TRAVERSENT']}
@@ -34,6 +84,7 @@ export function HomeHeroSection() {
                 lineClassName="block text-4xl sm:text-5xl md:text-7xl lg:text-[5.5rem]"
                 speed={40}
                 startDelay={500}
+                disabled={isMobile}
               />
               <TypingText
                 lines={['LES GÉNÉRATIONS.']}
@@ -41,6 +92,7 @@ export function HomeHeroSection() {
                 lineClassName="block text-4xl sm:text-5xl md:text-7xl lg:text-[5.5rem]"
                 speed={40}
                 startDelay={500}
+                disabled={isMobile}
               />
             </h1>
           </div>

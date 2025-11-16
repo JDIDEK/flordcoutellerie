@@ -8,42 +8,49 @@ interface TypingTextProps {
   lineClassName?: string
   speed?: number
   startDelay?: number
+  disabled?: boolean
 }
 
-export function TypingText({ 
-  lines, 
-  className = '', 
+export function TypingText({
+  lines,
+  className = '',
   lineClassName = '',
   speed = 80,
-  startDelay = 500
+  startDelay = 500,
+  disabled = false,
 }: TypingTextProps) {
-  const [visibleChars, setVisibleChars] = useState(0)
-  const [isStarted, setIsStarted] = useState(false)
+  const fullText = lines[0] || ''
+  const [visibleChars, setVisibleChars] = useState(() => (disabled ? fullText.length : 0))
 
   useEffect(() => {
+    if (disabled) return
+
+    let interval: ReturnType<typeof setInterval> | null = null
     const startTimer = setTimeout(() => {
-      setIsStarted(true)
+      setVisibleChars(0)
+      interval = setInterval(() => {
+        setVisibleChars((current) => {
+          if (current >= fullText.length) {
+            if (interval) {
+              clearInterval(interval)
+              interval = null
+            }
+            return current
+          }
+          return current + 1
+        })
+      }, speed)
     }, startDelay)
 
-    return () => clearTimeout(startTimer)
-  }, [startDelay])
+    return () => {
+      clearTimeout(startTimer)
+      if (interval) {
+        clearInterval(interval)
+      }
+    }
+  }, [disabled, startDelay, speed, fullText])
 
-  useEffect(() => {
-    if (!isStarted) return
-
-    const fullText = lines[0] || ''
-    
-    if (visibleChars >= fullText.length) return
-
-    const timer = setTimeout(() => {
-      setVisibleChars(visibleChars + 1)
-    }, speed)
-
-    return () => clearTimeout(timer)
-  }, [visibleChars, lines, speed, isStarted])
-
-  const fullText = lines[0] || ''
-  const displayedText = fullText.slice(0, visibleChars)
+  const displayedText = disabled ? fullText : fullText.slice(0, visibleChars)
 
   return (
     <span className={className}>

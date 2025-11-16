@@ -4,7 +4,6 @@ import { Navigation } from '@/components/navigation'
 import { VideoScrollSection } from '@/components/video-scroll-section'
 import { SignatureKnivesSection } from '@/components/signature-knives-section'
 import { HomeHeroSection } from '@/components/home-hero-section'
-import { HomeCtaSection } from '@/components/home-cta-section'
 import { HomeFooter } from '@/components/home-footer'
 
 export default function Home() {
@@ -16,7 +15,6 @@ export default function Home() {
         <HomeHeroSection />
         <VideoScrollSection />
         <SignatureKnivesSection />
-        <HomeCtaSection />
         <HomeFooter />
       </main>
     </>

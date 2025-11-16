@@ -2,29 +2,21 @@
 
 import { useEffect, useRef, useState } from 'react'
 
+import { useIsMobile } from '@/hooks/use-mobile'
+
 export function VideoScrollSection() {
   const sectionRef = useRef<HTMLElement>(null)
   const videoContainerRef = useRef<HTMLDivElement>(null)
   const videoRef = useRef<HTMLVideoElement>(null)
-  const [scale, setScale] = useState(1)
-  const [borderRadius, setBorderRadius] = useState(0)
-  const [isMobile, setIsMobile] = useState(false)
+  const [scale, setScale] = useState(0.9)
+  const [borderRadius, setBorderRadius] = useState(24)
+  const isMobile = useIsMobile()
+  const desktopVideoSrc = '/assets/videos/main-video.mp4'
+  const mobileVideoSrc = '/assets/videos/mobile_main-video.mp4'
 
   useEffect(() => {
-    const updateIsMobile = () => {
-      const mobile = window.innerWidth < 768
-      setIsMobile(mobile)
-      setScale(mobile ? 1 : 0.9)
-      setBorderRadius(mobile ? 0 : 24)
-    }
+    if (isMobile) return
 
-    updateIsMobile()
-    window.addEventListener('resize', updateIsMobile)
-    videoRef.current?.play().catch(() => {})
-    return () => window.removeEventListener('resize', updateIsMobile)
-  }, [])
-
-  useEffect(() => {
     const handleScroll = () => {
       if (!sectionRef.current) return
       const rect = sectionRef.current.getBoundingClientRect()
@@ -33,17 +25,17 @@ export function VideoScrollSection() {
       const threshold = windowHeight * 0.6
 
       if (rect.top >= threshold) {
-        setScale(isMobile ? 1 : 0.9)
-        setBorderRadius(isMobile ? 0 : 24)
+        setScale(0.9)
+        setBorderRadius(24)
         return
       }
 
       if (rect.top <= threshold && rect.bottom >= threshold) {
         const distance = Math.max(0, Math.min(threshold, threshold - rect.top))
         const progress = distance / threshold
-        const newScale = isMobile ? 1 : 0.9 + progress * 0.1
+        const newScale = 0.9 + progress * 0.1
         setScale(newScale)
-        const newRadius = isMobile ? 0 : 24 * (1 - progress)
+        const newRadius = 24 * (1 - progress)
         setBorderRadius(newRadius)
       } else if (rect.bottom < threshold) {
         setScale(1)
@@ -53,8 +45,44 @@ export function VideoScrollSection() {
 
     window.addEventListener('scroll', handleScroll)
     handleScroll()
+    videoRef.current?.play().catch(() => {})
     return () => window.removeEventListener('scroll', handleScroll)
   }, [isMobile])
+
+  if (isMobile) {
+    return (
+      <section className="relative overflow-hidden bg-black text-white min-h-[85vh]">
+        <div className="absolute inset-0">
+          <video
+            ref={videoRef}
+            src={mobileVideoSrc}
+            className="w-full h-full object-cover"
+            autoPlay
+            muted
+            loop
+            playsInline
+            poster="/assets/images/artisan-knife-blade-damascus-steel-dark-workshop.jpg"
+          />
+          <div className="absolute inset-0 bg-black/55" />
+          <div className="absolute inset-0 bg-gradient-to-b from-black/30 via-transparent to-black/80" />
+        </div>
+        <div className="relative z-10 flex min-h-[85vh] flex-col items-center justify-center px-6 text-center space-y-6">
+          <h2 className="font-serif font-light leading-[0.95] tracking-tight text-4xl">
+            <span className="block">L'ART</span>
+            <span className="block">DE LA FORGE</span>
+          </h2>
+          <div className="space-y-4 text-neutral-100 text-sm leading-relaxed">
+            <p>
+              Découvrez le processus de création, de la forge à la finition. Chaque lame raconte une histoire.
+            </p>
+            <p className="text-[0.65rem] uppercase tracking-[0.35em] text-neutral-300">
+              Atelier • Tradition • Passion
+            </p>
+          </div>
+        </div>
+      </section>
+    )
+  }
 
   return (
     <section ref={sectionRef} className="relative h-screen overflow-hidden">
@@ -71,7 +99,7 @@ export function VideoScrollSection() {
           <div className="absolute inset-0">
             <video
               ref={videoRef}
-              src="/assets/videos/main-video.mp4"
+              src={desktopVideoSrc}
               className="w-full h-full object-cover"
               autoPlay
               muted
