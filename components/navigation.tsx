@@ -5,16 +5,27 @@ import { useState, useEffect } from 'react'
 import { Menu, X } from 'lucide-react'
 
 export function Navigation() {
-  const [isScrolled, setIsScrolled] = useState(false)
+  const [isVisible, setIsVisible] = useState(true)
+  const [lastScrollY, setLastScrollY] = useState(0)
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false)
 
   useEffect(() => {
     const handleScroll = () => {
-      const scrolled = window.scrollY > 50
-      // Utiliser requestAnimationFrame pour une transition plus fluide
-      requestAnimationFrame(() => {
-        setIsScrolled(scrolled)
-      })
+      const currentScrollY = window.scrollY
+      
+      // Toujours visible en haut de page (100px)
+      if (currentScrollY < 100) {
+        setIsVisible(true)
+      } else {
+        // Disparaît en scrollant vers le bas, apparaît en scrollant vers le haut
+        if (currentScrollY > lastScrollY) {
+          setIsVisible(false)
+        } else {
+          setIsVisible(true)
+        }
+      }
+      
+      setLastScrollY(currentScrollY)
     }
     
     // Throttle pour optimiser les performances
@@ -31,7 +42,7 @@ export function Navigation() {
     
     window.addEventListener('scroll', onScroll, { passive: true })
     return () => window.removeEventListener('scroll', onScroll)
-  }, [])
+  }, [lastScrollY])
 
   const navLinks = [
     { href: '/pieces', label: 'Pièces' },
@@ -44,8 +55,8 @@ export function Navigation() {
 
   return (
     <nav 
-      className={`fixed top-0 left-0 right-0 z-40 transition-all duration-700 ease-in-out ${
-        isScrolled ? 'bg-background/80 backdrop-blur-md border-b border-border' : 'bg-transparent'
+      className={`fixed left-0 right-0 z-40 transition-all duration-500 ease-in-out bg-transparent ${
+        isVisible ? 'top-0' : '-top-32'
       }`}
     >
       <div className="container mx-auto px-6 py-6">
