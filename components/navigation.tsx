@@ -1,31 +1,29 @@
 'use client'
 
 import Link from 'next/link'
-import { useState, useEffect } from 'react'
+import { useState, useEffect, useRef } from 'react'
 import { Menu, X } from 'lucide-react'
 
 export function Navigation() {
   const [isVisible, setIsVisible] = useState(true)
-  const [lastScrollY, setLastScrollY] = useState(0)
+  const lastScrollYRef = useRef(0)
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false)
 
   useEffect(() => {
     const handleScroll = () => {
       const currentScrollY = window.scrollY
-      
-      // Toujours visible en haut de page (100px)
+      const lastScrollY = lastScrollYRef.current
+      const delta = currentScrollY - lastScrollY
+      const DIRECTION_THRESHOLD = 12
+
+      // Toujours visible proche du sommet
       if (currentScrollY < 100) {
         setIsVisible(true)
-      } else {
-        // Disparaît en scrollant vers le bas, apparaît en scrollant vers le haut
-        if (currentScrollY > lastScrollY) {
-          setIsVisible(false)
-        } else {
-          setIsVisible(true)
-        }
+      } else if (Math.abs(delta) > DIRECTION_THRESHOLD) {
+        setIsVisible(delta < 0)
       }
-      
-      setLastScrollY(currentScrollY)
+
+      lastScrollYRef.current = currentScrollY
     }
     
     // Throttle pour optimiser les performances
@@ -42,7 +40,7 @@ export function Navigation() {
     
     window.addEventListener('scroll', onScroll, { passive: true })
     return () => window.removeEventListener('scroll', onScroll)
-  }, [lastScrollY])
+  }, [])
 
   const navLinks = [
     { href: '/pieces', label: 'Pièces' },
