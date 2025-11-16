@@ -10,10 +10,27 @@ export function Navigation() {
 
   useEffect(() => {
     const handleScroll = () => {
-      setIsScrolled(window.scrollY > 50)
+      const scrolled = window.scrollY > 50
+      // Utiliser requestAnimationFrame pour une transition plus fluide
+      requestAnimationFrame(() => {
+        setIsScrolled(scrolled)
+      })
     }
-    window.addEventListener('scroll', handleScroll)
-    return () => window.removeEventListener('scroll', handleScroll)
+    
+    // Throttle pour optimiser les performances
+    let ticking = false
+    const onScroll = () => {
+      if (!ticking) {
+        requestAnimationFrame(() => {
+          handleScroll()
+          ticking = false
+        })
+        ticking = true
+      }
+    }
+    
+    window.addEventListener('scroll', onScroll, { passive: true })
+    return () => window.removeEventListener('scroll', onScroll)
   }, [])
 
   const navLinks = [
@@ -27,7 +44,7 @@ export function Navigation() {
 
   return (
     <nav 
-      className={`fixed top-0 left-0 right-0 z-40 transition-all duration-500 ${
+      className={`fixed top-0 left-0 right-0 z-40 transition-all duration-700 ease-in-out ${
         isScrolled ? 'bg-background/80 backdrop-blur-md border-b border-border' : 'bg-transparent'
       }`}
     >
