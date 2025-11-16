@@ -48,7 +48,7 @@ export function VideoScrollSection() {
   return (
     <section 
       ref={sectionRef}
-      className="relative min-h-[150vh] overflow-hidden"
+      className="relative h-screen overflow-hidden"
     >
       {/* Container full screen */}
       <div className="sticky top-0 h-screen overflow-hidden">
