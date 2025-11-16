@@ -1,6 +1,9 @@
+'use client'
+
 import { Loader } from '@/components/loader'
 import { Navigation } from '@/components/navigation'
 import { VideoScrollSection } from '@/components/video-scroll-section'
+import { TypingText } from '@/components/typing-text'
 import { Button } from '@/components/ui/button'
 import Link from 'next/link'
 import { ArrowRight, Hammer, Sparkles, Award } from 'lucide-react'
@@ -8,7 +11,6 @@ import { ArrowRight, Hammer, Sparkles, Award } from 'lucide-react'
 export default function Home() {
   return (
     <>
-      <Loader />
       <Navigation />
       
       <main className="min-h-screen">
@@ -33,15 +35,27 @@ export default function Home() {
             <div className="flex-1 flex items-center justify-center">
               <div className="text-center">
                 <h1 className="font-serif font-light leading-[0.9] tracking-tight">
-                  <span className="block text-5xl md:text-7xl lg:text-[5.5rem]">
-                    LAMES
-                  </span>
-                  <span className="block text-5xl md:text-7xl lg:text-[5.5rem]">
-                    QUI TRAVERSENT
-                  </span>
-                  <span className="block text-5xl md:text-7xl lg:text-[5.5rem]">
-                    LES GÉNÉRATIONS.
-                  </span>
+                  <TypingText
+                    lines={['LAMES']}
+                    className=""
+                    lineClassName="block text-5xl md:text-7xl lg:text-[5.5rem]"
+                    speed={50}
+                    startDelay={500}
+                  />
+                  <TypingText
+                    lines={['QUI TRAVERSENT']}
+                    className=""
+                    lineClassName="block text-5xl md:text-7xl lg:text-[5.5rem]"
+                    speed={40}
+                    startDelay={500}
+                  />
+                  <TypingText
+                    lines={['LES GÉNÉRATIONS.']}
+                    className=""
+                    lineClassName="block text-5xl md:text-7xl lg:text-[5.5rem]"
+                    speed={40}
+                    startDelay={500}
+                  />
                 </h1>
               </div>
             </div>
