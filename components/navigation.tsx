@@ -47,7 +47,6 @@ export function Navigation() {
   const navLinks = [
     { href: '/pieces', label: 'Pièces' },
     { href: '/sur-mesure', label: 'Sur Mesure' },
-    { href: '/works', label: 'Works' },
     { href: '/galerie', label: 'Galerie' },
     { href: '/about', label: 'Atelier' },
     { href: '/contact', label: 'Contact' },

@@ -2,6 +2,7 @@
 
 import { useEffect, useRef, useState } from 'react'
 import Link from 'next/link'
+import Image from 'next/image'
 import Lenis from 'lenis'
 
 interface Collection {
@@ -22,12 +23,10 @@ interface HorizontalScrollGalleryProps {
 export function HorizontalScrollGallery({ collections }: HorizontalScrollGalleryProps) {
   const containerRef = useRef<HTMLDivElement>(null)
   const scrollRef = useRef<HTMLDivElement>(null)
+  const prefersReducedMotionRef = useRef(false)
 
   // Carte survolée (pour le blur des autres)
   const [hoveredId, setHoveredId] = useState<number | null>(null)
-
-  // Réfs pour l’animation (évite des setState à chaque frame)
-  const snappingProgressRef = useRef(0)
 
   useEffect(() => {
     const container = containerRef.current
@@ -35,43 +34,50 @@ export function HorizontalScrollGallery({ collections }: HorizontalScrollGallery
     if (!container || !scrollContent || collections.length === 0) return
 
     const lenis = (window as any).lenis as Lenis | undefined
+    const mediaQuery = window.matchMedia('(prefers-reduced-motion: reduce)')
+    prefersReducedMotionRef.current = mediaQuery.matches
     let ticking = false
+
+    const clearTransforms = () => {
+      scrollContent.style.transform = ''
+      const cards = scrollContent.querySelectorAll<HTMLElement>('[data-collection-card]')
+      cards.forEach((card) => {
+        card.style.transform = ''
+      })
+    }
 
     const updateTransforms = () => {
       if (!container || !scrollContent) return
+      if (prefersReducedMotionRef.current) {
+        clearTransforms()
+        return
+      }
+
+      const cards = Array.from(
+        scrollContent.querySelectorAll<HTMLElement>('[data-collection-card]')
+      )
+      if (cards.length === 0) return
 
       const rect = container.getBoundingClientRect()
-      const scrollWidth = scrollContent.scrollWidth - window.innerWidth
-
-      if (scrollWidth <= 0) return
+      const scrollRange = Math.max(rect.height - window.innerHeight, 1)
 
       // Progress vertical (0 -> 1) pour le scroll horizontal
-      const rawProgress = Math.max(
-        0,
-        Math.min(1, -rect.top / (rect.height - window.innerHeight || 1))
-      )
+      const rawProgress = Math.max(0, Math.min(1, -rect.top / scrollRange))
 
-      // --- Effet de SNAP vers la carte la plus proche ---
-      // On considère qu’il y a (n - 1) “positions” de cartes.
-      const maxIndex = Math.max(collections.length - 1, 1)
-      const targetIndex = Math.round(rawProgress * maxIndex)
-      const targetProgress = targetIndex / maxIndex
-
-      // Lissage entre le scroll libre et la position “snap”
-      // (0 = aucun snap, 1 = collé sur la carte)
-      const SNAP_INTENSITY = 0.25
-      const current = snappingProgressRef.current
-      const snapped = current + (targetProgress - current) * SNAP_INTENSITY
-      snappingProgressRef.current = snapped
-
-      const effectiveProgress = snapped
-      const translateX = -effectiveProgress * scrollWidth
+      const viewportCenter = window.innerWidth / 2
+      const firstCard = cards[0]
+      const lastCard = cards[cards.length - 1]
+      const firstCenter = firstCard.offsetLeft + firstCard.offsetWidth / 2
+      const lastCenter = lastCard.offsetLeft + lastCard.offsetWidth / 2
+      const minTranslate = viewportCenter - firstCenter
+      const maxTranslate = viewportCenter - lastCenter
+      const translateDelta = maxTranslate - minTranslate
+      const translateX =
+        Math.abs(translateDelta) < 0.001
+          ? minTranslate
+          : minTranslate + rawProgress * translateDelta
 
       scrollContent.style.transform = `translateX(${translateX}px)`
-
-      // Effet 3D + trajectoire diagonale sur chaque carte
-      const cards = scrollContent.querySelectorAll<HTMLElement>('[data-collection-card]')
-      const viewportCenter = window.innerWidth / 2
 
       cards.forEach((card) => {
         const cardRect = card.getBoundingClientRect()
@@ -112,11 +118,25 @@ export function HorizontalScrollGallery({ collections }: HorizontalScrollGallery
       requestAnimationFrame(updateTransforms)
     }
 
+    const handleMotionChange = (event: MediaQueryListEvent) => {
+      prefersReducedMotionRef.current = event.matches
+      if (event.matches) {
+        clearTransforms()
+      } else {
+        requestAnimationFrame(updateTransforms)
+      }
+    }
+
+    if (mediaQuery.addEventListener) {
+      mediaQuery.addEventListener('change', handleMotionChange)
+    } else if (mediaQuery.addListener) {
+      mediaQuery.addListener(handleMotionChange)
+    }
+
     if (lenis) {
       lenis.on('scroll', handleScroll)
-    } else {
-      window.addEventListener('scroll', handleScroll, { passive: true })
     }
+    window.addEventListener('scroll', handleScroll, { passive: true })
 
     window.addEventListener('resize', handleResize)
 
@@ -126,10 +146,14 @@ export function HorizontalScrollGallery({ collections }: HorizontalScrollGallery
     return () => {
       if (lenis) {
         lenis.off('scroll', handleScroll)
-      } else {
-        window.removeEventListener('scroll', handleScroll)
       }
+      window.removeEventListener('scroll', handleScroll)
       window.removeEventListener('resize', handleResize)
+      if (mediaQuery.removeEventListener) {
+        mediaQuery.removeEventListener('change', handleMotionChange)
+      } else if (mediaQuery.removeListener) {
+        mediaQuery.removeListener(handleMotionChange)
+      }
     }
   }, [collections.length])
 
@@ -151,7 +175,7 @@ export function HorizontalScrollGallery({ collections }: HorizontalScrollGallery
             transition: 'transform 0.15s ease-out',
           }}
         >
-          {collections.map((collection) => {
+          {collections.map((collection, index) => {
             const isDimmed = hoveredId !== null && hoveredId !== collection.id
 
             return (
@@ -175,13 +199,22 @@ export function HorizontalScrollGallery({ collections }: HorizontalScrollGallery
                     'transform 0.3s ease-out, filter 0.4s ease-out, opacity 0.3s ease-out',
                 }}
               >
-                <Link href="/galerie" className="block group">
+                <Link
+                  href="/galerie"
+                  className="block group focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-white/70"
+                  aria-label={`Découvrir la collection ${collection.title}`}
+                  onFocus={() => setHoveredId(collection.id)}
+                  onBlur={() => setHoveredId(null)}
+                >
                   <div className="relative aspect-[16/9] overflow-hidden rounded-sm bg-black">
-                    <img
+                    <Image
                       src={collection.image || '/placeholder.svg'}
                       alt={collection.title}
+                      fill
+                      sizes="(min-width: 1024px) 60vw, (min-width: 768px) 70vw, 90vw"
+                      priority={index === 0}
                       className="
-                        w-full h-full object-cover
+                        object-cover
                         transition-transform duration-[900ms]
                         group-hover:scale-[1.04]
                       "
@@ -201,7 +234,7 @@ export function HorizontalScrollGallery({ collections }: HorizontalScrollGallery
                       </p>
 
                       <div className="mt-8 pointer-events-auto">
-                        <button
+                        <span
                           className="
                             inline-flex items-center gap-3
                             rounded-full border border-white/40
@@ -212,12 +245,13 @@ export function HorizontalScrollGallery({ collections }: HorizontalScrollGallery
                             transition-colors
                             group-hover:bg-white group-hover:text-black
                           "
+                          aria-hidden="true"
                         >
                           En savoir plus
                           <span className="inline-block text-[0.55rem]">
                             →
                           </span>
-                        </button>
+                        </span>
                       </div>
                     </div>
                   </div>
