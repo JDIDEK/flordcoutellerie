@@ -1,6 +1,6 @@
 'use client'
 
-import { useEffect } from 'react'
+import { useCallback, useEffect } from 'react'
 import { X, ChevronLeft, ChevronRight } from 'lucide-react'
 import { Button } from '@/components/ui/button'
 
@@ -22,6 +22,14 @@ interface GalleryLightboxProps {
 export function GalleryLightbox({ images, currentIndex, onClose, onNavigate }: GalleryLightboxProps) {
   const currentImage = images[currentIndex]
 
+  const handlePrevious = useCallback(() => {
+    onNavigate(currentIndex > 0 ? currentIndex - 1 : images.length - 1)
+  }, [currentIndex, images.length, onNavigate])
+
+  const handleNext = useCallback(() => {
+    onNavigate(currentIndex < images.length - 1 ? currentIndex + 1 : 0)
+  }, [currentIndex, images.length, onNavigate])
+
   useEffect(() => {
     const handleKeyDown = (e: KeyboardEvent) => {
       if (e.key === 'Escape') onClose()
@@ -36,15 +44,7 @@ export function GalleryLightbox({ images, currentIndex, onClose, onNavigate }: G
       window.removeEventListener('keydown', handleKeyDown)
       document.body.style.overflow = 'unset'
     }
-  }, [currentIndex])
-
-  const handlePrevious = () => {
-    onNavigate(currentIndex > 0 ? currentIndex - 1 : images.length - 1)
-  }
-
-  const handleNext = () => {
-    onNavigate(currentIndex < images.length - 1 ? currentIndex + 1 : 0)
-  }
+  }, [handleNext, handlePrevious, onClose])
 
   return (
     <div className="fixed inset-0 z-50 bg-background/95 backdrop-blur-md animate-in fade-in duration-300">

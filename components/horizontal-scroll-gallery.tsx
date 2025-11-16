@@ -27,6 +27,14 @@ export function HorizontalScrollGallery({ collections }: HorizontalScrollGallery
 
   // Carte survolée (pour le blur des autres)
   const [hoveredId, setHoveredId] = useState<number | null>(null)
+  const [isMobile, setIsMobile] = useState(false)
+
+  useEffect(() => {
+    const updateIsMobile = () => setIsMobile(window.innerWidth < 768)
+    updateIsMobile()
+    window.addEventListener('resize', updateIsMobile)
+    return () => window.removeEventListener('resize', updateIsMobile)
+  }, [])
 
   useEffect(() => {
     const container = containerRef.current
@@ -92,7 +100,7 @@ export function HorizontalScrollGallery({ collections }: HorizontalScrollGallery
         const scale = 0.9 + depth * 0.15 // 0.9 -> ~1.05
         const rotateY = distance * -1 // pivot vers le centre
         const rotateZ = distance * 5 // tilt léger
-        const translateY = -distance * 250 // droite = haut / gauche = bas (trajet diagonal)
+        const translateY = -distance * (isMobile ? 120 : 250) // droite = haut / gauche = bas
 
         card.style.transform = `
           translateY(${translateY}px)
@@ -155,28 +163,29 @@ export function HorizontalScrollGallery({ collections }: HorizontalScrollGallery
         mediaQuery.removeListener(handleMotionChange)
       }
     }
-  }, [collections.length])
+  }, [collections.length, isMobile])
+
+  const containerHeight = isMobile ? '280vh' : '400vh'
+  const horizontalPadding = isMobile ? '12vw' : '20vw'
 
   return (
     <div
       ref={containerRef}
-      // 400vh = espace vertical pour faire “défiler” la scène sticky
-      style={{ height: '400vh' }}
+      style={{ height: containerHeight }}
       className="relative"
     >
       <div className="sticky top-0 h-screen flex items-center overflow-hidden bg-background">
         <div
           ref={scrollRef}
-          className="flex items-center gap-24 md:gap-32 will-change-transform [perspective:1400px]"
+          className="flex items-center gap-12 sm:gap-20 lg:gap-32 will-change-transform [perspective:1400px]"
           style={{
-            // padding pour centrer la 1ère et la dernière carte
-            paddingLeft: '20vw',
-            paddingRight: '20vw',
+            paddingLeft: horizontalPadding,
+            paddingRight: horizontalPadding,
             transition: 'transform 0.15s ease-out',
           }}
         >
           {collections.map((collection, index) => {
-            const isDimmed = hoveredId !== null && hoveredId !== collection.id
+            const isDimmed = !isMobile && hoveredId !== null && hoveredId !== collection.id
 
             return (
               <article
@@ -184,14 +193,14 @@ export function HorizontalScrollGallery({ collections }: HorizontalScrollGallery
                 data-collection-card
                 className="
                   flex-shrink-0
-                  w-[90vw] md:w-[70vw] lg:w-[60vw]
+                  w-[78vw] sm:w-[70vw] lg:w-[60vw]
                   max-w-5xl
                   transform-gpu
                   cursor-pointer
                   origin-center
                 "
-                onMouseEnter={() => setHoveredId(collection.id)}
-                onMouseLeave={() => setHoveredId(null)}
+                onMouseEnter={!isMobile ? () => setHoveredId(collection.id) : undefined}
+                onMouseLeave={!isMobile ? () => setHoveredId(null) : undefined}
                 style={{
                   filter: isDimmed ? 'blur(4px) grayscale(0.6)' : 'none',
                   opacity: isDimmed ? 0.45 : 1,
@@ -206,12 +215,12 @@ export function HorizontalScrollGallery({ collections }: HorizontalScrollGallery
                   onFocus={() => setHoveredId(collection.id)}
                   onBlur={() => setHoveredId(null)}
                 >
-                  <div className="relative aspect-[16/9] overflow-hidden rounded-sm bg-black">
+                  <div className="relative aspect-[4/5] sm:aspect-[16/9] overflow-hidden rounded-sm bg-black">
                     <Image
                       src={collection.image || '/placeholder.svg'}
                       alt={collection.title}
                       fill
-                      sizes="(min-width: 1024px) 60vw, (min-width: 768px) 70vw, 90vw"
+                      sizes="(max-width: 768px) 90vw, (min-width: 1024px) 60vw, 70vw"
                       priority={index === 0}
                       className="
                         object-cover
@@ -222,14 +231,14 @@ export function HorizontalScrollGallery({ collections }: HorizontalScrollGallery
 
                     <div className="pointer-events-none absolute inset-0 bg-gradient-to-b from-black/25 via-black/10 to-black/75" />
 
-                    <div className="pointer-events-none absolute inset-0 flex flex-col items-center justify-center text-center px-6">
-                      <p className="mb-4 text-[0.65rem] md:text-xs tracking-[0.35em] uppercase text-neutral-200/80">
+                    <div className="pointer-events-none absolute inset-0 flex flex-col items-center justify-center text-center px-4 sm:px-6">
+                      <p className="mb-4 text-[0.6rem] md:text-xs tracking-[0.35em] uppercase text-neutral-200/80">
                         {collection.category} • {collection.year}
                       </p>
-                      <h2 className="mb-3 font-serif font-light tracking-[0.15em] text-4xl md:text-5xl lg:text-6xl text-white">
+                      <h2 className="mb-3 font-serif font-light tracking-[0.15em] text-3xl sm:text-5xl lg:text-6xl text-white">
                         {collection.title}
                       </h2>
-                      <p className="max-w-xl text-xs md:text-sm text-neutral-200/90">
+                      <p className="max-w-xl text-xs md:text-sm text-neutral-200/90 px-2">
                         {collection.subtitle}
                       </p>
 
@@ -238,7 +247,7 @@ export function HorizontalScrollGallery({ collections }: HorizontalScrollGallery
                           className="
                             inline-flex items-center gap-3
                             rounded-full border border-white/40
-                            bg-white/5 px-6 py-2
+                            bg-white/5 px-5 py-2
                             text-[0.7rem] md:text-xs
                             uppercase tracking-[0.3em]
                             text-white
