@@ -172,7 +172,7 @@ export function HorizontalScrollGallery({ collections }: HorizontalScrollGallery
                 src={collection.image || '/placeholder.svg'}
                 alt={collection.title}
                 fill
-                sizes="90vw"
+                sizes="(max-width: 640px) 90vw, (max-width: 768px) 85vw, 768px"
                 className="object-cover"
                 priority={collection.id === collections[0]?.id}
               />
@@ -256,7 +256,7 @@ export function HorizontalScrollGallery({ collections }: HorizontalScrollGallery
                       src={collection.image || '/placeholder.svg'}
                       alt={collection.title}
                       fill
-                      sizes="(max-width: 768px) 90vw, (min-width: 1024px) 60vw, 70vw"
+                      sizes="(max-width: 640px) 78vw, (max-width: 768px) 70vw, (max-width: 1024px) 70vw, (max-width: 1536px) 60vw, 1200px"
                       priority={index === 0}
                       className="
                         object-cover

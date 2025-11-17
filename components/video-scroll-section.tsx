@@ -10,9 +10,34 @@ export function VideoScrollSection() {
   const videoRef = useRef<HTMLVideoElement>(null)
   const [scale, setScale] = useState(0.9)
   const [borderRadius, setBorderRadius] = useState(24)
+  const [shouldAutoplay, setShouldAutoplay] = useState(true)
   const isMobile = useIsMobile()
   const desktopVideoSrc = '/assets/videos/main-video.mp4'
   const mobileVideoSrc = '/assets/videos/mobile_main-video.mp4'
+
+  useEffect(() => {
+    const mediaQuery = window.matchMedia('(prefers-reduced-motion: reduce)')
+    setShouldAutoplay(!mediaQuery.matches)
+
+    const handleChange = (e: MediaQueryListEvent) => {
+      setShouldAutoplay(!e.matches)
+      if (e.matches && videoRef.current) {
+        videoRef.current.pause()
+      } else if (!e.matches && videoRef.current) {
+        videoRef.current.play().catch(() => {})
+      }
+    }
+
+    if (mediaQuery.addEventListener) {
+      mediaQuery.addEventListener('change', handleChange)
+    }
+
+    return () => {
+      if (mediaQuery.removeEventListener) {
+        mediaQuery.removeEventListener('change', handleChange)
+      }
+    }
+  }, [])
 
   useEffect(() => {
     if (isMobile) return
@@ -45,9 +70,11 @@ export function VideoScrollSection() {
 
     window.addEventListener('scroll', handleScroll)
     handleScroll()
-    videoRef.current?.play().catch(() => {})
+    if (shouldAutoplay) {
+      videoRef.current?.play().catch(() => {})
+    }
     return () => window.removeEventListener('scroll', handleScroll)
-  }, [isMobile])
+  }, [isMobile, shouldAutoplay])
 
   if (isMobile) {
     return (
@@ -57,10 +84,11 @@ export function VideoScrollSection() {
             ref={videoRef}
             src={mobileVideoSrc}
             className="w-full h-full object-cover"
-            autoPlay
+            autoPlay={shouldAutoplay}
             muted
             loop
             playsInline
+            preload="metadata"
             poster="/assets/images/artisan-knife-blade-damascus-steel-dark-workshop.jpg"
           />
           <div className="absolute inset-0 bg-black/55" />
@@ -101,10 +129,11 @@ export function VideoScrollSection() {
               ref={videoRef}
               src={desktopVideoSrc}
               className="w-full h-full object-cover"
-              autoPlay
+              autoPlay={shouldAutoplay}
               muted
               loop
               playsInline
+              preload="metadata"
               poster="/assets/images/artisan-knife-blade-damascus-steel-dark-workshop.jpg"
             />
           </div>

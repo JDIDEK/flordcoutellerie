@@ -1,6 +1,7 @@
 'use client'
 
 import { useState } from 'react'
+import Image from 'next/image'
 import { Badge } from '@/components/ui/badge'
 import { Button } from '@/components/ui/button'
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from '@/components/ui/dialog'
@@ -37,10 +38,12 @@ export function ProductCard({ piece }: { piece: Piece }) {
           onMouseEnter={() => setIsImageHovered(true)}
           onMouseLeave={() => setIsImageHovered(false)}
         >
-          <img
+          <Image
             src={piece.image || "/placeholder.svg"}
             alt={piece.title}
-            className="w-full h-full object-cover transition-transform duration-700 group-hover:scale-110"
+            fill
+            sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw"
+            className="object-cover transition-transform duration-700 group-hover:scale-110"
           />
           
           {/* Overlay */}
@@ -118,11 +121,13 @@ export function ProductCard({ piece }: { piece: Piece }) {
 
           <div className="grid md:grid-cols-2 gap-8 mt-6">
             {/* Image */}
-            <div className="aspect-square overflow-hidden bg-secondary rounded-sm">
-              <img
+            <div className="relative aspect-square overflow-hidden bg-secondary rounded-sm">
+              <Image
                 src={piece.image || "/placeholder.svg"}
                 alt={piece.title}
-                className="w-full h-full object-cover hover:scale-110 transition-transform duration-700"
+                fill
+                sizes="(max-width: 768px) 100vw, 50vw"
+                className="object-cover hover:scale-110 transition-transform duration-700"
               />
             </div>
 

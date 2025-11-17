@@ -19,7 +19,7 @@ export function HomeHeroSection() {
             alt="Atelier Flo RD Coutellerie"
             fill
             priority
-            sizes="100vw"
+            sizes="(max-width: 768px) 100vw, 768px"
             className="object-cover"
           />
           <div className="absolute inset-0 bg-black/45" />
@@ -58,7 +58,7 @@ export function HomeHeroSection() {
           alt="Atelier Flo RD Coutellerie"
           fill
           priority
-          sizes="100vw"
+          sizes="(max-width: 768px) 100vw, (max-width: 1920px) 100vw, 1920px"
           className="object-cover"
         />
       </div>

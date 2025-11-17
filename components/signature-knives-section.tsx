@@ -2,6 +2,7 @@
 
 import { useState } from 'react'
 import Link from 'next/link'
+import Image from 'next/image'
 import { ArrowRight } from 'lucide-react'
 
 const knives = [
@@ -43,10 +44,13 @@ export function SignatureKnivesSection() {
         {/* Left Side - Image dynamique */}
         <div className="relative flex-1 lg:h-full bg-secondary/30 flex items-center justify-center overflow-hidden min-h-[45vh] lg:min-h-screen order-1 lg:order-none">
           <div className="absolute inset-0 transition-opacity duration-500">
-            <img
+            <Image
               src={activeKnife.image}
               alt={activeKnife.title}
-              className="w-full h-full object-cover transition-transform duration-700"
+              fill
+              sizes="(max-width: 1024px) 100vw, 50vw"
+              priority
+              className="object-cover transition-transform duration-700"
             />
           </div>
           <div className="absolute inset-0 bg-black/40" />
