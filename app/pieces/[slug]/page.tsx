@@ -14,8 +14,9 @@ export function generateStaticParams() {
   }))
 }
 
-export default function PieceDetailPage({ params }: { params: { slug: string } }) {
-  const piece = getPieceBySlug(params.slug)
+export default async function PieceDetailPage({ params }: { params: Promise<{ slug: string }> }) {
+  const { slug } = await params
+  const piece = getPieceBySlug(slug)
 
   if (!piece) {
     notFound()
