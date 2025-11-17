@@ -8,20 +8,20 @@ export default function SurMesurePage() {
     <>
       <Navigation />
       
-      <main className="min-h-screen pt-32 pb-20">
+      <main className="min-h-screen pt-32 pb-20 bg-background">
         <div className="container mx-auto px-6">
-          <div className="max-w-5xl mx-auto">
+          <div className="max-w-3xl mx-auto">
             {/* Header */}
-            <div className="text-center mb-16 space-y-6">
+            <div className="text-center mb-16 space-y-4">
               <div className="space-y-2">
-                <p className="text-sm tracking-[0.3em] text-primary uppercase">
+                <p className="text-xs tracking-[0.4em] text-muted-foreground uppercase">
                   Commander
                 </p>
-                <h1 className="text-5xl md:text-6xl font-serif font-light tracking-tight">
+                <h1 className="text-4xl md:text-5xl font-serif font-light tracking-tight text-foreground">
                   Créer votre Lame
                 </h1>
               </div>
-              <p className="text-lg text-muted-foreground leading-relaxed text-pretty max-w-2xl mx-auto">
+              <p className="text-muted-foreground leading-relaxed max-w-xl mx-auto">
                 Concevons ensemble votre couteau idéal. Choisissez les aciers, 
                 formes, manches et finitions selon vos besoins et préférences.
               </p>

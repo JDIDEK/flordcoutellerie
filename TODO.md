@@ -18,6 +18,9 @@
 - [x] Rendre Lenis/smooth scroll optionnel en respectant `prefers-reduced-motion` et offrir un fallback natif.
 - [ ] Mettre en place une batterie de tests Lighthouse/Chrome UX ciblant mobile + budgets de performance dans CI.
 
+## Homogénéité du site
+- [x] Ne pas toucher aux page "galerie" et la page principale, pour le reste modifie pour que le site sois sobre, pro, épuré
+
 ## Boutique en ligne complète
 - [ ] Remplacer les tableaux statiques de `app/pieces` par un vrai catalogue (CMS ou base) avec gestion de stock, prix, variantes et médias.
 - [ ] Concevoir un tunnel e-commerce (panier, checkout, confirmation) avec paiement sécurisé (Stripe/PayPal) et génération automatique des factures.

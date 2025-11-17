@@ -1,87 +1,73 @@
 import { Navigation } from '@/components/navigation'
-import { Badge } from '@/components/ui/badge'
-import { Hammer, Flame, Award, Users } from 'lucide-react'
+import Image from 'next/image'
 
 export default function AboutPage() {
   return (
     <>
       <Navigation />
       
-      <main className="min-h-screen pt-32 pb-20">
+      <main className="min-h-screen pt-32 pb-20 bg-background">
         <div className="container mx-auto px-6">
           {/* Hero */}
-          <div className="max-w-4xl mx-auto mb-24">
-            <div className="grid md:grid-cols-2 gap-12 items-center">
-              <div className="space-y-6">
-                <div className="space-y-2">
-                  <p className="text-sm tracking-[0.3em] text-primary uppercase">
-                    L'Atelier
-                  </p>
-                  <h1 className="text-5xl md:text-6xl font-serif font-light tracking-tight">
-                    Flo RD
-                  </h1>
-                </div>
-                <div className="space-y-4 text-muted-foreground leading-relaxed">
-                  <p className="text-pretty">
-                    Dans mon atelier, chaque lame naît du feu et prend forme sous le marteau. 
-                    Je forge des couteaux artisanaux qui allient tradition et innovation, 
-                    en utilisant les aciers les plus nobles et les techniques ancestrales.
-                  </p>
-                  <p className="text-pretty">
-                    Passionné par la coutellerie japonaise et européenne, je crée des pièces 
-                    uniques destinées aux chefs, aux amateurs d'outdoor et aux collectionneurs 
-                    exigeants.
-                  </p>
-                </div>
+          <div className="max-w-3xl mx-auto mb-20">
+            <div className="space-y-8">
+              <div className="space-y-3 text-center">
+                <p className="text-xs tracking-[0.4em] text-muted-foreground uppercase">
+                  L'Atelier
+                </p>
+                <h1 className="text-4xl md:text-5xl font-serif font-light tracking-tight text-foreground">
+                  Flo RD Coutellerie
+                </h1>
               </div>
-              <div className="aspect-square overflow-hidden bg-secondary rounded-sm">
-                <img
-                  src="/placeholder.svg?key=workshop-artisan-knife-maker-forge"
-                  alt="Atelier Flo RD Coutellerie"
-                  className="w-full h-full object-cover"
-                />
+              <div className="space-y-6 text-muted-foreground leading-relaxed text-center max-w-2xl mx-auto">
+                <p>
+                  Dans mon atelier, chaque lame naît du feu et prend forme sous le marteau. 
+                  Je forge des couteaux artisanaux qui allient tradition et innovation, 
+                  en utilisant les aciers les plus nobles et les techniques ancestrales.
+                </p>
+                <p>
+                  Passionné par la coutellerie japonaise et européenne, je crée des pièces 
+                  uniques destinées aux chefs, aux amateurs d'outdoor et aux collectionneurs 
+                  exigeants.
+                </p>
               </div>
             </div>
           </div>
 
           {/* Philosophy */}
-          <section className="max-w-4xl mx-auto mb-24">
-            <h2 className="text-3xl md:text-4xl font-serif font-light mb-12 text-center">
+          <section className="max-w-2xl mx-auto mb-20">
+            <h2 className="text-2xl md:text-3xl font-serif font-light mb-10 text-center text-foreground">
               Philosophie & Démarche
             </h2>
-            <div className="grid md:grid-cols-2 gap-8">
-              <div className="space-y-4 p-6 bg-secondary/30 rounded-sm">
-                <Hammer className="w-10 h-10 text-primary" />
-                <h3 className="text-xl font-serif font-light">Forge Traditionnelle</h3>
-                <p className="text-muted-foreground leading-relaxed text-pretty">
+            <div className="space-y-10">
+              <div className="space-y-3">
+                <h3 className="text-lg font-medium text-foreground">Forge Traditionnelle</h3>
+                <p className="text-muted-foreground leading-relaxed">
                   Chaque lame est façonnée à la main, du lingot d'acier brut jusqu'à la finition finale. 
                   Trempe différentielle, affûtage convexe et polissage miroir ou satiné selon vos préférences.
                 </p>
               </div>
 
-              <div className="space-y-4 p-6 bg-secondary/30 rounded-sm">
-                <Flame className="w-10 h-10 text-primary" />
-                <h3 className="text-xl font-serif font-light">Aciers d'Exception</h3>
-                <p className="text-muted-foreground leading-relaxed text-pretty">
+              <div className="space-y-3">
+                <h3 className="text-lg font-medium text-foreground">Aciers d'Exception</h3>
+                <p className="text-muted-foreground leading-relaxed">
                   Je travaille exclusivement avec des aciers premium : Damasteel DS93X suédois, 
                   VG10 Suminagashi japonais et 14C28N inox. Chaque acier est sélectionné pour ses 
                   performances et son esthétique.
                 </p>
               </div>
 
-              <div className="space-y-4 p-6 bg-secondary/30 rounded-sm">
-                <Award className="w-10 h-10 text-primary" />
-                <h3 className="text-xl font-serif font-light">Pièces Uniques</h3>
-                <p className="text-muted-foreground leading-relaxed text-pretty">
+              <div className="space-y-3">
+                <h3 className="text-lg font-medium text-foreground">Pièces Uniques</h3>
+                <p className="text-muted-foreground leading-relaxed">
                   Pas de production de masse. Chaque couteau est une création originale avec des 
                   variations naturelles de motifs, manches en bois stabilisé, morta ou résines artisanales.
                 </p>
               </div>
 
-              <div className="space-y-4 p-6 bg-secondary/30 rounded-sm">
-                <Users className="w-10 h-10 text-primary" />
-                <h3 className="text-xl font-serif font-light">Sur Mesure</h3>
-                <p className="text-muted-foreground leading-relaxed text-pretty">
+              <div className="space-y-3">
+                <h3 className="text-lg font-medium text-foreground">Sur Mesure</h3>
+                <p className="text-muted-foreground leading-relaxed">
                   Accompagnement personnalisé pour créer votre lame idéale. Du choix des aciers aux 
                   dimensions, en passant par le guillochage et la gravure, tout est possible.
                 </p>
@@ -90,130 +76,96 @@ export default function AboutPage() {
           </section>
 
           {/* Process */}
-          <section className="max-w-4xl mx-auto mb-24 texture-overlay bg-secondary/20 p-12 rounded-sm">
-            <h2 className="text-3xl md:text-4xl font-serif font-light mb-8">
+          <section className="max-w-2xl mx-auto mb-20">
+            <h2 className="text-2xl md:text-3xl font-serif font-light mb-10 text-center text-foreground">
               Le Processus de Création
             </h2>
-            <div className="space-y-6">
-              <div className="flex gap-6">
-                <div className="flex-shrink-0 w-12 h-12 rounded-full bg-primary/10 flex items-center justify-center">
-                  <span className="text-lg font-serif text-primary">1</span>
+            <div className="space-y-8">
+              <div className="space-y-2">
+                <div className="flex items-baseline gap-3">
+                  <span className="text-sm text-muted-foreground font-mono">01</span>
+                  <h4 className="font-medium text-foreground">Conception & Échange</h4>
                 </div>
-                <div>
-                  <h4 className="font-medium mb-2">Conception & Échange</h4>
-                  <p className="text-muted-foreground text-pretty">
-                    Discussion sur vos besoins, usage et préférences. Choix des matériaux et validation du design.
-                  </p>
-                </div>
+                <p className="text-muted-foreground leading-relaxed pl-8">
+                  Discussion sur vos besoins, usage et préférences. Choix des matériaux et validation du design.
+                </p>
               </div>
 
-              <div className="flex gap-6">
-                <div className="flex-shrink-0 w-12 h-12 rounded-full bg-primary/10 flex items-center justify-center">
-                  <span className="text-lg font-serif text-primary">2</span>
+              <div className="space-y-2">
+                <div className="flex items-baseline gap-3">
+                  <span className="text-sm text-muted-foreground font-mono">02</span>
+                  <h4 className="font-medium text-foreground">Forge & Trempe</h4>
                 </div>
-                <div>
-                  <h4 className="font-medium mb-2">Forge & Trempe</h4>
-                  <p className="text-muted-foreground text-pretty">
-                    Façonnage de la lame, traitement thermique selon l'acier choisi, rectification et polissage.
-                  </p>
-                </div>
+                <p className="text-muted-foreground leading-relaxed pl-8">
+                  Façonnage de la lame, traitement thermique selon l'acier choisi, rectification et polissage.
+                </p>
               </div>
 
-              <div className="flex gap-6">
-                <div className="flex-shrink-0 w-12 h-12 rounded-full bg-primary/10 flex items-center justify-center">
-                  <span className="text-lg font-serif text-primary">3</span>
+              <div className="space-y-2">
+                <div className="flex items-baseline gap-3">
+                  <span className="text-sm text-muted-foreground font-mono">03</span>
+                  <h4 className="font-medium text-foreground">Manche & Assemblage</h4>
                 </div>
-                <div>
-                  <h4 className="font-medium mb-2">Manche & Assemblage</h4>
-                  <p className="text-muted-foreground text-pretty">
-                    Travail du manche en bois ou résine, guillochage éventuel, assemblage précis et finitions.
-                  </p>
-                </div>
+                <p className="text-muted-foreground leading-relaxed pl-8">
+                  Travail du manche en bois ou résine, guillochage éventuel, assemblage précis et finitions.
+                </p>
               </div>
 
-              <div className="flex gap-6">
-                <div className="flex-shrink-0 w-12 h-12 rounded-full bg-primary/10 flex items-center justify-center">
-                  <span className="text-lg font-serif text-primary">4</span>
+              <div className="space-y-2">
+                <div className="flex items-baseline gap-3">
+                  <span className="text-sm text-muted-foreground font-mono">04</span>
+                  <h4 className="font-medium text-foreground">Affûtage & Livraison</h4>
                 </div>
-                <div>
-                  <h4 className="font-medium mb-2">Affûtage & Livraison</h4>
-                  <p className="text-muted-foreground text-pretty">
-                    Affûtage final tranchant rasoir, contrôle qualité, emballage soigné et envoi sécurisé.
-                  </p>
-                </div>
+                <p className="text-muted-foreground leading-relaxed pl-8">
+                  Affûtage final tranchant rasoir, contrôle qualité, emballage soigné et envoi sécurisé.
+                </p>
               </div>
             </div>
 
-            <div className="mt-8 p-6 bg-background/50 rounded-sm border border-border">
-              <p className="text-sm text-muted-foreground">
-                <strong>Délai moyen :</strong> 4 à 8 semaines selon la complexité • 
-                <strong> Acompte :</strong> 20% à la commande • 
-                <strong> Garantie :</strong> Qualité artisanale française
+            <div className="mt-10 pt-8 border-t border-border">
+              <p className="text-sm text-muted-foreground text-center leading-relaxed">
+                Délai moyen : 4 à 8 semaines • Acompte : 20% à la commande
               </p>
             </div>
           </section>
 
           {/* Materials */}
-          <section className="max-w-4xl mx-auto">
-            <h2 className="text-3xl md:text-4xl font-serif font-light mb-8">
+          <section className="max-w-2xl mx-auto">
+            <h2 className="text-2xl md:text-3xl font-serif font-light mb-10 text-center text-foreground">
               Les Matériaux
             </h2>
-            <div className="space-y-6">
-              <div className="border border-border p-6 rounded-sm">
-                <div className="flex items-start justify-between mb-4">
-                  <div>
-                    <h3 className="text-xl font-medium mb-1">Damasteel DS93X™</h3>
-                    <Badge>Premium</Badge>
-                  </div>
-                  <span className="text-2xl font-serif font-light text-primary">64 HRC</span>
+            <div className="space-y-8">
+              <div className="space-y-3">
+                <div className="flex items-baseline justify-between">
+                  <h3 className="text-lg font-medium text-foreground">Damasteel DS93X™</h3>
+                  <span className="text-sm text-muted-foreground font-mono">64 HRC</span>
                 </div>
-                <p className="text-muted-foreground mb-4 text-pretty">
+                <p className="text-muted-foreground leading-relaxed">
                   Acier Damas suédois de renommée mondiale. Motifs Fafnir, Rose, Vinland, Twist ou Baldur. 
                   Exceptionnelle tenue de coupe et esthétique spectaculaire.
                 </p>
-                <div className="flex gap-2">
-                  <Badge variant="outline">Tenue de coupe</Badge>
-                  <Badge variant="outline">Résistance corrosion</Badge>
-                  <Badge variant="outline">Beauté</Badge>
-                </div>
               </div>
 
-              <div className="border border-border p-6 rounded-sm">
-                <div className="flex items-start justify-between mb-4">
-                  <div>
-                    <h3 className="text-xl font-medium mb-1">VG10 Suminagashi</h3>
-                    <Badge>Haut de gamme</Badge>
-                  </div>
-                  <span className="text-2xl font-serif font-light text-primary">60-61 HRC</span>
+              <div className="space-y-3">
+                <div className="flex items-baseline justify-between">
+                  <h3 className="text-lg font-medium text-foreground">VG10 Suminagashi</h3>
+                  <span className="text-sm text-muted-foreground font-mono">60-61 HRC</span>
                 </div>
-                <p className="text-muted-foreground mb-4 text-pretty">
+                <p className="text-muted-foreground leading-relaxed">
                   Acier japonais 67 couches avec motifs ondulés traditionnels. Excellent compromis 
                   entre performance et facilité d'entretien.
                 </p>
-                <div className="flex gap-2">
-                  <Badge variant="outline">Affûtage facile</Badge>
-                  <Badge variant="outline">Motifs élégants</Badge>
-                  <Badge variant="outline">Polyvalent</Badge>
-                </div>
               </div>
 
-              <div className="border border-border p-6 rounded-sm">
-                <div className="flex items-start justify-between mb-4">
-                  <div>
-                    <h3 className="text-xl font-medium mb-1">14C28N Swedish</h3>
-                    <Badge>Accessible</Badge>
-                  </div>
-                  <span className="text-2xl font-serif font-light text-primary">58-60 HRC</span>
+              <div className="space-y-3">
+                <div className="flex items-baseline justify-between">
+                  <h3 className="text-lg font-medium text-foreground">14C28N Swedish</h3>
+                  <span className="text-sm text-muted-foreground font-mono">58-60 HRC</span>
                 </div>
-                <p className="text-muted-foreground mb-4 text-pretty">
+                <p className="text-muted-foreground leading-relaxed">
                   Inox suédois réputé pour sa fiabilité. Idéal pour l'outdoor et un usage quotidien intensif. 
                   Excellent rapport qualité-prix.
                 </p>
-                <div className="flex gap-2">
-                  <Badge variant="outline">Robuste</Badge>
-                  <Badge variant="outline">Entretien facile</Badge>
-                  <Badge variant="outline">Fiable</Badge>
-                </div>
               </div>
             </div>
           </section>

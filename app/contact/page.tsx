@@ -31,69 +31,27 @@ export default function ContactPage() {
     <>
       <Navigation />
       
-      <main className="min-h-screen pt-32 pb-20">
+      <main className="min-h-screen pt-32 pb-20 bg-background">
         <div className="container mx-auto px-6">
-          <div className="max-w-5xl mx-auto">
+          <div className="max-w-2xl mx-auto">
             {/* Header */}
-            <div className="text-center mb-16 space-y-6">
+            <div className="text-center mb-16 space-y-4">
               <div className="space-y-2">
-                <p className="text-sm tracking-[0.3em] text-primary uppercase">
+                <p className="text-xs tracking-[0.4em] text-muted-foreground uppercase">
                   Parlons de votre projet
                 </p>
-                <h1 className="text-5xl md:text-6xl font-serif font-light tracking-tight">
+                <h1 className="text-4xl md:text-5xl font-serif font-light tracking-tight text-foreground">
                   Contact
                 </h1>
               </div>
-              <p className="text-lg text-muted-foreground leading-relaxed text-pretty max-w-2xl mx-auto">
+              <p className="text-muted-foreground leading-relaxed max-w-xl mx-auto">
                 Une question ? Un projet de couteau sur mesure ? N'hésitez pas à me contacter. 
                 Je réponds généralement sous 24-48h.
               </p>
             </div>
 
-            <div className="grid md:grid-cols-3 gap-8 mb-12">
-              {/* Contact Cards */}
-              <Card className="p-6 text-center space-y-3">
-                <div className="w-12 h-12 mx-auto rounded-full bg-primary/10 flex items-center justify-center">
-                  <Mail className="w-6 h-6 text-primary" />
-                </div>
-                <div>
-                  <h3 className="font-medium mb-1">Email</h3>
-                  <a 
-                    href="mailto:floribadeaudumas@gmail.com"
-                    className="text-sm text-muted-foreground hover:text-primary transition-colors"
-                  >
-                    floribadeaudumas@gmail.com
-                  </a>
-                </div>
-              </Card>
-
-              <Card className="p-6 text-center space-y-3">
-                <div className="w-12 h-12 mx-auto rounded-full bg-primary/10 flex items-center justify-center">
-                  <MapPin className="w-6 h-6 text-primary" />
-                </div>
-                <div>
-                  <h3 className="font-medium mb-1">Localisation</h3>
-                  <p className="text-sm text-muted-foreground">
-                    France
-                  </p>
-                </div>
-              </Card>
-
-              <Card className="p-6 text-center space-y-3">
-                <div className="w-12 h-12 mx-auto rounded-full bg-primary/10 flex items-center justify-center">
-                  <Phone className="w-6 h-6 text-primary" />
-                </div>
-                <div>
-                  <h3 className="font-medium mb-1">Réponse</h3>
-                  <p className="text-sm text-muted-foreground">
-                    Sous 24-48h
-                  </p>
-                </div>
-              </Card>
-            </div>
-
             {/* Contact Form */}
-            <Card className="p-8 md:p-12">
+            <div className="border border-border p-8 md:p-10 rounded-sm bg-card">
               <form onSubmit={handleSubmit} className="space-y-6">
                 <div className="grid md:grid-cols-2 gap-6">
                   <div className="space-y-2">
@@ -151,19 +109,21 @@ export default function ContactPage() {
                   pour vous recontacter concernant votre demande.
                 </p>
               </form>
-            </Card>
+            </div>
 
             {/* Additional Info */}
-            <Card className="mt-12 p-8 bg-secondary/30">
-              <h3 className="text-xl font-serif font-light mb-4">
-                Informations Légales
-              </h3>
-              <div className="space-y-2 text-sm text-muted-foreground">
-                <p><strong>SIRET :</strong> 914 141 684 00011</p>
-                <p><strong>Artisan Coutelier</strong></p>
-                <p><strong>Atelier :</strong> France</p>
-              </div>
-            </Card>
+            <div className="mt-12 pt-8 border-t border-border text-center space-y-2">
+              <p className="text-sm text-muted-foreground">
+                <strong className="text-foreground">SIRET :</strong> 914 141 684 00011
+              </p>
+              <p className="text-sm text-muted-foreground">Artisan Coutelier • France</p>
+              <a 
+                href="mailto:floribadeaudumas@gmail.com"
+                className="text-sm text-muted-foreground hover:text-foreground transition-colors inline-block"
+              >
+                floribadeaudumas@gmail.com
+              </a>
+            </div>
           </div>
         </div>
       </main>

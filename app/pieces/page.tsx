@@ -97,41 +97,22 @@ export default function PiecesPage() {
     <>
       <Navigation />
       
-      <main className="min-h-screen pt-32 pb-20">
+      <main className="min-h-screen pt-32 pb-20 bg-background">
         <div className="container mx-auto px-6">
           {/* Header */}
-          <div className="max-w-3xl mb-16 space-y-6">
+          <div className="max-w-2xl mx-auto mb-16 space-y-4 text-center">
             <div className="space-y-2">
-              <p className="text-sm tracking-[0.3em] text-primary uppercase">
+              <p className="text-xs tracking-[0.4em] text-muted-foreground uppercase">
                 Disponibles
               </p>
-              <h1 className="text-5xl md:text-6xl font-serif font-light tracking-tight">
+              <h1 className="text-4xl md:text-5xl font-serif font-light tracking-tight text-foreground">
                 Pièces Uniques
               </h1>
             </div>
-            <p className="text-lg text-muted-foreground leading-relaxed text-pretty">
+            <p className="text-muted-foreground leading-relaxed">
               Chaque couteau est une création originale, forgée à la main dans mon atelier. 
               Les pièces marquées comme vendues peuvent être recréées sur commande avec des variations uniques.
             </p>
-          </div>
-
-          {/* Filters */}
-          <div className="flex flex-wrap gap-3 mb-12">
-            <Badge variant="outline" className="cursor-pointer hover:bg-primary hover:text-primary-foreground transition-colors">
-              Tous
-            </Badge>
-            <Badge variant="outline" className="cursor-pointer hover:bg-primary hover:text-primary-foreground transition-colors">
-              Cuisine
-            </Badge>
-            <Badge variant="outline" className="cursor-pointer hover:bg-primary hover:text-primary-foreground transition-colors">
-              Outdoor
-            </Badge>
-            <Badge variant="outline" className="cursor-pointer hover:bg-primary hover:text-primary-foreground transition-colors">
-              Pliants
-            </Badge>
-            <Badge variant="outline" className="cursor-pointer hover:bg-primary hover:text-primary-foreground transition-colors">
-              Damasteel
-            </Badge>
           </div>
 
           {/* Products Grid */}
@@ -142,11 +123,11 @@ export default function PiecesPage() {
           </div>
 
           {/* Custom Order CTA */}
-          <div className="bg-secondary/30 rounded-sm p-12 text-center space-y-6 texture-overlay">
-            <h2 className="text-3xl md:text-4xl font-serif font-light tracking-tight">
+          <div className="max-w-2xl mx-auto border border-border rounded-sm p-10 text-center space-y-6 mt-16">
+            <h2 className="text-2xl md:text-3xl font-serif font-light tracking-tight text-foreground">
               Vous ne trouvez pas votre lame idéale ?
             </h2>
-            <p className="text-muted-foreground max-w-2xl mx-auto leading-relaxed">
+            <p className="text-muted-foreground leading-relaxed">
               Créons ensemble votre couteau sur mesure. Choix des aciers, dimensions, 
               manches et finitions personnalisées.
             </p>
