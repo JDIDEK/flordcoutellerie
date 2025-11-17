@@ -15,7 +15,7 @@
 ## Optimisations mobiles et performances
 - [x] Revoir les sections plein écran (`home-hero`, `video-scroll`, galerie horizontale) pour proposer des variantes sans surcharge sur <768px (hauteurs auto, animations désactivées, images adaptées).
 - [x] Optimiser les vidéos/images (posters, compression, `loading="lazy"`, `sizes` adaptés) et implémenter des breakpoints spécifiques.
-- [ ] Rendre Lenis/smooth scroll optionnel en respectant `prefers-reduced-motion` et offrir un fallback natif.
+- [x] Rendre Lenis/smooth scroll optionnel en respectant `prefers-reduced-motion` et offrir un fallback natif.
 - [ ] Mettre en place une batterie de tests Lighthouse/Chrome UX ciblant mobile + budgets de performance dans CI.
 
 ## Boutique en ligne complète
