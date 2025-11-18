@@ -19,10 +19,10 @@ const steps = [
 ]
 
 const usageOptions = [
-  { id: 'cuisine', label: 'Cuisine', description: 'Couteaux de chef, Santoku, Nakiri', icon: '🔪' },
-  { id: 'outdoor', label: 'Outdoor', description: 'Bushcraft, survie, camping', icon: '🏕️' },
-  { id: 'collection', label: 'Collection', description: 'Pièce d\'art, vitrine', icon: '⭐' },
-  { id: 'pliant', label: 'Pliant', description: 'Piémontais, cran forcé, EDC', icon: '🗡️' },
+  { id: 'cuisine', label: 'Cuisine', description: 'Couteaux de chef, Santoku, Nakiri'},
+  { id: 'outdoor', label: 'Outdoor', description: 'Bushcraft, survie, camping' },
+  { id: 'collection', label: 'Collection', description: 'Pièce d\'art, vitrine'},
+  { id: 'pliant', label: 'Pliant', description: 'Piémontais, cran forcé, EDC'},
 ]
 
 const formesByCuisine = [
@@ -235,7 +235,6 @@ Cordialement`)
                   onClick={() => setConfig({ ...config, usage: option.id, forme: '', acier: '', manche: '' })}
                 >
                   <div className="flex items-start gap-4">
-                    <div className="text-3xl">{option.icon}</div>
                     <div className="flex-1">
                       <h3 className="font-medium mb-1">{option.label}</h3>
                       <p className="text-sm text-muted-foreground">{option.description}</p>
