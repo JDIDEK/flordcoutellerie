@@ -2,9 +2,13 @@ import { Navigation } from '@/components/navigation'
 import { ProductCard } from '@/components/product-card'
 import { Button } from '@/components/ui/button'
 import Link from 'next/link'
-import { pieces } from '@/lib/pieces-data'
+import { getPieces } from '@/lib/sanity/queries'
 
-export default function PiecesPage() {
+export const revalidate = 60
+
+export default async function PiecesPage() {
+  const pieces = await getPieces()
+
   return (
     <>
       <Navigation />
@@ -30,7 +34,7 @@ export default function PiecesPage() {
           {/* Products Grid */}
           <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-8 mb-16">
             {pieces.map((piece) => (
-              <ProductCard key={piece.id} piece={piece} />
+              <ProductCard key={piece._id} piece={piece} />
             ))}
           </div>
 

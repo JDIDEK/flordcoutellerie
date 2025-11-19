@@ -3,15 +3,23 @@ import Link from 'next/link'
 import { Badge } from '@/components/ui/badge'
 import { Button } from '@/components/ui/button'
 import { ArrowRight } from 'lucide-react'
-import type { Piece } from '@/lib/pieces-data'
+import { urlFor } from '@/sanity/lib/image'
+import { formatCurrency } from '@/lib/utils'
+import type { PieceListItem } from '@/lib/sanity/types'
 
-export function ProductCard({ piece }: { piece: Piece }) {
+export function ProductCard({ piece }: { piece: PieceListItem }) {
+  const formattedPrice = formatCurrency(piece.price)
+  const formattedOriginalPrice = formatCurrency(piece.originalPrice)
   return (
     <Link href={`/pieces/${piece.slug}`} className="group block space-y-4">
       {/* Image */}
       <div className="relative aspect-[4/3] overflow-hidden bg-secondary rounded-sm">
         <Image
-          src={piece.image || "/placeholder.svg"}
+          src={
+            piece.mainImage
+              ? urlFor(piece.mainImage).width(1200).height(900).fit('crop').url()
+              : '/placeholder.svg'
+          }
           alt={piece.title}
           fill
           sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw"
@@ -27,13 +35,18 @@ export function ProductCard({ piece }: { piece: Piece }) {
         </div>
 
         {/* Stock Badge */}
-        {piece.stock === 'sold' && (
+        {piece.status === 'sold' && (
           <Badge className="absolute top-4 left-4 bg-destructive/90 text-destructive-foreground">
             Vendu
           </Badge>
         )}
-        {piece.originalPrice && piece.stock === 'available' && (
-          <Badge className="absolute top-4 left-4 bg-primary text-primary-foreground">
+        {piece.status === 'reserved' && (
+          <Badge className="absolute top-4 left-4 bg-amber-600 text-white">
+            Réservé
+          </Badge>
+        )}
+        {piece.originalPrice && piece.status === 'available' && (
+          <Badge className="absolute top-4 right-4 bg-primary text-primary-foreground">
             Promo
           </Badge>
         )}
@@ -61,11 +74,11 @@ export function ProductCard({ piece }: { piece: Piece }) {
         <div className="flex items-center justify-between pt-2">
           <div className="flex items-baseline gap-2">
             <span className="text-2xl font-light text-foreground">
-              {piece.price}€
+              {formattedPrice ? `${formattedPrice}€` : 'Sur demande'}
             </span>
-            {piece.originalPrice && (
+            {formattedOriginalPrice && (
               <span className="text-sm text-muted-foreground line-through">
-                {piece.originalPrice}€
+                {`${formattedOriginalPrice}€`}
               </span>
             )}
           </div>
