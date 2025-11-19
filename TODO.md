@@ -1,39 +1,30 @@
 # TODO
 
-## Refonte graphique complète
-- [ ] Construire un design system aligné sur la DA Flo RD (palette officielle, typo, iconographie) et l'appliquer à `globals.css`, aux composants communs (`Navigation`, `HomeHeroSection`, CTA, cards, etc.).
-- [ ] Remplacer tous les visuels placeholders par les photos/vidéos atelier validées, gérer leur optimisation (formats, tailles, `Image` Next).
-- [ ] Décliner de nouveaux gabarits pour les pages clés (accueil, atelier, pièces, sur-mesure, contact) en intégrant storytelling, micro-interactions et hiérarchie éditoriale cohérente.
-- [ ] Documenter le système (tokens, composants, règles responsive) pour faciliter l'évolution future.
+## 1. Design & migration visuelle
+- [ ] Appliquer la direction artistique validée à `globals.css`, `Navigation`, `HomeHeroSection`, CTA et autres blocs pour refléter la nouvelle palette, typographie et hiérarchie.
+- [ ] Remplacer les visuels placeholders par les photos/vidéos atelier définitives et ajuster leurs `sizes`, formats et overlays.
+- [ ] Documenter les tokens/règles responsive pour que la refonte reste cohérente, simple à maintenir et prête pour la mise à jour du client.
+- [ ] Préparer l’inventaire Wix + planifier la bascule DNS de `flordcoutellerie.com` (redirections, enregistrements mail, monitoring).
 
-## Sortie de Wix et conservation du domaine
-- [ ] Préparer l’inventaire des contenus Wix (textes, médias, SEO) et planifier leur reprise dans l’app Next.
-- [ ] Choisir une plateforme d’hébergement (ex. Vercel) et configurer les pipelines (environnements, variables, r/w, sauvegardes).
-- [ ] Planifier la bascule DNS de `flordcoutellerie.com` (zones A/CNAME, éventuels enregistrements mail) avec fenêtre de transition et monitoring.
-- [ ] Mettre en place les redirections 301 des anciennes URLs Wix vers les nouvelles routes Next + vérifier via crawler que le SEO est préservé.
+## 2. Catalogue & boutique
+- [ ] Finaliser le schéma Sanity des pièces (statuts, images, features, prix, mise en avant) et former ton client à créer/modifier les documents.
+- [ ] Alimenter `app/pieces` et les cards avec ces données dynamiques puis préparer les états (disponible, réservé, vendu).
+- [ ] Construire un tunnel e-commerce complet (panier, checkout Stripe, confirmation) et automatiser la facturation/emails transactionnels.
+- [ ] Ajouter une couche back-office/fidélité : suivi des commandes, exports comptables, tracking conversions + TVA/frais d’expédition.
 
-## Optimisations mobiles et performances
-- [x] Revoir les sections plein écran (`home-hero`, `video-scroll`, galerie horizontale) pour proposer des variantes sans surcharge sur <768px (hauteurs auto, animations désactivées, images adaptées).
-- [x] Optimiser les vidéos/images (posters, compression, `loading="lazy"`, `sizes` adaptés) et implémenter des breakpoints spécifiques.
-- [x] Rendre Lenis/smooth scroll optionnel en respectant `prefers-reduced-motion` et offrir un fallback natif.
-- [ ] Mettre en place une batterie de tests Lighthouse/Chrome UX ciblant mobile + budgets de performance dans CI.
+## 3. Contact & CRM
+- [ ] Remplacer le `mailto:` par une API route sécurisée (validation, options anti-spam) qui envoie un email via Resend/Brevo et enregistre le message.
+- [ ] Ajouter un feedback utilisateur (loading, erreurs, confirmation) et un filtrage anti-spam (honeypot, rate limit, reCAPTCHA si nécessaire).
+- [ ] Centraliser les messages entrants dans la stack de ton choix (Notion, Slack, CRM) pour que ton client puisse répondre sans changer de boîte mail.
 
-## Homogénéité du site
-- [x] Ne pas toucher aux page "galerie" et la page principale, pour le reste modifie pour que le site sois sobre, pro, épuré
+## 4. Formation & adhésion
+- [ ] Esquisser les futures routes (`/formation`, `/formation/[module]`, `/espace-membre`) et créer des placeholders graphiques pour les modules en rédaction.
+- [ ] Concevoir le modèle de contenu Sanity pour la formation (chapitres, ressources, tarifs, accès) et la logique d’adhésion (rôles, abonnement).
+- [ ] Préparer l’intégration avec le e-commerce (achat de formation, renouvellement adhésion, facturation) et les workflows de communication (newsletters, rappels).
+- [ ] Organiser les ressources (vidéos, PDF, animations) pour que ton client and sa graphiste puissent les publier quand elles seront prêtes.
 
-## Boutique en ligne complète
-- [ ] Remplacer les tableaux statiques de `app/pieces` par un vrai catalogue (CMS ou base) avec gestion de stock, prix, variantes et médias.
-- [ ] Concevoir un tunnel e-commerce (panier, checkout, confirmation) avec paiement sécurisé (Stripe/PayPal) et génération automatique des factures.
-- [ ] Créer un back-office pour suivre commandes, statut, expéditions, emails transactionnels et export comptable.
-- [ ] Intégrer tracking (analytics, conversions) et prévoir les évolutions TVA, frais d’expédition, codes promo.
-
-## Formulaire de contact fiable
-- [ ] Remplacer le `mailto:` de `app/contact/page.tsx` par une route API sécurisée (validation, rate limiting, logs) ou un service tiers (Resend, Brevo).
-- [ ] Ajouter feedback utilisateur (loading, succès/erreur, confirmation email) + anti-spam (honeypot, reCAPTCHA, filtrage IP).
-- [ ] Centraliser les messages dans un outil (CRM, Notion, Slack webhook) pour ne rien perdre.
-
-## Espace “formation / adhésion” à préparer
-- [ ] Définir l’architecture de navigation/URL (ex. `/formation`, `/formation/[slug]`, `/espace-membre`) et créer les pages placeholders avec le design système.
-- [ ] Concevoir le modèle de contenu (formations, modules, calendrier, tarifs) et la stratégie d’accès (authentification, rôles, abonnement/paiement récurrent).
-- [ ] Prévoir l’intégration avec le futur e-commerce (achat de formation, renouvellement adhésion, facturation) et tracer les points de calendrier (newsletter, rappels).
-- [ ] Documenter les besoins techniques/métier pour pouvoir alimenter l’espace dès que le contenu sera prêt.
+## 5. Sanity & expérience back-office
+- [ ] Structurer le Studio avec des sections/explications claires, champs obligatoires et validations précises pour faciliter les mises à jour content.
+- [ ] Créer une checklist de publication (image, statut, prix, tags) pour réduire les erreurs à la mise en ligne.
+- [ ] Maintenir le webhook `/api/revalidate` pour purger les tags `pieces`/`piece:<slug>` à chaque publication et documenter les variables d’environnement (Sanity + Stripe, etc.).
+- [ ] Former ton client rapide sur le Studio : guide de saisie, workflows de mise à jour et point de contact en cas de question.
