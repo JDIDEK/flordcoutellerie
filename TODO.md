@@ -1,30 +1,40 @@
-# TODO
+# Priorités immédiates
 
-## 1. Design & migration visuelle
-- [ ] Appliquer la direction artistique validée à `globals.css`, `Navigation`, `HomeHeroSection`, CTA et autres blocs pour refléter la nouvelle palette, typographie et hiérarchie.
-- [ ] Remplacer les visuels placeholders par les photos/vidéos atelier définitives et ajuster leurs `sizes`, formats et overlays.
-- [ ] Documenter les tokens/règles responsive pour que la refonte reste cohérente, simple à maintenir et prête pour la mise à jour du client.
-- [ ] Préparer l’inventaire Wix + planifier la bascule DNS de `flordcoutellerie.com` (redirections, enregistrements mail, monitoring).
+1. **Stabiliser la base Sanity**
+   - Structurer les schémas (`piece`, `page`, `galleryImage`, futur `formation`) pour que le client puisse publier sans erreur.
+   - Documenter `/api/revalidate`, les variables (`NEXT_PUBLIC_SANITY_*`, `SANITY_WEBHOOK_SECRET`, clés Stripe/Resend) et maintenir le webhook actif.
+   - Préparer la formation utilisateur : sections claires dans Studio + checklist de publication.
 
-## 2. Catalogue & boutique
-- [ ] Finaliser le schéma Sanity des pièces (statuts, images, features, prix, mise en avant) et former ton client à créer/modifier les documents.
-- [ ] Alimenter `app/pieces` et les cards avec ces données dynamiques puis préparer les états (disponible, réservé, vendu).
-- [ ] Construire un tunnel e-commerce complet (panier, checkout Stripe, confirmation) et automatiser la facturation/emails transactionnels.
-- [ ] Ajouter une couche back-office/fidélité : suivi des commandes, exports comptables, tracking conversions + TVA/frais d’expédition.
+2. **Mettre en ligne les produits “prêts à vendre”**
+   - Bricoler le catalogue `app/pieces` avec les champs Sanity (statut, prix, image, features) et passer à un affichage dynamique.
+   - Concevoir panier + checkout (Stripe Checkout) avec génération automatique de facture/email.
+   - Ajouter tracking + suivi de commandes (export, hooks, webhooks, statut)
 
-## 3. Contact & CRM
-- [ ] Remplacer le `mailto:` par une API route sécurisée (validation, options anti-spam) qui envoie un email via Resend/Brevo et enregistre le message.
-- [ ] Ajouter un feedback utilisateur (loading, erreurs, confirmation) et un filtrage anti-spam (honeypot, rate limit, reCAPTCHA si nécessaire).
-- [ ] Centraliser les messages entrants dans la stack de ton choix (Notion, Slack, CRM) pour que ton client puisse répondre sans changer de boîte mail.
+3. **Refonte graphique / responsive**
+   - Appliquer la DA sur `Navigation`, hero, CTA, cartes, etc., puis valider l’adaptive/mobile.
+   - Gérer les visuels (taille, overlay, video) en cohérence avec la nouvelle palette.
+   - Finaliser la migration DNS du domaine.
 
-## 4. Formation & adhésion
-- [ ] Esquisser les futures routes (`/formation`, `/formation/[module]`, `/espace-membre`) et créer des placeholders graphiques pour les modules en rédaction.
-- [ ] Concevoir le modèle de contenu Sanity pour la formation (chapitres, ressources, tarifs, accès) et la logique d’adhésion (rôles, abonnement).
-- [ ] Préparer l’intégration avec le e-commerce (achat de formation, renouvellement adhésion, facturation) et les workflows de communication (newsletters, rappels).
-- [ ] Organiser les ressources (vidéos, PDF, animations) pour que ton client and sa graphiste puissent les publier quand elles seront prêtes.
+4. **Formulaire de contact & CRM**
+   - Remplacer le `mailto:` par une API route sécurisée (validation, rate limit, anti-spam) envoyant des emails via Resend et logguant dans Notion/Slack.
+   - Ajouter feedback UX (loading, erreurs, confirmation par email).
 
-## 5. Sanity & expérience back-office
-- [ ] Structurer le Studio avec des sections/explications claires, champs obligatoires et validations précises pour faciliter les mises à jour content.
-- [ ] Créer une checklist de publication (image, statut, prix, tags) pour réduire les erreurs à la mise en ligne.
-- [ ] Maintenir le webhook `/api/revalidate` pour purger les tags `pieces`/`piece:<slug>` à chaque publication et documenter les variables d’environnement (Sanity + Stripe, etc.).
-- [ ] Former ton client rapide sur le Studio : guide de saisie, workflows de mise à jour et point de contact en cas de question.
+5. **Préparer la formation en ligne + adhésion**
+   - Esquisser `/formation`, `/espace-membre` et les maquettes.
+   - Définir les contenus Sanity + accès payant (modèles, rôles, paiements récurrents).
+   - Intégrer les workflows e-commerce (achat d’accès, relance).
+
+# Fiche de solution (choix)
+
+- **Sanity pour quoi ?**
+  - Contenu éditable : pièces, pages, textes, visuels, modules formation (OK).
+  - Ne gère pas : paiement/facturation, données clients, auth de membres (utiliser Stripe/Auth0/webhooks).
+
+- **Paiement / facturation**
+  - Choix : Stripe Checkout + Billing.
+  - Pourquoi : contrôle total, génération PDF/automatisation, possibilité d’extensions (adhésion, renouvelement).
+  - Relier : webhook Stripe → `/api/revalidate` + logic pour envoyer PDF/confirmation.
+
+- **Webhook Sanity**
+  - Pourquoi : invalider les tags `pieces` et `piece:<slug>` dès qu’un document est publié/édité.
+  - À garder active avec le secret (`SANITY_WEBHOOK_SECRET`) et le header `x-sanity-webhook-signature`.
