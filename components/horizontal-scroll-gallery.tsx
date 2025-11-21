@@ -286,11 +286,6 @@ export function HorizontalScrollGallery({ collections }: HorizontalScrollGallery
         <defs>
           <filter id="wave-distortion-filter" x="-20%" y="-20%" width="140%" height="140%">
             <feTurbulence type="fractalNoise" baseFrequency="0.01 0.005" numOctaves="1" result="warp">
-              {/* MODIFICATIONS ICI :
-                 1. values : On définit un chemin "Aller-Retour" (0.01 -> 0.02 -> 0.01).
-                    Comme la valeur de fin est égale à la valeur de début, la boucle est invisible.
-                 2. dur : On augmente la durée (ex: 60s ou 90s) pour que le mouvement soit très lent et hypnotique.
-              */}
               <animate 
                 attributeName="baseFrequency" 
                 values="0.01 0.005; 0.02 0.009; 0.01 0.005" 
