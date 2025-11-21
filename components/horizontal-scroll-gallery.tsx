@@ -1,11 +1,11 @@
 'use client'
 
-import { useEffect, useRef, useState } from 'react'
+import { useEffect, useRef, useCallback, useState } from 'react'
 import Link from 'next/link'
 import Image from 'next/image'
 import Lenis from 'lenis'
-
 import { useIsMobile } from '@/hooks/use-mobile'
+import { cn } from '@/lib/utils'
 
 interface Collection {
   id: number
@@ -22,290 +22,276 @@ interface HorizontalScrollGalleryProps {
   collections: Collection[]
 }
 
+// Fonction d'interpolation
+const lerp = (start: number, end: number, factor: number) => start + (end - start) * factor
+
 export function HorizontalScrollGallery({ collections }: HorizontalScrollGalleryProps) {
   const containerRef = useRef<HTMLDivElement>(null)
   const scrollRef = useRef<HTMLDivElement>(null)
-  const prefersReducedMotionRef = useRef(false)
-
-  // Carte survolée (pour le blur des autres)
+  
   const [hoveredId, setHoveredId] = useState<number | null>(null)
+
+  const stateRef = useRef({ 
+    current: 0, 
+    target: 0,
+    lastRendered: -1 
+  })
+  const requestRef = useRef<number>(0)
+  const boundsRef = useRef({ top: 0, height: 0, scrollRange: 1 })
+  
   const isMobile = useIsMobile()
 
+  // 1. Mesure des dimensions
+  const measure = useCallback(() => {
+    if (!containerRef.current) return
+    const rect = containerRef.current.getBoundingClientRect()
+    const scrollTop = window.scrollY || document.documentElement.scrollTop
+    const offsetTop = rect.top + scrollTop
+    
+    boundsRef.current = {
+      top: offsetTop,
+      height: rect.height,
+      scrollRange: Math.max(rect.height - window.innerHeight, 1)
+    }
+  }, [])
+
+  // 2. Boucle d'animation (Scroll + 3D)
   useEffect(() => {
-    if (isMobile) return
+    if (collections.length === 0) return
 
-    const container = containerRef.current
-    const scrollContent = scrollRef.current
-    if (!container || !scrollContent || collections.length === 0) return
-
-    const lenis = (window as any).lenis as Lenis | undefined
-    const mediaQuery = window.matchMedia('(prefers-reduced-motion: reduce)')
-    prefersReducedMotionRef.current = mediaQuery.matches
-    let ticking = false
-
-    const clearTransforms = () => {
-      scrollContent.style.transform = ''
-      const cards = scrollContent.querySelectorAll<HTMLElement>('[data-collection-card]')
-      cards.forEach((card) => {
-        card.style.transform = ''
-      })
-    }
-
-    const updateTransforms = () => {
-      if (!container || !scrollContent) return
-      if (prefersReducedMotionRef.current) {
-        clearTransforms()
-        return
-      }
-
-      const cards = Array.from(
-        scrollContent.querySelectorAll<HTMLElement>('[data-collection-card]')
-      )
-      if (cards.length === 0) return
-
-      const rect = container.getBoundingClientRect()
-      const scrollRange = Math.max(rect.height - window.innerHeight, 1)
-
-      // Progress vertical (0 -> 1) pour le scroll horizontal
-      const rawProgress = Math.max(0, Math.min(1, -rect.top / scrollRange))
-
-      const viewportCenter = window.innerWidth / 2
-      const firstCard = cards[0]
-      const lastCard = cards[cards.length - 1]
-      const firstCenter = firstCard.offsetLeft + firstCard.offsetWidth / 2
-      const lastCenter = lastCard.offsetLeft + lastCard.offsetWidth / 2
-      const minTranslate = viewportCenter - firstCenter
-      const maxTranslate = viewportCenter - lastCenter
-      const translateDelta = maxTranslate - minTranslate
-      const translateX =
-        Math.abs(translateDelta) < 0.001
-          ? minTranslate
-          : minTranslate + rawProgress * translateDelta
-
-      scrollContent.style.transform = `translateX(${translateX}px)`
-
-      cards.forEach((card) => {
-        const cardRect = card.getBoundingClientRect()
-        const cardCenter = cardRect.left + cardRect.width / 2
-
-        // distance normalisée : -1 (gauche) -> 0 (centre) -> +1 (droite)
-        const distanceNorm = (cardCenter - viewportCenter) / viewportCenter
-        const distance = Math.max(-1, Math.min(1, distanceNorm))
-
-        const depth = 1 - Math.min(Math.abs(distance), 1) // 1 au centre, 0 sur les bords
-
-        const scale = 0.9 + depth * 0.15 // 0.9 -> ~1.05
-        const rotateY = distance * -1 // pivot vers le centre
-        const rotateZ = distance * 5 // tilt léger
-        const translateY = -distance * (isMobile ? 120 : 250) // droite = haut / gauche = bas
-
-        card.style.transform = `
-          translateY(${translateY}px)
-          rotateY(${rotateY}deg)
-          rotateZ(${rotateZ}deg)
-          scale(${scale})
-        `
-      })
-    }
+    measure()
+    window.addEventListener('resize', measure)
 
     const handleScroll = () => {
-      if (!ticking) {
-        ticking = true
-        requestAnimationFrame(() => {
-          updateTransforms()
-          ticking = false
-        })
+      const scrollY = window.scrollY
+      const { top, scrollRange } = boundsRef.current
+      const relativeScroll = scrollY - top
+      const rawProgress = Math.max(0, Math.min(1, relativeScroll / scrollRange))
+      stateRef.current.target = rawProgress
+    }
+
+    const animate = () => {
+      const state = stateRef.current
+      const easeFactor = isMobile ? 0.1 : 0.08
+      state.current = lerp(state.current, state.target, easeFactor)
+      
+      if (state.lastRendered !== -1 && 
+          Math.abs(state.current - state.lastRendered) < 0.0001 && 
+          Math.abs(state.target - state.current) < 0.0001) {
+        requestRef.current = requestAnimationFrame(animate)
+        return
       }
-    }
+      state.lastRendered = state.current
 
-    // On veut aussi recalculer sur resize
-    const handleResize = () => {
-      requestAnimationFrame(updateTransforms)
-    }
+      const progress = state.current
+      const scrollContent = scrollRef.current
 
-    const handleMotionChange = (event: MediaQueryListEvent) => {
-      prefersReducedMotionRef.current = event.matches
-      if (event.matches) {
-        clearTransforms()
-      } else {
-        requestAnimationFrame(updateTransforms)
+      if (scrollContent) {
+        const viewportCenter = window.innerWidth / 2
+        const cards = Array.from(scrollContent.children) as HTMLElement[]
+        
+        if (cards.length > 0) {
+          const firstCard = cards[0]
+          const lastCard = cards[cards.length - 1]
+          
+          const firstCenter = firstCard.offsetLeft + firstCard.offsetWidth / 2
+          const lastCenter = lastCard.offsetLeft + lastCard.offsetWidth / 2
+          
+          const minTranslateX = viewportCenter - firstCenter
+          const maxTranslateX = viewportCenter - lastCenter
+          
+          // Translation globale
+          const currentTranslateX = minTranslateX + progress * (maxTranslateX - minTranslateX)
+          scrollContent.style.transform = `translate3d(${currentTranslateX}px, 0, 0)`
+
+          // Animation individuelle
+          cards.forEach((card) => {
+            const cardRect = card.getBoundingClientRect()
+            const cardCenter = cardRect.left + cardRect.width / 2
+            
+            const spreadFactor = isMobile ? 0.7 : 1.0
+            const distanceNorm = (cardCenter - viewportCenter) / (viewportCenter * spreadFactor)
+            
+            const slopeStrength = isMobile ? 100 : 250
+            const translateY = -distanceNorm * slopeStrength
+
+            const distanceAbs = Math.abs(distanceNorm)
+            const baseScale = isMobile ? 0.95 : 0.9
+            const scale = baseScale + (Math.exp(-distanceAbs * 2) * 0.1)
+
+            const rotateY = distanceNorm * -15
+            const rotateZ = distanceNorm * (isMobile ? 2 : 5)
+
+            card.style.transform = `
+              perspective(${isMobile ? 800 : 1500}px)
+              translate3d(0, ${translateY}px, 0)
+              rotateY(${rotateY}deg)
+              rotateZ(${rotateZ}deg)
+              scale(${scale})
+            `
+          })
+        }
       }
+
+      requestRef.current = requestAnimationFrame(animate)
     }
 
-    if (mediaQuery.addEventListener) {
-      mediaQuery.addEventListener('change', handleMotionChange)
-    } else if (mediaQuery.addListener) {
-      mediaQuery.addListener(handleMotionChange)
-    }
-
-    if (lenis) {
-      lenis.on('scroll', handleScroll)
-    }
+    const lenis = (window as any).lenis as Lenis | undefined
+    if (lenis) lenis.on('scroll', handleScroll)
     window.addEventListener('scroll', handleScroll, { passive: true })
-
-    window.addEventListener('resize', handleResize)
-
-    // Première mise à jour
-    updateTransforms()
+    
+    requestRef.current = requestAnimationFrame(animate)
 
     return () => {
-      if (lenis) {
-        lenis.off('scroll', handleScroll)
-      }
+      if (lenis) lenis.off('scroll', handleScroll)
       window.removeEventListener('scroll', handleScroll)
-      window.removeEventListener('resize', handleResize)
-      if (mediaQuery.removeEventListener) {
-        mediaQuery.removeEventListener('change', handleMotionChange)
-      } else if (mediaQuery.removeListener) {
-        mediaQuery.removeListener(handleMotionChange)
-      }
+      window.removeEventListener('resize', measure)
+      cancelAnimationFrame(requestRef.current)
     }
-  }, [collections.length, isMobile])
+  }, [collections.length, isMobile, measure])
 
-  if (isMobile) {
-    return (
-      <section className="bg-background px-6 py-12 space-y-10">
-        {collections.map((collection) => (
-          <article key={collection.id} className="space-y-4">
-            <div className="relative w-full aspect-[4/3] overflow-hidden rounded-sm">
-              <Image
-                src={collection.image || '/placeholder.svg'}
-                alt={collection.title}
-                fill
-                sizes="(max-width: 640px) 90vw, (max-width: 768px) 85vw, 768px"
-                className="object-cover"
-                priority={collection.id === collections[0]?.id}
-              />
-              <div className="absolute inset-0 bg-gradient-to-b from-black/20 via-black/10 to-black/75" />
-              <div className="absolute inset-0 flex flex-col justify-between px-5 py-6 text-white">
-                <p className="text-[0.6rem] uppercase tracking-[0.35em] text-neutral-200/80">
-                  {collection.category} • {collection.year}
-                </p>
-                <div>
-                  <h3 className="font-serif font-light text-3xl tracking-[0.1em]">
-                    {collection.title}
-                  </h3>
-                  <p className="mt-2 text-sm text-neutral-100/90">{collection.subtitle}</p>
-                </div>
-              </div>
-            </div>
-            <Link
-              href="/galerie"
-              className="inline-flex items-center gap-2 text-xs uppercase tracking-[0.35em] text-white"
-            >
-              Découvrir la collection
-              <span aria-hidden="true">→</span>
-            </Link>
-          </article>
-        ))}
-      </section>
-    )
-  }
-
-  const horizontalPadding = '20vw'
+  const horizontalPadding = isMobile ? '50vw' : '20vw'
 
   return (
     <div
       ref={containerRef}
-      style={{ height: '400vh' }}
-      className="relative"
+      className={cn("relative", isMobile ? "h-[300vh]" : "h-[400vh]")}
     >
       <div className="sticky top-0 h-screen flex items-center overflow-hidden bg-background">
         <div
           ref={scrollRef}
-          className="flex items-center gap-12 sm:gap-20 lg:gap-32 will-change-transform [perspective:1400px]"
+          className="flex items-center will-change-transform"
           style={{
             paddingLeft: horizontalPadding,
             paddingRight: horizontalPadding,
-            transition: 'transform 0.15s ease-out',
+            gap: isMobile ? '2rem' : '5rem' 
           }}
         >
           {collections.map((collection, index) => {
-            const isDimmed = hoveredId !== null && hoveredId !== collection.id
+            const isHovered = hoveredId === collection.id
+            
+            // LOGIQUE MODIFIÉE :
+            // Le calque de vague est visible par défaut (true).
+            // Il ne devient invisible (false) QUE si c'est la carte survolée.
+            // Sur mobile, on désactive toujours pour la clarté.
+            const showWaveLayer = !isMobile && !isHovered
 
             return (
-              <article
-                key={collection.id}
-                data-collection-card
-                className="
-                  flex-shrink-0
-                  w-[78vw] sm:w-[70vw] lg:w-[60vw]
-                  max-w-5xl
-                  transform-gpu
-                  cursor-pointer
-                  origin-center
-                "
-                onMouseEnter={() => setHoveredId(collection.id)}
-                onMouseLeave={() => setHoveredId(null)}
-                style={{
-                  filter: isDimmed ? 'blur(4px) grayscale(0.6)' : 'none',
-                  opacity: isDimmed ? 0.45 : 1,
-                  transition:
-                    'transform 0.3s ease-out, filter 0.4s ease-out, opacity 0.3s ease-out',
-                }}
+            <article
+              key={collection.id}
+              data-collection-card
+              className={cn(
+                "relative flex-shrink-0 transform-gpu cursor-pointer origin-center",
+                isMobile ? "w-[85vw] aspect-[3/4]" : "w-[60vw] max-w-5xl aspect-[16/9]"
+              )}
+              onMouseEnter={() => !isMobile && setHoveredId(collection.id)}
+              onMouseLeave={() => !isMobile && setHoveredId(null)}
+              style={{
+                transformStyle: 'preserve-3d',
+                willChange: 'transform'
+              }}
+            >
+              <Link
+                href="/galerie"
+                className="block w-full h-full group focus-visible:outline-none"
+                style={{ transformStyle: 'preserve-3d' }}
+                onFocus={() => !isMobile && setHoveredId(collection.id)}
+                onBlur={() => !isMobile && setHoveredId(null)}
               >
-                <Link
-                  href="/galerie"
-                  className="block group focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-white/70"
-                  aria-label={`Découvrir la collection ${collection.title}`}
-                  onFocus={() => setHoveredId(collection.id)}
-                  onBlur={() => setHoveredId(null)}
+                {/* --- CONTENEUR IMAGE --- */}
+                <div 
+                  className="absolute inset-0 w-full h-full overflow-hidden rounded-sm bg-black shadow-2xl"
+                  style={{ transform: 'translateZ(0px)' }} 
                 >
-                  <div className="relative aspect-[4/5] sm:aspect-[16/9] overflow-hidden rounded-sm bg-black">
+                  {/* COUCHE 1 : Image "Clean" (Dessous) */}
+                  <div className="relative w-full h-full">
                     <Image
                       src={collection.image || '/placeholder.svg'}
                       alt={collection.title}
                       fill
-                      sizes="(max-width: 640px) 78vw, (max-width: 768px) 70vw, (max-width: 1024px) 70vw, (max-width: 1536px) 60vw, 1200px"
+                      sizes={isMobile ? "(max-width: 768px) 85vw, 600px" : "(max-width: 1200px) 60vw, 1200px"}
                       priority={index === 0}
-                      className="
-                        object-cover
-                        transition-transform duration-[900ms]
-                        group-hover:scale-[1.04]
-                      "
+                      className="object-cover"
                     />
-
-                    <div className="pointer-events-none absolute inset-0 bg-gradient-to-b from-black/25 via-black/10 to-black/75" />
-
-                    <div className="pointer-events-none absolute inset-0 flex flex-col items-center justify-center text-center px-4 sm:px-6">
-                      <p className="mb-4 text-[0.6rem] md:text-xs tracking-[0.35em] uppercase text-neutral-200/80">
-                        {collection.category} • {collection.year}
-                      </p>
-                      <h2 className="mb-3 font-serif font-light tracking-[0.15em] text-3xl sm:text-5xl lg:text-6xl text-white">
-                        {collection.title}
-                      </h2>
-                      <p className="max-w-xl text-xs md:text-sm text-neutral-200/90 px-2">
-                        {collection.subtitle}
-                      </p>
-
-                      <div className="mt-8 pointer-events-auto">
-                        <span
-                          className="
-                            inline-flex items-center gap-3
-                            rounded-full border border-white/40
-                            bg-white/5 px-5 py-2
-                            text-[0.7rem] md:text-xs
-                            uppercase tracking-[0.3em]
-                            text-white
-                            transition-colors
-                            group-hover:bg-white group-hover:text-black
-                          "
-                          aria-hidden="true"
-                        >
-                          En savoir plus
-                          <span className="inline-block text-[0.55rem]">
-                            →
-                          </span>
-                        </span>
-                      </div>
-                    </div>
+                    <div className="pointer-events-none absolute inset-0 bg-black/20" />
                   </div>
-                </Link>
-              </article>
-            )
-          })}
+
+                  {/* COUCHE 2 : Image "Wavy" (Dessus) - ACTIVE PAR DÉFAUT */}
+                  {!isMobile && (
+                    <div 
+                      className="absolute inset-0 w-full h-full pointer-events-none transition-opacity duration-700 ease-out"
+                      style={{
+                        // Si showWaveLayer est true (pas survolé), opacité = 1 -> On voit les vagues.
+                        // Si survolé, opacité = 0 -> On voit l'image du dessous (Clean).
+                        opacity: showWaveLayer ? 1 : 0, 
+                        filter: 'url(#wave-distortion-filter) grayscale(0.6) brightness(0.7)',
+                        transform: 'scale(1.05)'
+                      }}
+                    >
+                      <Image
+                        src={collection.image || '/placeholder.svg'}
+                        alt=""
+                        fill
+                        sizes="(max-width: 1200px) 60vw, 1200px"
+                        className="object-cover"
+                      />
+                    </div>
+                  )}
+                </div>
+
+                {/* --- TEXTE (Flottant 3D) --- */}
+                <div 
+                  className="absolute inset-0 flex flex-col items-center justify-center text-center px-4 pointer-events-none"
+                  style={{ 
+                    transform: `translateZ(${isMobile ? 40 : 80}px)`,
+                  }}
+                >
+                  <p className="mb-4 text-[0.6rem] md:text-xs tracking-[0.3em] uppercase text-neutral-200 drop-shadow-lg">
+                    {collection.category} • {collection.year}
+                  </p>
+                  
+                  <h2 className={cn(
+                    "font-serif font-light tracking-[0.05em] text-white drop-shadow-xl mb-3",
+                    isMobile ? "text-3xl" : "text-6xl lg:text-7xl"
+                  )}>
+                    {collection.title}
+                  </h2>
+                  
+                  {!isMobile && (
+                    <p className="max-w-md text-sm text-neutral-100/90 leading-relaxed drop-shadow-md mb-8">
+                      {collection.subtitle}
+                    </p>
+                  )}
+
+                  <div className="pointer-events-auto mt-4 md:mt-0">
+                    <span
+                      className={cn(
+                        "inline-flex items-center gap-3 rounded-full border border-white/30 bg-black/20 backdrop-blur-sm text-white uppercase tracking-[0.2em]",
+                        isMobile ? "px-4 py-2 text-[0.6rem]" : "px-6 py-3 text-xs hover:bg-white hover:text-black transition-all"
+                      )}
+                    >
+                      Découvrir
+                      <span className="inline-block text-[0.6rem]">→</span>
+                    </span>
+                  </div>
+                </div>
+              </Link>
+            </article>
+          )})}
         </div>
       </div>
+
+      {/* --- FILTRE SVG --- */}
+      <svg className="absolute h-0 w-0 pointer-events-none" xmlns="http://www.w3.org/2000/svg">
+        <defs>
+          <filter id="wave-distortion-filter">
+            <feTurbulence type="fractalNoise" baseFrequency="0.01 0.005" numOctaves="1" result="warp">
+              <animate attributeName="baseFrequency" from="0.01 0.005" to="0.02 0.01" dur="20s" repeatCount="indefinite"/>
+            </feTurbulence>
+            <feDisplacementMap xChannelSelector="R" yChannelSelector="G" scale="35" in="SourceGraphic" in2="warp" />
+          </filter>
+        </defs>
+      </svg>
     </div>
   )
 }

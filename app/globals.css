@@ -76,7 +76,7 @@
 
 /* Smooth scroll behavior */
 html {
-  scroll-behavior: smooth;
+  scroll-behavior: auto;
 }
 
 /* Texture overlay for steel effect */
