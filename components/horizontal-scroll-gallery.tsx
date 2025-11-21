@@ -284,11 +284,22 @@ export function HorizontalScrollGallery({ collections }: HorizontalScrollGallery
       {/* --- FILTRE SVG --- */}
       <svg className="absolute h-0 w-0 pointer-events-none" xmlns="http://www.w3.org/2000/svg">
         <defs>
-          <filter id="wave-distortion-filter">
+          <filter id="wave-distortion-filter" x="-20%" y="-20%" width="140%" height="140%">
             <feTurbulence type="fractalNoise" baseFrequency="0.01 0.005" numOctaves="1" result="warp">
-              <animate attributeName="baseFrequency" from="0.01 0.005" to="0.02 0.01" dur="20s" repeatCount="indefinite"/>
+              {/* MODIFICATIONS ICI :
+                 1. values : On définit un chemin "Aller-Retour" (0.01 -> 0.02 -> 0.01).
+                    Comme la valeur de fin est égale à la valeur de début, la boucle est invisible.
+                 2. dur : On augmente la durée (ex: 60s ou 90s) pour que le mouvement soit très lent et hypnotique.
+              */}
+              <animate 
+                attributeName="baseFrequency" 
+                values="0.01 0.005; 0.02 0.009; 0.01 0.005" 
+                dur="60s" 
+                repeatCount="indefinite"
+                keyTimes="0; 0.5; 1"
+              />
             </feTurbulence>
-            <feDisplacementMap xChannelSelector="R" yChannelSelector="G" scale="35" in="SourceGraphic" in2="warp" />
+            <feDisplacementMap xChannelSelector="R" yChannelSelector="G" scale="60" in="SourceGraphic" in2="warp" />
           </filter>
         </defs>
       </svg>
