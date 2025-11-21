@@ -22,7 +22,6 @@ interface HorizontalScrollGalleryProps {
   collections: Collection[]
 }
 
-// Fonction d'interpolation
 const lerp = (start: number, end: number, factor: number) => start + (end - start) * factor
 
 export function HorizontalScrollGallery({ collections }: HorizontalScrollGalleryProps) {
@@ -41,7 +40,6 @@ export function HorizontalScrollGallery({ collections }: HorizontalScrollGallery
   
   const isMobile = useIsMobile()
 
-  // 1. Mesure des dimensions
   const measure = useCallback(() => {
     if (!containerRef.current) return
     const rect = containerRef.current.getBoundingClientRect()
@@ -55,7 +53,6 @@ export function HorizontalScrollGallery({ collections }: HorizontalScrollGallery
     }
   }, [])
 
-  // 2. Boucle d'animation (Scroll + 3D)
   useEffect(() => {
     if (collections.length === 0) return
 
@@ -100,11 +97,9 @@ export function HorizontalScrollGallery({ collections }: HorizontalScrollGallery
           const minTranslateX = viewportCenter - firstCenter
           const maxTranslateX = viewportCenter - lastCenter
           
-          // Translation globale
           const currentTranslateX = minTranslateX + progress * (maxTranslateX - minTranslateX)
           scrollContent.style.transform = `translate3d(${currentTranslateX}px, 0, 0)`
 
-          // Animation individuelle
           cards.forEach((card) => {
             const cardRect = card.getBoundingClientRect()
             const cardCenter = cardRect.left + cardRect.width / 2
@@ -169,11 +164,7 @@ export function HorizontalScrollGallery({ collections }: HorizontalScrollGallery
         >
           {collections.map((collection, index) => {
             const isHovered = hoveredId === collection.id
-            
-            // LOGIQUE MODIFIÉE :
-            // Le calque de vague est visible par défaut (true).
-            // Il ne devient invisible (false) QUE si c'est la carte survolée.
-            // Sur mobile, on désactive toujours pour la clarté.
+
             const showWaveLayer = !isMobile && !isHovered
 
             return (
@@ -198,12 +189,10 @@ export function HorizontalScrollGallery({ collections }: HorizontalScrollGallery
                 onFocus={() => !isMobile && setHoveredId(collection.id)}
                 onBlur={() => !isMobile && setHoveredId(null)}
               >
-                {/* --- CONTENEUR IMAGE --- */}
                 <div 
                   className="absolute inset-0 w-full h-full overflow-hidden rounded-sm bg-black shadow-2xl"
                   style={{ transform: 'translateZ(0px)' }} 
                 >
-                  {/* COUCHE 1 : Image "Clean" (Dessous) */}
                   <div className="relative w-full h-full">
                     <Image
                       src={collection.image || '/placeholder.svg'}
@@ -216,13 +205,10 @@ export function HorizontalScrollGallery({ collections }: HorizontalScrollGallery
                     <div className="pointer-events-none absolute inset-0 bg-black/20" />
                   </div>
 
-                  {/* COUCHE 2 : Image "Wavy" (Dessus) - ACTIVE PAR DÉFAUT */}
                   {!isMobile && (
                     <div 
                       className="absolute inset-0 w-full h-full pointer-events-none transition-opacity duration-700 ease-out"
                       style={{
-                        // Si showWaveLayer est true (pas survolé), opacité = 1 -> On voit les vagues.
-                        // Si survolé, opacité = 0 -> On voit l'image du dessous (Clean).
                         opacity: showWaveLayer ? 1 : 0, 
                         filter: 'url(#wave-distortion-filter) grayscale(0.6) brightness(0.7)',
                         transform: 'scale(1.05)'
@@ -239,7 +225,6 @@ export function HorizontalScrollGallery({ collections }: HorizontalScrollGallery
                   )}
                 </div>
 
-                {/* --- TEXTE (Flottant 3D) --- */}
                 <div 
                   className="absolute inset-0 flex flex-col items-center justify-center text-center px-4 pointer-events-none"
                   style={{ 
@@ -281,7 +266,6 @@ export function HorizontalScrollGallery({ collections }: HorizontalScrollGallery
         </div>
       </div>
 
-      {/* --- FILTRE SVG --- */}
       <svg className="absolute h-0 w-0 pointer-events-none" xmlns="http://www.w3.org/2000/svg">
         <defs>
           <filter id="wave-distortion-filter" x="-20%" y="-20%" width="140%" height="140%">
