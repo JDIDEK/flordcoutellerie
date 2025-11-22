@@ -70,15 +70,27 @@ const signaturePiecesQuery = groq`
 const pieceSlugsQuery = groq`*[_type == "piece" && defined(slug.current)]{ "slug": slug.current }`
 
 export async function getPieces() {
-  return client.fetch<PieceListItem[]>(piecesListQuery)
+  return client.fetch<PieceListItem[]>(
+    piecesListQuery, 
+    {}, 
+    { next: { tags: ['piece'] } }
+  )
 }
 
 export async function getPieceBySlug(slug: string) {
-  return client.fetch<PieceDetail | null>(pieceDetailQuery, { slug })
+  return client.fetch<PieceDetail | null>(
+    pieceDetailQuery, 
+    { slug }, 
+    { next: { tags: ['piece'] } }
+  )
 }
 
 export async function getSignaturePieces() {
-  return client.fetch<SignaturePiece[]>(signaturePiecesQuery)
+  return client.fetch<SignaturePiece[]>(
+    signaturePiecesQuery, 
+    {}, 
+    { next: { tags: ['piece'] } }
+  )
 }
 
 export async function getAllPieceSlugs() {
