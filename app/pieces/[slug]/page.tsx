@@ -17,8 +17,6 @@ export async function generateStaticParams() {
   }))
 }
 
-export const revalidate = 60
-
 export default async function PieceDetailPage({ params }: { params: Promise<{ slug: string }> }) {
   const { slug } = await params
   const piece = await getPieceBySlug(slug)

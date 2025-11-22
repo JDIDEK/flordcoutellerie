@@ -5,7 +5,6 @@ import { HomeHeroSection } from '@/components/home-hero-section'
 import { HomeFooter } from '@/components/home-footer'
 import { getSignaturePieces } from '@/lib/sanity/queries'
 
-export const revalidate = 60
 
 export default async function Home() {
   const signaturePieces = await getSignaturePieces()
