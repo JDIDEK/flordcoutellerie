@@ -83,7 +83,7 @@ export function VideoScrollSection() {
 
   if (isMobile) {
     return (
-      <section className="relative overflow-hidden bg-black text-white min-h-[85vh]">
+      <section className="relative overflow-hidden bg-black text-white h-screen">
         <div className="absolute inset-0">
           <video
             ref={videoRef}
@@ -99,7 +99,7 @@ export function VideoScrollSection() {
           <div className="absolute inset-0 bg-black/55" />
           <div className="absolute inset-0 bg-gradient-to-b from-black/30 via-transparent to-black/80" />
         </div>
-        <div className="relative z-10 flex min-h-[85vh] flex-col items-center justify-center px-6 text-center space-y-6">
+        <div className="relative z-10 flex h-full flex-col items-center justify-center px-6 text-center space-y-6">
           <h2 className="font-serif font-light leading-[0.95] tracking-tight text-4xl">
             <span className="block">L'ART</span>
             <span className="block">DE LA FORGE</span>

@@ -12,8 +12,8 @@ export function HomeHeroSection() {
 
   if (isMobile) {
     return (
-      <section className="bg-black text-white">
-        <div className="relative w-full aspect-[3/4]">
+      <section className="bg-black text-white h-screen">
+        <div className="relative w-full h-full">
           <Image
             src={mobileHeroImage}
             alt="Atelier Flo RD Coutellerie"
@@ -51,7 +51,7 @@ export function HomeHeroSection() {
   }
 
   return (
-    <section className="relative overflow-hidden text-white min-h-[85vh] md:min-h-screen">
+    <section className="relative overflow-hidden text-white h-screen">
       <div className="absolute inset-0">
         <Image
           src={desktopHeroImage}
@@ -66,7 +66,7 @@ export function HomeHeroSection() {
       <div className="absolute inset-0 bg-black/55" />
       <div className="absolute inset-0 bg-gradient-to-b from-black/40 via-transparent to-black/80" />
 
-      <div className="relative z-10 flex flex-col min-h-[85vh] md:min-h-screen">
+      <div className="relative z-10 flex flex-col h-screen">
         <div className="flex flex-1 flex-col items-center justify-center px-6 pt-24 pb-12 text-center md:px-0 md:pt-0">
           <div className="w-full max-w-5xl">
             <h1 className="font-serif font-light leading-[0.9] tracking-tight">
