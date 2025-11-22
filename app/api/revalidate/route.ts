@@ -1,22 +1,26 @@
-import { NextResponse } from 'next/server'
-import { headers } from 'next/headers'
+import { type NextRequest, NextResponse } from 'next/server'
+import { parseBody } from 'next-sanity/webhook'
 import { revalidateTag } from 'next/cache'
 
-const AUTH_HEADER = 'x-sanity-webhook-signature'
+export async function POST(req: NextRequest) {
+  try {
+    const { isValidSignature, body } = await parseBody<{ _type: string }>(
+      req,
+      process.env.SANITY_WEBHOOK_SECRET
+    )
 
-export async function POST(request: Request) {
-  const requestHeaders = await headers()
-  const signature = requestHeaders.get(AUTH_HEADER)
-  if (!process.env.SANITY_WEBHOOK_SECRET || signature !== process.env.SANITY_WEBHOOK_SECRET) {
-    return NextResponse.json({ success: false }, { status: 401 })
+    if (!isValidSignature) {
+      return new NextResponse('Invalid signature', { status: 401 })
+    }
+
+    if (body?._type === 'piece') {
+      revalidateTag('piece', 'default')
+      console.log('Cache nettoyé pour le tag: piece')
+    }
+
+    return NextResponse.json({ body })
+  } catch (err: any) {
+    console.error(err)
+    return new NextResponse(err.message, { status: 500 })
   }
-
-  const body = await request.json().catch(() => ({}))
-  revalidateTag('pieces', 'default')
-
-  if (body?.slug?.current) {
-    revalidateTag(`piece:${body.slug.current}`, 'default')
-  }
-
-  return NextResponse.json({ success: true })
 }
