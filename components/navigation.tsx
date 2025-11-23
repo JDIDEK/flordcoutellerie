@@ -18,6 +18,14 @@ export function Navigation({ alwaysVisible = false }: NavigationProps) {
       return
     }
 
+    const isMobile = window.innerWidth < 768
+
+    // Sur mobile, toujours visible
+    if (isMobile) {
+      setIsVisible(true)
+      return
+    }
+
     const handleScroll = () => {
       const currentScrollY = window.scrollY
       const lastScrollY = lastScrollYRef.current

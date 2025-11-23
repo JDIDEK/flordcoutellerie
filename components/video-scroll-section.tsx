@@ -99,18 +99,22 @@ export function VideoScrollSection() {
           <div className="absolute inset-0 bg-black/55" />
           <div className="absolute inset-0 bg-gradient-to-b from-black/30 via-transparent to-black/80" />
         </div>
-        <div className="relative z-10 flex h-full flex-col items-center justify-center px-6 text-center space-y-6">
-          <h2 className="font-serif font-light leading-[0.95] tracking-tight text-4xl">
-            <span className="block">L'ART</span>
-            <span className="block">DE LA FORGE</span>
-          </h2>
-          <div className="space-y-4 text-neutral-100 text-sm leading-relaxed">
-            <p>
-              Découvrez le processus de création, de la forge à la finition. Chaque lame raconte une histoire.
-            </p>
-            <p className="text-[0.65rem] uppercase tracking-[0.35em] text-neutral-300">
-              Atelier • Tradition • Passion
-            </p>
+        <div className="relative z-10 flex h-full flex-col px-6 text-center">
+          <div className="pt-24">
+            <h2 className="font-serif font-light leading-[0.95] tracking-tight text-5xl">
+              <span className="block">L'ART</span>
+              <span className="block">DE LA FORGE</span>
+            </h2>
+          </div>
+          <div className="flex-1 flex items-center justify-center">
+            <div className="space-y-6 text-neutral-100 text-base leading-relaxed">
+              <p>
+                Découvrez le processus de création, de la forge à la finition. Chaque lame raconte une histoire.
+              </p>
+              <p className="text-xs uppercase tracking-[0.35em] text-neutral-300">
+                Atelier • Tradition • Passion
+              </p>
+            </div>
           </div>
         </div>
       </section>
