@@ -83,7 +83,10 @@ export function VideoScrollSection() {
 
   if (isMobile) {
     return (
-      <section className="relative overflow-hidden bg-black text-white h-screen">
+      <section
+        className="relative overflow-hidden bg-black text-white h-screen"
+        data-nav-background-trigger
+      >
         <div className="absolute inset-0">
           <video
             ref={videoRef}
@@ -122,7 +125,11 @@ export function VideoScrollSection() {
   }
 
   return (
-    <section ref={sectionRef} className="relative h-screen overflow-hidden">
+    <section
+      ref={sectionRef}
+      className="relative h-screen overflow-hidden"
+      data-nav-background-trigger
+    >
       <div className="sticky top-0 h-screen overflow-hidden">
         <div
           ref={videoContainerRef}

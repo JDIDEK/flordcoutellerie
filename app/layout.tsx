@@ -2,7 +2,8 @@ import type { Metadata } from 'next'
 import { Cormorant_Garamond, Inter } from 'next/font/google'
 import { Analytics } from '@vercel/analytics/next'
 import { SmoothScroll } from '@/components/smooth-scroll'
-import './globals.css'
+import { FooterWrapper } from '@/components/footer-wrapper'
+import '@/styles/globals.css'
 
 const cormorant = Cormorant_Garamond({ 
   subsets: ["latin"],
@@ -49,6 +50,7 @@ export default function RootLayout({
       <body className={`${inter.variable} ${cormorant.variable} font-sans antialiased`}>
         <SmoothScroll />
         {children}
+        <FooterWrapper />
         <Analytics />
       </body>
     </html>

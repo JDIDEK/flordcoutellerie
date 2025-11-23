@@ -11,6 +11,8 @@ export function Navigation({ alwaysVisible = false }: NavigationProps) {
   const [isVisible, setIsVisible] = useState(true)
   const lastScrollYRef = useRef(0)
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false)
+  const [hasBackground, setHasBackground] = useState(false)
+  const navRef = useRef<HTMLElement>(null)
   const mobileMenuId = 'primary-mobile-menu'
 
   useEffect(() => {
@@ -58,6 +60,32 @@ export function Navigation({ alwaysVisible = false }: NavigationProps) {
     return () => window.removeEventListener('scroll', onScroll)
   }, [alwaysVisible])
 
+  useEffect(() => {
+    const findTarget = () => document.querySelector<HTMLElement>('[data-nav-background-trigger]')
+    let currentTarget = findTarget()
+    if (!currentTarget) return
+
+    const updateBackground = () => {
+      if (!currentTarget || !currentTarget.isConnected) {
+        currentTarget = findTarget()
+      }
+      if (!currentTarget) return
+
+      const navHeight = navRef.current?.offsetHeight ?? 0
+      const triggerTop = currentTarget.getBoundingClientRect().top + window.scrollY
+      setHasBackground(window.scrollY + navHeight >= triggerTop)
+    }
+
+    updateBackground()
+    window.addEventListener('scroll', updateBackground, { passive: true })
+    window.addEventListener('resize', updateBackground)
+
+    return () => {
+      window.removeEventListener('scroll', updateBackground)
+      window.removeEventListener('resize', updateBackground)
+    }
+  }, [])
+
   const navLinks = [
     { href: '/pieces', label: 'Pièces' },
     { href: '/sur-mesure', label: 'Sur Mesure' },
@@ -68,9 +96,10 @@ export function Navigation({ alwaysVisible = false }: NavigationProps) {
 
   return (
     <nav
-      className={`fixed left-0 right-0 z-40 transition-all duration-500 ease-in-out bg-transparent ${
+      ref={navRef}
+      className={`fixed left-0 right-0 z-40 transition-all duration-500 ease-in-out ${
         alwaysVisible || isVisible ? 'top-0' : '-top-32'
-      }`}
+      } ${hasBackground ? 'bg-neutral-900/85 backdrop-blur-md border-b border-white/10' : 'bg-transparent'}`}
     >
       <div className="container mx-auto px-6 py-6">
         <div className="flex items-center justify-between">

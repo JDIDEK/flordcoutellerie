@@ -2,7 +2,6 @@ import { Navigation } from '@/components/navigation'
 import { VideoScrollSection } from '@/components/video-scroll-section'
 import { SignatureKnivesSection } from '@/components/signature-knives-section'
 import { HomeHeroSection } from '@/components/home-hero-section'
-import { HomeFooter } from '@/components/home-footer'
 import { getSignaturePieces } from '@/lib/sanity/queries'
 
 
@@ -17,7 +16,6 @@ export default async function Home() {
         <HomeHeroSection />
         <VideoScrollSection />
         <SignatureKnivesSection pieces={signaturePieces} />
-        <HomeFooter />
       </main>
     </>
   )
