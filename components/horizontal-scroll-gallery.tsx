@@ -173,7 +173,7 @@ export function HorizontalScrollGallery({ collections }: HorizontalScrollGallery
               data-collection-card
               className={cn(
                 "relative flex-shrink-0 transform-gpu cursor-pointer origin-center",
-                isMobile ? "w-[85vw] aspect-[3/4]" : "w-[60vw] max-w-5xl aspect-[16/9]"
+                isMobile ? "w-[72vw] max-w-[320px] aspect-[2/3]" : "w-[60vw] max-w-5xl aspect-[16/9]"
               )}
               onMouseEnter={() => !isMobile && setHoveredId(collection.id)}
               onMouseLeave={() => !isMobile && setHoveredId(null)}
