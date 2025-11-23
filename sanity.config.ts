@@ -1,28 +1,48 @@
 'use client'
 
-/**
- * This configuration is used to for the Sanity Studio that’s mounted on the `/app/studio/[[...tool]]/page.tsx` route
- */
+import { visionTool } from '@sanity/vision'
+import { defineConfig } from 'sanity'
+import { structureTool } from 'sanity/structure'
+import { media } from 'sanity-plugin-media'
+import { Iframe } from 'sanity-plugin-iframe-pane'
 
-import {visionTool} from '@sanity/vision'
-import {defineConfig} from 'sanity'
-import {structureTool} from 'sanity/structure'
+import { apiVersion, dataset, projectId } from './sanity/env'
+import { schema } from './sanity/schemaTypes'
+import { structure } from './sanity/structure'
 
-// Go to https://www.sanity.io/docs/api-versioning to learn how API versioning works
-import {apiVersion, dataset, projectId} from './sanity/env'
-import {schema} from './sanity/schemaTypes'
-import {structure} from './sanity/structure'
+// Configuration de l'aperçu (Site à droite, Formulaire à gauche)
+function defaultDocumentNode(S: any, { schemaType }: any) {
+  if (['piece', 'page'].includes(schemaType)) {
+    return S.document().views([
+      S.view.form(),
+      S.view
+        .component(Iframe)
+        .options({
+          url: (doc: any) => {
+             const domain = 'http://localhost:3000' // Changez si en prod
+             const slug = doc?.slug?.current
+             
+             if (schemaType === 'piece' && slug) return `${domain}/pieces/${slug}`
+             if (schemaType === 'page' && slug) return `${domain}/${slug}`
+             
+             return domain
+          },
+          reload: { button: true },
+        })
+        .title('Aperçu Site'),
+    ])
+  }
+  return S.document().views([S.view.form()])
+}
 
 export default defineConfig({
   basePath: '/studio',
   projectId,
   dataset,
-  // Add and edit the content schema in the './sanity/schemaTypes' folder
   schema,
   plugins: [
-    structureTool({structure}),
-    // Vision is for querying with GROQ from inside the Studio
-    // https://www.sanity.io/docs/the-vision-plugin
-    visionTool({defaultApiVersion: apiVersion}),
+    structureTool({ structure, defaultDocumentNode }), // Menu Custom + Aperçu
+    media(), // Médiathèque avancée
+    visionTool({ defaultApiVersion: apiVersion }),
   ],
 })

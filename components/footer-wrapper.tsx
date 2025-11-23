@@ -7,7 +7,10 @@ import { HomeFooter } from './home-footer'
 export function FooterWrapper() {
   const pathname = usePathname()
 
-  if (pathname?.startsWith('/galerie')) {
+  const shouldHide =
+    pathname?.startsWith('/galerie') || pathname?.startsWith('/studio')
+
+  if (shouldHide) {
     return null
   }
 
