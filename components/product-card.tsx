@@ -84,10 +84,10 @@ export function ProductCard({ piece }: { piece: PieceListItem }) {
           </div>
           <Button 
             size="sm"
-            variant={piece.stock === 'sold' ? 'outline' : 'default'}
+            variant={piece.status === 'sold' ? 'outline' : 'default'}
             asChild
           >
-            <span>{piece.stock === 'sold' ? 'Voir' : 'Découvrir'}</span>
+            <span>{piece.status === 'sold' ? 'Voir' : 'Découvrir'}</span>
           </Button>
         </div>
       </div>
