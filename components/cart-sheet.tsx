@@ -193,7 +193,7 @@ export function CartSheet({ className, triggerClassName }: CartSheetProps) {
             </span>
           </div>
           <Button size="lg" disabled={items.length === 0} className="w-full">
-            Passer a la caisse
+            Paiement
           </Button>
           {items.length > 0 && (
             <Button

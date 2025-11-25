@@ -1,14 +1,16 @@
+import Image from 'next/image'
+import Link from 'next/link'
+import { notFound } from 'next/navigation'
+import { ArrowLeft, Check } from 'lucide-react'
+
+import { AddToCartButton } from '@/components/add-to-cart-button'
 import { Navigation } from '@/components/navigation'
-import { Button } from '@/components/ui/button'
 import { Badge } from '@/components/ui/badge'
+import { Button } from '@/components/ui/button'
 import { Separator } from '@/components/ui/separator'
 import { getPieceBySlug, getAllPieceSlugs } from '@/lib/sanity/queries'
-import { Check, Mail, ArrowLeft } from 'lucide-react'
-import Link from 'next/link'
-import Image from 'next/image'
-import { notFound } from 'next/navigation'
-import { urlFor } from '@/sanity/lib/image'
 import { formatCurrency } from '@/lib/utils'
+import { urlFor } from '@/sanity/lib/image'
 
 export async function generateStaticParams() {
   const slugs = await getAllPieceSlugs()
@@ -32,6 +34,14 @@ export default async function PieceDetailPage({ params }: { params: Promise<{ sl
     ? urlFor(heroImage).width(1600).height(1600).fit('crop').url()
     : '/placeholder.jpg'
   const isAvailable = piece.status === 'available'
+  const cartPiece = {
+    id: piece._id,
+    name: piece.title,
+    price: piece.price,
+    image: heroImageSrc,
+    slug: piece.slug,
+    status: piece.status,
+  }
 
   return (
     <>
@@ -46,7 +56,7 @@ export default async function PieceDetailPage({ params }: { params: Promise<{ sl
               className="inline-flex items-center gap-2 text-sm text-muted-foreground hover:text-foreground transition-colors mb-8"
             >
               <ArrowLeft className="w-4 h-4" />
-              Retour aux pièces
+              Retour aux pieces
             </Link>
 
             <div className="grid md:grid-cols-2 gap-12">
@@ -68,7 +78,7 @@ export default async function PieceDetailPage({ params }: { params: Promise<{ sl
                   )}
                   {piece.status === 'reserved' && (
                     <Badge className="absolute top-4 left-4 bg-amber-600 text-white">
-                      Réservé
+                      Reserve
                     </Badge>
                   )}
                   {piece.originalPrice && piece.status === 'available' && (
@@ -94,11 +104,11 @@ export default async function PieceDetailPage({ params }: { params: Promise<{ sl
                 {/* Price */}
                 <div className="flex items-baseline gap-3">
                   <span className="text-4xl font-light text-foreground">
-                    {formattedPrice ? `${formattedPrice}€` : 'Sur demande'}
+                    {formattedPrice ? `${formattedPrice} EUR` : 'Sur demande'}
                   </span>
                   {formattedOriginalPrice && (
                     <span className="text-xl text-muted-foreground line-through">
-                      {`${formattedOriginalPrice}€`}
+                      {`${formattedOriginalPrice} EUR`}
                     </span>
                   )}
                 </div>
@@ -113,7 +123,7 @@ export default async function PieceDetailPage({ params }: { params: Promise<{ sl
 
                 {/* Specifications */}
                 <div className="space-y-4">
-                  <h2 className="text-lg font-medium text-foreground">Spécifications Techniques</h2>
+                  <h2 className="text-lg font-medium text-foreground">Specifications Techniques</h2>
                   <div className="space-y-3 text-sm">
                     <div className="flex justify-between py-2 border-b border-border">
                       <span className="text-muted-foreground">Acier</span>
@@ -124,7 +134,7 @@ export default async function PieceDetailPage({ params }: { params: Promise<{ sl
                       <span className="font-medium text-foreground">{piece.layers}</span>
                     </div>
                     <div className="flex justify-between py-2 border-b border-border">
-                      <span className="text-muted-foreground">Dureté</span>
+                      <span className="text-muted-foreground">Durete</span>
                       <span className="font-medium text-foreground">{piece.hrc}</span>
                     </div>
                     <div className="flex justify-between py-2 border-b border-border">
@@ -148,7 +158,7 @@ export default async function PieceDetailPage({ params }: { params: Promise<{ sl
 
                 {/* Features */}
                 <div className="space-y-4">
-                  <h2 className="text-lg font-medium text-foreground">Caractéristiques</h2>
+                  <h2 className="text-lg font-medium text-foreground">Caracteristiques</h2>
                   {piece.features?.length ? (
                     <ul className="space-y-2">
                       {piece.features.map((feature, index) => (
@@ -160,7 +170,7 @@ export default async function PieceDetailPage({ params }: { params: Promise<{ sl
                     </ul>
                   ) : (
                     <p className="text-sm text-muted-foreground">
-                      Les caractéristiques sont en cours de mise à jour.
+                      Les caracteristiques sont en cours de mise a jour.
                     </p>
                   )}
                 </div>
@@ -170,28 +180,23 @@ export default async function PieceDetailPage({ params }: { params: Promise<{ sl
                 {/* CTA */}
                 {isAvailable ? (
                   <div className="space-y-4">
-                    <Button className="w-full" size="lg" asChild>
-                      <a href={`mailto:floribadeaudumas@gmail.com?subject=Commande - ${piece.title}`}>
-                        <Mail className="mr-2 h-4 w-4" />
-                        Commander par Email
-                      </a>
-                    </Button>
+                    <AddToCartButton
+                      piece={cartPiece}
+                      buttonProps={{ className: 'w-full', size: 'lg' }}
+                    />
                     <p className="text-xs text-muted-foreground text-center leading-relaxed">
-                      Acompte de 20% à la commande • Livraison sous 2-4 semaines
+                      Acompte de 20% a la commande - Livraison sous 2-4 semaines
                     </p>
                   </div>
                 ) : (
                   <div className="space-y-4">
-                    <Button className="w-full" size="lg" variant="outline" asChild>
-                      <a href={`mailto:floribadeaudumas@gmail.com?subject=Recréation - ${piece.title}`}>
-                        <Mail className="mr-2 h-4 w-4" />
-                        Recréer cette Pièce
-                      </a>
+                    <Button className="w-full" size="lg" variant="outline" disabled>
+                      Indisponible
                     </Button>
                     <p className="text-xs text-muted-foreground text-center leading-relaxed">
                       {piece.status === 'reserved'
-                        ? 'Cette pièce est réservée mais peut être adaptée sur commande'
-                        : 'Cette pièce est vendue mais peut être recréée avec des variations uniques'}
+                        ? 'Cette piece est reservee mais peut etre adaptee sur commande'
+                        : 'Cette piece est vendue mais peut etre recreee avec des variations uniques'}
                     </p>
                   </div>
                 )}
