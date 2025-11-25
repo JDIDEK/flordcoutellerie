@@ -2,6 +2,7 @@
 
 import Link from 'next/link'
 import { useState, useEffect, useRef } from 'react'
+import { CartSheet } from '@/components/cart-sheet'
 
 interface NavigationProps {
   alwaysVisible?: boolean
@@ -115,7 +116,7 @@ export function Navigation({ alwaysVisible = false }: NavigationProps) {
           </Link>
 
           {/* Desktop Navigation */}
-          <div className="hidden md:flex items-center gap-8">
+          <div className="hidden md:flex items-center gap-6">
             {navLinks.map((link) => (
               <Link
                 key={link.href}
@@ -126,34 +127,38 @@ export function Navigation({ alwaysVisible = false }: NavigationProps) {
                 <span className="absolute -bottom-1 left-0 w-0 h-[1px] bg-primary group-hover:w-full transition-all duration-300" />
               </Link>
             ))}
+            <CartSheet />
           </div>
 
           {/* Mobile Menu Button */}
-          <button
-            onClick={() => setIsMobileMenuOpen((prev) => !prev)}
-            className="relative flex h-12 w-12 items-center justify-center md:hidden text-foreground hover:text-primary transition-colors"
-            aria-label="Basculer le menu"
-            aria-controls={mobileMenuId}
-            aria-expanded={isMobileMenuOpen}
-            type="button"
-          >
-            <span className="sr-only">Menu</span>
-            <span
-              className={`absolute block h-0.5 w-6 bg-current transition-all duration-300 ${
-                isMobileMenuOpen ? 'translate-y-0 rotate-45' : '-translate-y-2'
-              }`}
-            />
-            <span
-              className={`absolute block h-0.5 w-6 bg-current transition-all duration-300 ${
-                isMobileMenuOpen ? 'opacity-0' : 'opacity-100'
-              }`}
-            />
-            <span
-              className={`absolute block h-0.5 w-6 bg-current transition-all duration-300 ${
-                isMobileMenuOpen ? 'translate-y-0 -rotate-45' : 'translate-y-2'
-              }`}
-            />
-          </button>
+          <div className="flex items-center gap-3 md:hidden">
+            <CartSheet />
+            <button
+              onClick={() => setIsMobileMenuOpen((prev) => !prev)}
+              className="relative flex h-12 w-12 items-center justify-center text-foreground hover:text-primary transition-colors"
+              aria-label="Basculer le menu"
+              aria-controls={mobileMenuId}
+              aria-expanded={isMobileMenuOpen}
+              type="button"
+            >
+              <span className="sr-only">Menu</span>
+              <span
+                className={`absolute block h-0.5 w-6 bg-current transition-all duration-300 ${
+                  isMobileMenuOpen ? 'translate-y-0 rotate-45' : '-translate-y-2'
+                }`}
+              />
+              <span
+                className={`absolute block h-0.5 w-6 bg-current transition-all duration-300 ${
+                  isMobileMenuOpen ? 'opacity-0' : 'opacity-100'
+                }`}
+              />
+              <span
+                className={`absolute block h-0.5 w-6 bg-current transition-all duration-300 ${
+                  isMobileMenuOpen ? 'translate-y-0 -rotate-45' : 'translate-y-2'
+                }`}
+              />
+            </button>
+          </div>
         </div>
 
         {/* Mobile Menu Overlay */}
