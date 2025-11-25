@@ -1,7 +1,7 @@
 import { groq } from 'next-sanity'
 
 import { client } from '@/sanity/lib/client'
-import type { PieceDetail, PieceListItem, SignaturePiece } from '@/lib/sanity/types'
+import type { GalleryImage, PieceDetail, PieceListItem, SignaturePiece } from '@/lib/sanity/types'
 
 const piecesListQuery = groq`
   *[_type == "piece"]
@@ -69,6 +69,17 @@ const signaturePiecesQuery = groq`
 
 const pieceSlugsQuery = groq`*[_type == "piece" && defined(slug.current)]{ "slug": slug.current }`
 
+const galleryImagesQuery = groq`
+  *[_type == "galleryImage"]
+    | order(_createdAt desc){
+    _id,
+    "createdAt": _createdAt,
+    category,
+    legend,
+    image
+  }
+`
+
 export async function getPieces() {
   return client.fetch<PieceListItem[]>(
     piecesListQuery, 
@@ -98,4 +109,12 @@ export async function getAllPieceSlugs() {
   return slugs
     .map((entry) => entry.slug)
     .filter((slug): slug is string => typeof slug === 'string')
+}
+
+export async function getGalleryImages() {
+  return client.fetch<GalleryImage[]>(
+    galleryImagesQuery,
+    {},
+    { next: { tags: ['galleryImage'] } }
+  )
 }

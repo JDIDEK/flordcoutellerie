@@ -29,6 +29,7 @@ export function HorizontalScrollGallery({ collections }: HorizontalScrollGallery
   const scrollRef = useRef<HTMLDivElement>(null)
   
   const [hoveredId, setHoveredId] = useState<number | null>(null)
+  const itemCount = Math.max(collections.length, 1)
 
   const stateRef = useRef({ 
     current: 0, 
@@ -146,11 +147,15 @@ export function HorizontalScrollGallery({ collections }: HorizontalScrollGallery
   }, [collections.length, isMobile, measure])
 
   const horizontalPadding = isMobile ? '50vw' : '20vw'
+  const baseHeight = isMobile ? 150 : 210
+  const extraPerItem = isMobile ? 40 : 60
+  const containerHeight = `${baseHeight + (itemCount - 1) * extraPerItem}vh`
 
   return (
     <div
       ref={containerRef}
-      className={cn("relative", isMobile ? "h-[300vh]" : "h-[400vh]")}
+      className={cn("relative")}
+      style={{ height: containerHeight }}
     >
       <div className="sticky top-0 h-screen flex items-center overflow-hidden bg-background">
         <div
