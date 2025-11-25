@@ -1,12 +1,3 @@
-Phase 2 : Le Panier d'Achat (Frontend)
-Prompt 2 :
-
-"J'ai besoin d'un store global pour gérer le panier. Installe zustand et crée le fichier hooks/use-cart.ts qui permet d'ajouter, supprimer et vider le panier. Il doit persister les données dans le localStorage."
-
-Prompt 3 :
-
-"Crée le composant components/cart-sheet.tsx (en utilisant shadcn/ui sheet). Il doit afficher la liste des articles du panier, le total, et un bouton pour passer à la caisse. Ajoute aussi le petit bouton avec l'icône de sac et le badge de quantité pour l'intégrer dans ma Navbar."
-
 Phase 3 : Paiement Stripe (Backend)
 Prompt 4 :
 
