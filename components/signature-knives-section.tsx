@@ -36,12 +36,12 @@ export function SignatureKnivesSection({ pieces }: SignatureKnivesSectionProps) 
 
   return (
     <section
-      className="relative h-screen overflow-hidden w-screen"
+      className="relative min-h-screen w-screen overflow-visible lg:overflow-hidden"
       style={{ marginLeft: 'calc(50% - 50vw)', marginRight: 'calc(50% - 50vw)' }}
     >
-      <div className="w-full h-screen flex flex-col lg:grid lg:grid-cols-2">
+      <div className="w-full min-h-screen lg:h-screen flex flex-col lg:grid lg:grid-cols-2">
         {/* Left Side - Image dynamique */}
-        <div className="relative flex-1 lg:h-full bg-secondary/30 flex items-center justify-center overflow-hidden h-full order-1 lg:order-none">
+        <div className="relative flex-1 min-h-[55vh] lg:h-full bg-secondary/30 flex items-center justify-center overflow-hidden order-1 lg:order-none">
           <div className="absolute inset-0 transition-opacity duration-500">
             <Image
               src={activeImageSrc}
@@ -65,7 +65,7 @@ export function SignatureKnivesSection({ pieces }: SignatureKnivesSectionProps) 
         </div>
 
         {/* Right Side - Menu des couteaux */}
-        <div className="bg-primary/80 flex flex-col justify-center px-6 lg:px-16 py-12 text-primary-foreground h-full order-2 lg:order-none overflow-hidden">
+        <div className="bg-primary/80 flex flex-col justify-center px-6 lg:px-16 py-12 text-primary-foreground order-2 lg:order-none overflow-visible lg:overflow-hidden lg:h-full">
           <div className="max-w-xl w-full space-y-6 mx-auto">
             {/* Titre */}
             <div className="space-y-4">

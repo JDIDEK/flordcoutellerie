@@ -1,8 +1,8 @@
 'use client'
 
-import { useState } from 'react'
+import { useState, type ComponentProps } from 'react'
 
-import { Button, type ButtonProps } from '@/components/ui/button'
+import { Button } from '@/components/ui/button'
 import { useCart } from '@/hooks/use-cart'
 
 type AddToCartButtonProps = {
@@ -14,7 +14,7 @@ type AddToCartButtonProps = {
     slug?: string
     status?: string
   }
-  buttonProps?: ButtonProps
+  buttonProps?: ComponentProps<typeof Button>
 }
 
 export function AddToCartButton({ piece, buttonProps }: AddToCartButtonProps) {

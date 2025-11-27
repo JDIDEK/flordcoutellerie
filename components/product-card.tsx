@@ -17,22 +17,22 @@ export function ProductCard({ piece }: { piece: PieceListItem }) {
   const isUnavailable = piece.status && piece.status !== 'available'
 
   return (
-    <div className="group block space-y-4">
+    <div className="block space-y-4">
       {/* Image */}
       <Link
         href={`/pieces/${piece.slug}`}
-        className="relative block aspect-[4/3] overflow-hidden bg-secondary rounded-sm"
+        className="group relative block aspect-[4/3] overflow-hidden bg-secondary rounded-sm"
       >
         <Image
           src={imageUrl}
           alt={piece.title}
           fill
           sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw"
-          className="object-cover transition-transform duration-700 group-hover:scale-105"
+          className="object-cover transition-transform duration-500 ease-out group-hover:scale-[1.03]"
         />
         
         {/* Overlay */}
-        <div className="absolute inset-0 bg-background/80 opacity-0 group-hover:opacity-100 transition-opacity duration-300 flex items-center justify-center">
+        <div className="absolute inset-0 bg-background/70 opacity-0 group-hover:opacity-100 transition-opacity duration-300 flex items-center justify-center">
           <div className="text-center space-y-2">
             <ArrowRight className="w-8 h-8 text-foreground mx-auto" />
             <p className="text-sm">Voir les details</p>
@@ -60,8 +60,8 @@ export function ProductCard({ piece }: { piece: PieceListItem }) {
       {/* Info */}
       <div className="space-y-3">
         <div>
-          <Link href={`/pieces/${piece.slug}`} className="block">
-            <h3 className="text-xl font-serif font-light group-hover:text-primary transition-colors">
+          <Link href={`/pieces/${piece.slug}`} className="block hover:text-primary transition-colors">
+            <h3 className="text-xl font-serif font-light">
               {piece.title}
             </h3>
             <p className="text-sm text-muted-foreground">

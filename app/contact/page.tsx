@@ -110,20 +110,6 @@ export default function ContactPage() {
                 </p>
               </form>
             </div>
-
-            {/* Additional Info */}
-            <div className="mt-12 pt-8 border-t border-border text-center space-y-2">
-              <p className="text-sm text-muted-foreground">
-                <strong className="text-foreground">SIRET :</strong> 914 141 684 00011
-              </p>
-              <p className="text-sm text-muted-foreground">Artisan Coutelier • France</p>
-              <a 
-                href="mailto:floribadeaudumas@gmail.com"
-                className="text-sm text-muted-foreground hover:text-foreground transition-colors inline-block"
-              >
-                floribadeaudumas@gmail.com
-              </a>
-            </div>
           </div>
         </div>
       </main>
