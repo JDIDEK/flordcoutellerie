@@ -39,6 +39,7 @@
     "@radix-ui/react-tooltip": "1.1.6",
     "@sanity/client": "^7.13.0",
     "@sanity/image-url": "1",
+    "@sanity/orderable-document-list": "^1.4.0",
     "@sanity/vision": "^4.16.0",
     "@vercel/analytics": "latest",
     "autoprefixer": "^10.4.20",

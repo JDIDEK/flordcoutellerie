@@ -32,7 +32,6 @@ export function SignatureKnivesSection({ pieces }: SignatureKnivesSectionProps) 
   }, [activeKnife.mainImage])
 
   const activePrice = formatCurrency(activeKnife.price)
-  const priceLabel = activePrice ? `${activePrice}€` : 'Sur commande'
 
   return (
     <section
@@ -54,13 +53,6 @@ export function SignatureKnivesSection({ pieces }: SignatureKnivesSectionProps) 
           </div>
           <div className="absolute inset-0 bg-black/40" />
           <div className="relative z-10 text-center text-white px-8">
-            <h3 className="text-5xl md:text-6xl lg:text-7xl font-serif font-light tracking-tight">
-              {activeKnife.title}
-            </h3>
-            <p className="text-sm uppercase tracking-[0.3em] mt-4 text-white/70">
-              {activeKnife.steelSummary ?? 'Signature en création'}
-            </p>
-            <p className="mt-6 text-xs tracking-[0.35em] text-white/60">{priceLabel}</p>
           </div>
         </div>
 

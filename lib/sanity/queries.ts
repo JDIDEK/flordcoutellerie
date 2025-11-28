@@ -5,7 +5,7 @@ import type { GalleryImage, PieceDetail, PieceListItem, SignaturePiece } from '@
 
 const piecesListQuery = groq`
   *[_type == "piece"]
-    | order(status asc, coalesce(homeOrder, 999), _createdAt desc){
+    | order(orderRank asc, status asc, coalesce(homeOrder, 999), _createdAt desc){
     _id,
     title,
     subtitle,
@@ -56,7 +56,7 @@ const pieceDetailQuery = groq`
 
 const signaturePiecesQuery = groq`
   *[_type == "piece" && highlightOnHome == true]
-    | order(homeOrder asc, _createdAt desc)[0...4]{
+    | order(orderRank asc, homeOrder asc, _createdAt desc)[0...4]{
     _id,
     title,
     status,

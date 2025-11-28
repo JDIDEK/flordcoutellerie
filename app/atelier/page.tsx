@@ -9,30 +9,9 @@ export default function AboutPage() {
       <main className="min-h-screen pt-32 pb-20 bg-background">
         <div className="container mx-auto px-6">
           {/* Hero */}
-          <div className="max-w-3xl mx-auto mb-20">
-            <div className="space-y-8">
-              <div className="space-y-3 text-center">
-                <p className="text-xs tracking-[0.4em] text-muted-foreground uppercase">
-                  L'Atelier
-                </p>
-                <h1 className="text-4xl md:text-5xl font-serif font-light tracking-tight text-foreground">
-                  Flo RD Coutellerie
-                </h1>
-              </div>
-              <div className="space-y-6 text-muted-foreground leading-relaxed text-center max-w-2xl mx-auto">
-                <p>
-                  Dans mon atelier, chaque lame naît du feu et prend forme sous le marteau. 
-                  Je forge des couteaux artisanaux qui allient tradition et innovation, 
-                  en utilisant les aciers les plus nobles et les techniques ancestrales.
-                </p>
-                <p>
-                  Passionné par la coutellerie japonaise et européenne, je crée des pièces 
-                  uniques destinées aux chefs, aux amateurs d'outdoor et aux collectionneurs 
-                  exigeants.
-                </p>
-              </div>
-            </div>
-          </div>
+          <h1 className="text-3xl md:text-4xl font-light text-center tracking-tight mb-24 animate-fade-in-up">
+            Atelier
+          </h1>
 
           {/* Philosophy */}
           <section className="max-w-2xl mx-auto mb-20">

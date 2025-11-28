@@ -1,4 +1,8 @@
 import { defineField, defineType } from 'sanity'
+import { orderRankField, orderRankOrdering } from '@sanity/orderable-document-list'
+
+import { AutoSlugInput } from '../components/autoSlugInput'
+import { slugifyString } from '../lib/slugify'
 
 export const piece = defineType({
   name: 'piece',
@@ -6,12 +10,13 @@ export const piece = defineType({
   type: 'document',
   // Définition des onglets
   groups: [
-    { name: 'main', title: '📝 Infos', default: true },
-    { name: 'tech', title: '⚙️ Technique' },
-    { name: 'sales', title: '💰 Vente & Stock' },
-    { name: 'home', title: '⭐ Accueil' },
+    { name: 'main', title: 'Infos', default: true },
+    { name: 'tech', title: 'Technique' },
+    { name: 'sales', title: 'Vente & Stock' },
+    { name: 'home', title: 'Accueil' },
   ],
   fields: [
+    orderRankField({ type: 'piece', hidden: true }),
     // --- ONGLET INFOS ---
     defineField({
       name: 'title',
@@ -51,11 +56,11 @@ export const piece = defineType({
       group: 'sales',
       options: {
         list: [
-          { title: '🟢 Disponible', value: 'available' },
-          { title: '🟠 Réservé', value: 'reserved' },
-          { title: '🔴 Vendu', value: 'sold' },
+          { title: 'Disponible', value: 'available' },
+          { title: 'Réservé', value: 'reserved' },
+          { title: 'Vendu', value: 'sold' },
         ],
-        layout: 'radio', // Boutons radio horizontaux
+        layout: 'radio',
       },
       initialValue: 'available',
     }),
@@ -69,27 +74,19 @@ export const piece = defineType({
       name: 'slug',
       title: 'Lien (Slug)',
       type: 'slug',
-      options: { source: 'title' },
+      options: {
+        source: 'title',
+        slugify: slugifyString,
+      },
+      components: { input: AutoSlugInput },
       group: 'sales',
       validation: (rule) => rule.required(),
     }),
 
     // --- ONGLET TECHNIQUE ---
-    defineField({
-      name: 'steel',
-      title: 'Acier',
-      type: 'string',
-      group: 'tech',
-    }),
-    defineField({
-      name: 'handle',
-      title: 'Manche',
-      type: 'string',
-      group: 'tech',
-    }),
-    defineField({
+  defineField({
       name: 'features',
-      title: 'Caractéristiques (Liste)',
+      title: 'Caractéristiques',
       type: 'array',
       of: [{ type: 'string' }],
       group: 'tech',
@@ -110,6 +107,7 @@ export const piece = defineType({
       group: 'home',
     }),
   ],
+  orderings: [orderRankOrdering],
   preview: {
     select: {
       title: 'title',

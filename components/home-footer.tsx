@@ -15,7 +15,7 @@ export function HomeFooter() {
           </div>
 
           <div className="flex flex-wrap items-center justify-center gap-6 text-sm text-foreground">
-            <Link href="/about" className="hover:text-primary transition-colors">
+            <Link href="/atelier" className="hover:text-primary transition-colors">
               Atelier
             </Link>
             <Link href="/contact" className="hover:text-primary transition-colors">

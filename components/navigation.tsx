@@ -91,7 +91,7 @@ export function Navigation({ alwaysVisible = false }: NavigationProps) {
     { href: '/pieces', label: 'Pièces' },
     { href: '/sur-mesure', label: 'Sur Mesure' },
     { href: '/galerie', label: 'Galerie' },
-    { href: '/about', label: 'Atelier' },
+    { href: '/atelier', label: 'Atelier' },
     { href: '/contact', label: 'Contact' },
   ]
 

@@ -35,20 +35,9 @@ export default function ContactPage() {
         <div className="container mx-auto px-6">
           <div className="max-w-2xl mx-auto">
             {/* Header */}
-            <div className="text-center mb-16 space-y-4">
-              <div className="space-y-2">
-                <p className="text-xs tracking-[0.4em] text-muted-foreground uppercase">
-                  Parlons de votre projet
-                </p>
-                <h1 className="text-4xl md:text-5xl font-serif font-light tracking-tight text-foreground">
-                  Contact
-                </h1>
-              </div>
-              <p className="text-muted-foreground leading-relaxed max-w-xl mx-auto">
-                Une question ? Un projet de couteau sur mesure ? N'hésitez pas à me contacter. 
-                Je réponds généralement sous 24-48h.
-              </p>
-            </div>
+            <h1 className="text-3xl md:text-4xl font-light text-center tracking-tight mb-24 animate-fade-in-up">
+              Contact
+            </h1>
 
             {/* Contact Form */}
             <div className="border border-border p-8 md:p-10 rounded-sm bg-card">
