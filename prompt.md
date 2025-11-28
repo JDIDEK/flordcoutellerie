@@ -6,4 +6,4 @@ Prompt 6 :
 
 Phase 6 : amélioration
 Prompt 7 : 
-Fais en sorte que si on clique sur voir la fiche on retourne sur la fiche de la piece et la cart sheet se ferme
+Fais en sorte que si on clique sur "voir la fiche" on retourne sur la fiche de la piece et la cart sheet se ferme

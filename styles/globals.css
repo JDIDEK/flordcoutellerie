@@ -336,3 +336,45 @@ html {
   background-size: 1000px 100%;
   animation: shimmer 2s infinite;
 }
+
+@layer utilities {
+  /* Bouton avec vague qui monte du bas vers le haut */
+  .btn-wave {
+    position: relative;
+    overflow: hidden;
+    isolation: isolate; /* pour que le ::before reste bien dans le bouton */
+  }
+
+  .btn-wave::before {
+    content: '';
+    position: absolute;
+    inset: 0;
+    transform: translateY(100%);
+    background: linear-gradient(
+      to top,
+      oklch(0.95 0.02 80 / 0.16),
+      oklch(0.95 0.02 80 / 0.08),
+      transparent 70%
+    );
+    opacity: 0;
+    transition:
+      transform 0.35s cubic-bezier(0.22, 0.61, 0.36, 1),
+      opacity 0.35s ease-out;
+    z-index: -1;
+  }
+
+  .btn-wave:hover::before,
+  .btn-wave:focus-visible::before {
+    transform: translateY(0%);
+    opacity: 1;
+  }
+
+  /* Petit effet de "press" au clic */
+  .btn-press {
+    transition: transform 0.15s ease-out;
+  }
+
+  .btn-press:active {
+    transform: scale(0.97) translateY(1px);
+  }
+}
