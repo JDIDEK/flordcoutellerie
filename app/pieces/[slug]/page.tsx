@@ -1,13 +1,11 @@
-import Image from 'next/image'
 import Link from 'next/link'
 import { notFound } from 'next/navigation'
 import { ArrowLeft, Check } from 'lucide-react'
 
 import { AddToCartButton } from '@/components/add-to-cart-button'
 import { Navigation } from '@/components/navigation'
-import { Badge } from '@/components/ui/badge'
 import { Button } from '@/components/ui/button'
-import { Separator } from '@/components/ui/separator'
+import { PieceGallery } from '@/components/piece-gallery'
 import { getPieceBySlug, getAllPieceSlugs } from '@/lib/sanity/queries'
 import { formatCurrency } from '@/lib/utils'
 import { urlFor } from '@/sanity/lib/image'
@@ -19,7 +17,11 @@ export async function generateStaticParams() {
   }))
 }
 
-export default async function PieceDetailPage({ params }: { params: Promise<{ slug: string }> }) {
+export default async function PieceDetailPage({
+  params,
+}: {
+  params: Promise<{ slug: string }>
+}) {
   const { slug } = await params
   const piece = await getPieceBySlug(slug)
 
@@ -33,7 +35,27 @@ export default async function PieceDetailPage({ params }: { params: Promise<{ sl
   const heroImageSrc = heroImage
     ? urlFor(heroImage).width(1600).height(1600).fit('crop').url()
     : '/placeholder.jpg'
+  const galleryImagesSet = new Set<string>()
+  const galleryImages: { src: string; alt: string }[] = []
+
+  if (heroImageSrc && !galleryImagesSet.has(heroImageSrc)) {
+    galleryImages.push({ src: heroImageSrc, alt: piece.title })
+    galleryImagesSet.add(heroImageSrc)
+  }
+
+  piece.gallery?.forEach((image, index) => {
+    const src = urlFor(image).width(1600).height(1600).fit('crop').url()
+    if (!galleryImagesSet.has(src)) {
+      galleryImages.push({
+        src,
+        alt: `${piece.title} - vue ${index + 1}`,
+      })
+      galleryImagesSet.add(src)
+    }
+  })
+
   const isAvailable = piece.status === 'available'
+
   const cartPiece = {
     id: piece._id,
     name: piece.title,
@@ -46,123 +68,155 @@ export default async function PieceDetailPage({ params }: { params: Promise<{ sl
   return (
     <>
       <Navigation />
-      
+
       <main className="min-h-screen pt-32 pb-20 bg-background">
         <div className="container mx-auto px-6">
-          <div className="max-w-5xl mx-auto">
-            {/* Back Button */}
-            <Link 
+          <div className="max-w-6xl mx-auto">
+            <Link
               href="/pieces"
-              className="inline-flex items-center gap-2 text-sm text-muted-foreground hover:text-foreground transition-colors mb-8"
+              className="inline-flex items-center gap-2 text-sm text-muted-foreground hover:text-foreground transition-colors mb-10 animate-fade-in"
             >
               <ArrowLeft className="w-4 h-4" />
               Retour aux pieces
             </Link>
 
-            <div className="grid md:grid-cols-2 gap-12">
-              {/* Image */}
-              <div className="space-y-4">
-                <div className="relative aspect-square overflow-hidden bg-secondary rounded-sm">
-                  <Image
-                    src={heroImageSrc}
-                    alt={piece.title}
-                    fill
-                    sizes="(max-width: 768px) 100vw, 50vw"
-                    priority
-                    className="object-cover"
-                  />
-                  {piece.status === 'sold' && (
-                    <Badge className="absolute top-4 left-4 bg-destructive/90 text-destructive-foreground">
-                      Vendu
-                    </Badge>
-                  )}
-                  {piece.status === 'reserved' && (
-                    <Badge className="absolute top-4 left-4 bg-amber-600 text-white">
-                      Reserve
-                    </Badge>
-                  )}
-                  {piece.originalPrice && piece.status === 'available' && (
-                    <Badge className="absolute top-4 right-4 bg-primary text-primary-foreground">
-                      Promo
-                    </Badge>
-                  )}
-                </div>
-              </div>
+            <div className="grid lg:grid-cols-[1.1fr_0.9fr] gap-14 items-start">
+              <PieceGallery images={galleryImages} status={piece.status} />
 
-              {/* Details */}
-              <div className="space-y-8">
-                <div>
-                  <p className="text-xs tracking-[0.4em] text-muted-foreground uppercase mb-2">
-                    {piece.category}
-                  </p>
-                  <h1 className="text-4xl md:text-5xl font-serif font-light tracking-tight text-foreground mb-2">
+              <section className="space-y-8">
+                <div className="space-y-3 animate-slide-in-right">
+                  {piece.category && (
+                    <p className="text-xs tracking-[0.35em] text-muted-foreground uppercase">
+                      {piece.category}
+                    </p>
+                  )}
+                  <h1 className="text-3xl md:text-4xl font-serif font-light tracking-tight text-foreground">
                     {piece.title}
                   </h1>
-                  <p className="text-lg text-muted-foreground">{piece.subtitle}</p>
+                  {piece.subtitle && (
+                    <p className="text-sm text-muted-foreground">
+                      {piece.subtitle}
+                    </p>
+                  )}
                 </div>
 
-                {/* Price */}
-                <div className="flex items-baseline gap-3">
-                  <span className="text-4xl font-light text-foreground">
-                    {formattedPrice ? `${formattedPrice} EUR` : 'Sur demande'}
-                  </span>
-                  {formattedOriginalPrice && (
-                    <span className="text-xl text-muted-foreground line-through">
-                      {`${formattedOriginalPrice} EUR`}
+                <div className="space-y-3 animate-fade-in-up animation-delay-200">
+                  <div className="flex items-baseline gap-3">
+                    <span className="text-2xl md:text-3xl font-light text-foreground">
+                      {formattedPrice ? `${formattedPrice} EUR` : 'Sur demande'}
                     </span>
+                    {formattedOriginalPrice && (
+                      <span className="text-lg text-muted-foreground line-through">
+                        {`${formattedOriginalPrice} EUR`}
+                      </span>
+                    )}
+                  </div>
+                  <div className="flex items-center gap-2 text-sm text-muted-foreground">
+                    <span
+                      className={`inline-block h-2 w-2 rounded-full ${
+                        isAvailable ? 'bg-emerald-500' : 'bg-destructive'
+                      }`}
+                    />
+                    <span>
+                      {isAvailable
+                        ? 'Pièce en stock'
+                        : piece.status === 'reserved'
+                        ? 'Pièce réservée'
+                        : 'Pièce vendue'}
+                    </span>
+                  </div>
+                </div>
+
+                <div className="space-y-3 animate-fade-in-up animation-delay-400">
+                  {isAvailable ? (
+                    <>
+                      <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
+                        <AddToCartButton
+                          piece={cartPiece}
+                          buttonProps={{
+                            size: 'lg',
+                            className:
+                              'w-full rounded-md bg-amber-50 text-foreground border border-amber-100 ' +
+                              'hover:bg-amber-100 transition-all overflow-hidden group/cta shadow-sm',
+                            children: (
+                              <span className="relative flex items-center justify-center gap-2 text-sm md:text-base">
+                                <span className="inline-flex h-2 w-2 rounded-full bg-emerald-500" />
+                                <span className="relative inline-block h-[1.2em] overflow-hidden">
+                                  <span className="block group-hover/cta:-translate-y-full transition-transform duration-300 ease-out">
+                                    Ajouter au panier
+                                  </span>
+                                  <span className="block -translate-y-full group-hover/cta:translate-y-0 transition-transform duration-300 ease-out">
+                                    Ajouter au panier
+                                  </span>
+                                </span>
+                              </span>
+                            ),
+                          }}
+                        />
+
+                        <Button
+                          size="lg"
+                          variant="outline"
+                          className="w-full hover:shadow-sm"
+                          type="button"
+                        >
+                          Acheter maintenant
+                        </Button>
+                      </div>
+                      <p className="text-xs text-muted-foreground leading-relaxed">
+                        Acompte de 20% à la commande — Livraison estimée sous 2 à 4 semaines.
+                      </p>
+                    </>
+                  ) : (
+                    <>
+                      <Button className="w-full" size="lg" variant="outline" disabled>
+                        Indisponible
+                      </Button>
+                      <p className="text-xs text-muted-foreground leading-relaxed">
+                        {piece.status === 'reserved'
+                          ? 'Cette pièce est réservée mais peut être adaptée sur commande.'
+                          : 'Cette pièce est vendue mais peut être recréée avec des variations uniques.'}
+                      </p>
+                    </>
                   )}
                 </div>
 
                 {piece.description && (
-                  <p className="text-muted-foreground leading-relaxed">
+                  <p className="text-sm text-muted-foreground leading-relaxed animate-fade-in-up animation-delay-600">
                     {piece.description}
                   </p>
                 )}
 
-                <Separator />
-
-                {/* Specifications */}
-                <div className="space-y-4">
-                  <h2 className="text-lg font-medium text-foreground">Specifications Techniques</h2>
-                  <div className="space-y-3 text-sm">
-                    <div className="flex justify-between py-2 border-b border-border">
-                      <span className="text-muted-foreground">Acier</span>
-                      <span className="font-medium text-foreground">{piece.steel}</span>
-                    </div>
-                    <div className="flex justify-between py-2 border-b border-border">
-                      <span className="text-muted-foreground">Couches</span>
-                      <span className="font-medium text-foreground">{piece.layers}</span>
-                    </div>
-                    <div className="flex justify-between py-2 border-b border-border">
-                      <span className="text-muted-foreground">Durete</span>
-                      <span className="font-medium text-foreground">{piece.hrc}</span>
-                    </div>
-                    <div className="flex justify-between py-2 border-b border-border">
-                      <span className="text-muted-foreground">Manche</span>
-                      <span className="font-medium text-foreground">{piece.handle}</span>
-                    </div>
-                    <div className="flex justify-between py-2 border-b border-border">
-                      <span className="text-muted-foreground">Longueur</span>
-                      <span className="font-medium text-foreground">{piece.length}</span>
-                    </div>
-                    {piece.weight && (
-                      <div className="flex justify-between py-2 border-b border-border">
-                        <span className="text-muted-foreground">Poids</span>
-                        <span className="font-medium text-foreground">{piece.weight}</span>
-                      </div>
-                    )}
+                <div className="space-y-3 animate-fade-in-up animation-delay-800">
+                  <h2 className="text-lg font-medium text-foreground">Fiche technique</h2>
+                  <div className="grid grid-cols-1 gap-2 text-sm text-muted-foreground">
+                    {[
+                      { label: 'Acier', value: piece.steel },
+                      { label: 'Couches', value: piece.layers },
+                      { label: 'Dureté', value: piece.hrc },
+                      { label: 'Manche', value: piece.handle },
+                      { label: 'Longueur', value: piece.length },
+                      { label: 'Poids', value: piece.weight },
+                    ]
+                      .filter((item) => item.value)
+                      .map((item) => (
+                        <div
+                          key={item.label}
+                          className="flex justify-between rounded-md bg-card/40 px-4 py-2 border border-border/60"
+                        >
+                          <span>{item.label}</span>
+                          <span className="text-foreground font-medium">{item.value}</span>
+                        </div>
+                      ))}
                   </div>
-                </div>
 
-                <Separator />
-
-                {/* Features */}
-                <div className="space-y-4">
-                  <h2 className="text-lg font-medium text-foreground">Caracteristiques</h2>
                   {piece.features?.length ? (
-                    <ul className="space-y-2">
+                    <ul className="space-y-2 pt-2">
                       {piece.features.map((feature, index) => (
-                        <li key={index} className="flex items-center gap-3 text-sm text-muted-foreground">
+                        <li
+                          key={index}
+                          className="flex items-center gap-3 text-sm text-muted-foreground"
+                        >
                           <Check className="w-4 h-4 text-foreground flex-shrink-0" />
                           <span>{feature}</span>
                         </li>
@@ -170,37 +224,11 @@ export default async function PieceDetailPage({ params }: { params: Promise<{ sl
                     </ul>
                   ) : (
                     <p className="text-sm text-muted-foreground">
-                      Les caracteristiques sont en cours de mise a jour.
+                      Les caracteristiques sont en cours de mise à jour.
                     </p>
                   )}
                 </div>
-
-                <Separator />
-
-                {/* CTA */}
-                {isAvailable ? (
-                  <div className="space-y-4">
-                    <AddToCartButton
-                      piece={cartPiece}
-                      buttonProps={{ className: 'w-full', size: 'lg' }}
-                    />
-                    <p className="text-xs text-muted-foreground text-center leading-relaxed">
-                      Acompte de 20% a la commande - Livraison sous 2-4 semaines
-                    </p>
-                  </div>
-                ) : (
-                  <div className="space-y-4">
-                    <Button className="w-full" size="lg" variant="outline" disabled>
-                      Indisponible
-                    </Button>
-                    <p className="text-xs text-muted-foreground text-center leading-relaxed">
-                      {piece.status === 'reserved'
-                        ? 'Cette piece est reservee mais peut etre adaptee sur commande'
-                        : 'Cette piece est vendue mais peut etre recreee avec des variations uniques'}
-                    </p>
-                  </div>
-                )}
-              </div>
+              </section>
             </div>
           </div>
         </div>
