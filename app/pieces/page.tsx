@@ -14,14 +14,20 @@ export default async function PiecesPage() {
         <div className="container mx-auto px-6 max-w-6xl">
 
           {/* ---------- TITRE CENTRÉ ---------- */}
-          <h1 className="text-3xl md:text-4xl font-light text-center tracking-tight mb-24">
+          <h1 className="text-3xl md:text-4xl font-light text-center tracking-tight mb-24 animate-fade-in-up">
             Pièces
           </h1>
 
           {/* ---------- GRILLE PRODUITS ---------- */}
           <div className="grid gap-10 md:grid-cols-2 lg:grid-cols-3">
-            {pieces.map((piece) => (
-              <ProductCard key={piece._id} piece={piece} />
+            {pieces.map((piece, index) => (
+              <div
+                key={piece._id}
+                className="animate-fade-in-up"
+                style={{ animationDelay: `${index * 60}ms` }}
+              >
+                <ProductCard piece={piece} />
+              </div>
             ))}
           </div>
 

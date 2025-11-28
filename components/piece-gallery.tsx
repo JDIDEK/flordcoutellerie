@@ -52,12 +52,12 @@ export function PieceGallery({ images, status }: PieceGalleryProps) {
       <Carousel
         opts={{ align: 'start', loop: hasMultiple }}
         setApi={setApi}
-        className="w-full"
+        className="w-full group"
       >
         <CarouselContent className="-ml-4">
           {images.map((image, idx) => (
             <CarouselItem key={idx} className="pl-4">
-              <div className="relative aspect-[4/5] overflow-hidden rounded-xl bg-muted animate-scale-in">
+              <div className="relative aspect-square overflow-hidden rounded-xl bg-muted animate-scale-in">
                 <Image
                   src={image.src}
                   alt={image.alt}
@@ -78,14 +78,14 @@ export function PieceGallery({ images, status }: PieceGalleryProps) {
 
         {hasMultiple && (
           <>
-            <CarouselPrevious className="top-1/2 -left-6 -translate-y-1/2 bg-white/90 text-foreground shadow-lg hover:bg-white" />
-            <CarouselNext className="top-1/2 -right-6 -translate-y-1/2 bg-white/90 text-foreground shadow-lg hover:bg-white" />
+            <CarouselPrevious className="top-1/2 -left-6 -translate-y-1/2 bg-white/90 text-black shadow-lg hover:bg-white hover:text-black opacity-0 group-hover:opacity-100 pointer-events-none group-hover:pointer-events-auto transition-opacity duration-200" />
+            <CarouselNext className="top-1/2 -right-6 -translate-y-1/2 bg-white/90 text-black shadow-lg hover:bg-white hover:text-black opacity-0 group-hover:opacity-100 pointer-events-none group-hover:pointer-events-auto transition-opacity duration-200" />
           </>
         )}
       </Carousel>
 
       {hasMultiple && (
-        <div className="flex flex-wrap gap-3">
+        <div className="flex flex-wrap justify-center gap-3">
           {images.map((image, idx) => (
             <button
               key={idx}

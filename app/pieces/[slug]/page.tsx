@@ -1,3 +1,4 @@
+import Image from 'next/image'
 import Link from 'next/link'
 import { notFound } from 'next/navigation'
 import { ArrowLeft, Check } from 'lucide-react'
@@ -36,7 +37,7 @@ export default async function PieceDetailPage({
     ? urlFor(heroImage).width(1600).height(1600).fit('crop').url()
     : '/placeholder.jpg'
   const galleryImagesSet = new Set<string>()
-  const galleryImages: { src: string; alt: string }[] = []
+  const galleryImages = []
 
   if (heroImageSrc && !galleryImagesSet.has(heroImageSrc)) {
     galleryImages.push({ src: heroImageSrc, alt: piece.title })
@@ -136,18 +137,27 @@ export default async function PieceDetailPage({
                           buttonProps={{
                             size: 'lg',
                             className:
-                              'w-full rounded-md bg-amber-50 text-foreground border border-amber-100 ' +
-                              'hover:bg-amber-100 transition-all overflow-hidden group/cta shadow-sm',
+                              'w-full rounded-md bg-amber-50 text-neutral-900 border border-amber-100 ' +
+                              'hover:bg-amber-100 transition-all overflow-hidden group/cta shadow-sm ' +
+                              'active:translate-y-[1px] active:shadow-md',
                             children: (
-                              <span className="relative flex items-center justify-center gap-2 text-sm md:text-base">
-                                <span className="inline-flex h-2 w-2 rounded-full bg-emerald-500" />
-                                <span className="relative inline-block h-[1.2em] overflow-hidden">
-                                  <span className="block group-hover/cta:-translate-y-full transition-transform duration-300 ease-out">
-                                    Ajouter au panier
-                                  </span>
-                                  <span className="block -translate-y-full group-hover/cta:translate-y-0 transition-transform duration-300 ease-out">
-                                    Ajouter au panier
-                                  </span>
+                              <span className="relative flex items-center justify-center text-sm md:text-base">
+                                <span className="pointer-events-none absolute inset-0 overflow-hidden">
+                                  <svg
+                                    viewBox="0 0 200 200"
+                                    preserveAspectRatio="none"
+                                    className="absolute inset-0 w-full h-full text-amber-100 translate-y-[70%] group-hover/cta:translate-y-0 transition-transform duration-600 ease-out"
+                                    aria-hidden="true"
+                                  >
+                                    <path
+                                      d="M0 160 Q40 120 80 160 T160 160 T240 160 V220 H0 Z"
+                                      fill="currentColor"
+                                      fillOpacity={0.8}
+                                    />
+                                  </svg>
+                                </span>
+                                <span className="relative z-10">
+                                  Ajouter au panier
                                 </span>
                               </span>
                             ),
@@ -222,11 +232,7 @@ export default async function PieceDetailPage({
                         </li>
                       ))}
                     </ul>
-                  ) : (
-                    <p className="text-sm text-muted-foreground">
-                      Les caracteristiques sont en cours de mise à jour.
-                    </p>
-                  )}
+                  ) : null}
                 </div>
               </section>
             </div>
