@@ -378,3 +378,49 @@ html {
     transform: scale(0.97) translateY(1px);
   }
 }
+
+@layer utilities {
+  .cart-pill {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    border-radius: 999px;
+    padding: 0.4rem 0.5rem;
+    background: oklch(0.95 0.02 80 / 0.96);
+    color: oklch(0.12 0.01 30);
+    box-shadow: 0 8px 18px oklch(0.12 0.01 30 / 0.3);
+    font-size: 0.75rem;
+    white-space: nowrap;
+    transition:
+      padding 0.2s ease,
+      background 0.2s ease,
+      transform 0.12s ease;
+  }
+
+  .cart-pill__label {
+    max-width: 0;
+    opacity: 0;
+    margin-left: 0;
+    overflow: hidden;
+    transition:
+      max-width 0.25s ease,
+      opacity 0.25s ease,
+      margin-left 0.25s ease;
+  }
+
+  .cart-pill:hover {
+    padding-right: 0.9rem;
+    background: oklch(0.98 0.02 90 / 0.98);
+    transform: translateY(-1px);
+  }
+
+  .cart-pill:active {
+    transform: translateY(0) scale(0.97);
+  }
+
+  .cart-pill:hover .cart-pill__label {
+    max-width: 140px;
+    opacity: 1;
+    margin-left: 0.45rem;
+  }
+}

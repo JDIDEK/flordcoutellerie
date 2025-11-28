@@ -23,6 +23,14 @@ export function AddToCartButton({ piece, buttonProps }: AddToCartButtonProps) {
 
   const isUnavailable = piece.status && piece.status !== 'available'
   const disabled = loading || isUnavailable || buttonProps?.disabled
+  const { children, ...restButtonProps } = buttonProps ?? {}
+
+  const defaultLabel = loading
+    ? 'Ajout...'
+    : isUnavailable
+      ? 'Indisponible'
+      : 'Ajouter au panier'
+  const showCustomContent = children !== undefined && !loading && !isUnavailable
 
   const handleAdd = () => {
     if (disabled) return
@@ -42,11 +50,11 @@ export function AddToCartButton({ piece, buttonProps }: AddToCartButtonProps) {
 
   return (
     <Button
-      {...buttonProps}
+      {...restButtonProps}
       disabled={disabled}
       onClick={handleAdd}
     >
-      {loading ? 'Ajout...' : isUnavailable ? 'Indisponible' : 'Ajouter au panier'}
+      {showCustomContent ? children : defaultLabel}
     </Button>
   )
 }
