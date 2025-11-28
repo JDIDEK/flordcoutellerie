@@ -9,7 +9,7 @@ export default function AboutPage() {
       <main className="min-h-screen pt-32 pb-20 bg-background">
         <div className="container mx-auto px-6">
           {/* Hero */}
-          <h1 className="text-3xl md:text-4xl font-light text-center tracking-tight mb-24 animate-fade-in-up">
+          <h1 className="text-3xl md:text-6xl font-light text-center tracking-tight mb-24 animate-fade-in-up">
             Atelier
           </h1>
 

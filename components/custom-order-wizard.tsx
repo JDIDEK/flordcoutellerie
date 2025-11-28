@@ -510,7 +510,7 @@ Cordialement`)
         </Button>
 
         {currentStep < steps.length ? (
-          <Button
+          <Button className="hover:brightness-70"
             onClick={handleNext}
             disabled={
               (currentStep === 1 && !config.usage) ||
