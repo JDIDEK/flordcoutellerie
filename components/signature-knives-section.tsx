@@ -22,63 +22,103 @@ const placeholderPiece: SignaturePiece = {
 
 export function SignatureKnivesSection({ pieces }: SignatureKnivesSectionProps) {
   const displayPieces = pieces.length ? pieces : [placeholderPiece]
-  const [activeKnife, setActiveKnife] = useState(displayPieces[0])
+  const [activeIndex, setActiveIndex] = useState(0)
+
+  const activeKnife = displayPieces[activeIndex] ?? displayPieces[0]
 
   const activeImageSrc = useMemo(() => {
-    if (activeKnife.mainImage) {
+    if (activeKnife?.mainImage) {
       return urlFor(activeKnife.mainImage).width(1600).height(1600).fit('crop').url()
     }
     return '/placeholder.jpg'
-  }, [activeKnife.mainImage])
+  }, [activeKnife])
 
-  const activePrice = formatCurrency(activeKnife.price)
+  const activePrice = formatCurrency(activeKnife?.price)
 
   return (
-    <section
-      className="relative min-h-screen w-screen overflow-visible lg:overflow-hidden"
-      style={{ marginLeft: 'calc(50% - 50vw)', marginRight: 'calc(50% - 50vw)' }}
-    >
-      <div className="w-full min-h-screen flex flex-col lg:grid lg:grid-cols-2 lg:h-screen">
-        {/* Image - Mobile: stack vertical, Desktop: left side */}
-        <div className="relative h-[50vh] lg:h-full bg-secondary/30 flex items-center justify-center overflow-hidden order-2 lg:order-1">
-          <div className="absolute inset-0 lg:transition-opacity lg:duration-500">
-            <Image
-              src={activeImageSrc}
-              alt={activeKnife.title}
-              fill
-              sizes="(max-width: 1024px) 100vw, 50vw"
-              priority
-              className="object-cover lg:transition-transform lg:duration-700"
-            />
-          </div>
+    <section className="relative w-full overflow-hidden">
+      <div className="flex flex-col min-h-screen lg:grid lg:grid-rows-1 lg:grid-cols-2 lg:h-screen">
+        <div className="order-2 lg:order-1 relative min-h-[52vh] lg:h-full w-full overflow-hidden bg-secondary/30">
+          <Image
+            src={activeImageSrc}
+            alt={activeKnife?.title ?? 'Pièce signature'}
+            fill
+            sizes="(max-width: 1024px) 100vw, 50vw"
+            priority
+            className="object-cover transition-transform duration-700"
+          />
           <div className="absolute inset-0 bg-black/40" />
+          <div className="absolute inset-0 bg-gradient-to-t from-black/55 via-black/15 to-black/5" />
+          <div className="absolute bottom-6 left-6 right-6 flex items-center justify-between text-[0.65rem] uppercase tracking-[0.28em] text-neutral-100">
+            <span>Pièce mise en avant</span>
+            {activePrice && <span>{activePrice}€</span>}
+          </div>
         </div>
 
-        {/* Content - Mobile: top, Desktop: right side */}
-        <div className="bg-primary/90 lg:bg-primary/80 flex flex-col justify-center px-6 lg:px-16 py-8 lg:py-12 text-primary-foreground order-1 lg:order-2">
-          <div className="max-w-xl w-full space-y-4 lg:space-y-6 mx-auto">
-            {/* Titre */}
-            <div className="space-y-2 lg:space-y-4">
-              <h2 className="text-3xl lg:text-4xl xl:text-5xl font-serif font-light tracking-tight">
-                COUTEAUX
-                <br />
-                SIGNATURE
-              </h2>
-            </div>
+        <div className="order-1 lg:order-2 flex flex-col justify-center bg-primary/90 lg:bg-primary/80 px-5 py-10 lg:px-16 lg:py-14 text-primary-foreground gap-6">
+          <div className="space-y-2">
+            <p className="text-[0.65rem] uppercase tracking-[0.35em] text-primary-foreground/80">
+              Collection atelier
+            </p>
+            <h2 className="text-3xl lg:text-4xl xl:text-5xl font-serif font-light tracking-tight">
+              COUTEAUX
+              <br />
+              SIGNATURE
+            </h2>
+          </div>
 
-            {/* Liste desktop */}
-            <div className="space-y-1 pt-6 lg:pt-8 hidden lg:block">
+          <div className="-mx-3 lg:mx-0">
+            <div className="flex overflow-x-auto snap-x snap-mandatory gap-3 px-3 pb-2 lg:hidden scrollbar-hide">
               {displayPieces.map((knife, index) => {
                 const knifePrice = formatCurrency(knife.price)
+                const isActive = index === activeIndex
+
                 return (
-                  <div
+                  <button
                     key={knife.slug ?? `${knife._id}-${index}`}
-                    onMouseEnter={() => setActiveKnife(knife)}
-                    className={`border-b border-primary-foreground/20 py-6 transition-all duration-300 cursor-pointer px-4 -mx-4 ${
-                      activeKnife.slug === knife.slug
-                        ? 'bg-primary-foreground/10'
-                        : 'hover:bg-primary-foreground/5'
+                    type="button"
+                    onClick={() => setActiveIndex(index)}
+                    className={`snap-start min-w-[78vw] rounded-sm border border-primary-foreground/20 p-4 text-left transition-all duration-300 ${
+                      isActive
+                        ? 'bg-primary-foreground text-primary shadow-lg'
+                        : 'bg-transparent hover:bg-primary-foreground/10'
                     }`}
+                    aria-pressed={isActive}
+                  >
+                    <div className="space-y-3">
+                      <div className="flex items-start justify-between gap-4">
+                        <h3 className="text-lg font-serif font-light">{knife.title}</h3>
+                        <span className="text-base font-light whitespace-nowrap">
+                          {knifePrice ? `${knifePrice}€` : 'Sur commande'}
+                        </span>
+                      </div>
+                      <p
+                        className={`text-sm leading-relaxed ${
+                          isActive ? 'text-primary/70' : 'text-primary-foreground/80'
+                        }`}
+                      >
+                        {knife.steelSummary ?? 'Création sur mesure'}
+                      </p>
+                    </div>
+                  </button>
+                )
+              })}
+            </div>
+
+            <div className="hidden lg:flex lg:flex-col">
+              {displayPieces.map((knife, index) => {
+                const knifePrice = formatCurrency(knife.price)
+                const isActive = index === activeIndex
+
+                return (
+                  <button
+                    key={knife.slug ?? `${knife._id}-${index}`}
+                    type="button"
+                    onMouseEnter={() => setActiveIndex(index)}
+                    className={`text-left border-b border-primary-foreground/20 py-6 px-4 -mx-4 transition-all duration-300 ${
+                      isActive ? 'bg-primary-foreground/10' : 'hover:bg-primary-foreground/5'
+                    }`}
+                    aria-pressed={isActive}
                   >
                     <div className="flex items-baseline justify-between gap-4 mb-2">
                       <h3 className="text-xl md:text-2xl font-serif font-light">{knife.title}</h3>
@@ -89,59 +129,29 @@ export function SignatureKnivesSection({ pieces }: SignatureKnivesSectionProps) 
                     <p className="text-sm opacity-80 leading-relaxed">
                       {knife.steelSummary ?? 'Création sur mesure'}
                     </p>
-                  </div>
+                  </button>
                 )
               })}
             </div>
+          </div>
 
-            {/* Cards mobile scrollables horizontalement */}
-            <div className="lg:hidden -mx-6 px-6">
-              <div className="flex overflow-x-auto gap-3 snap-x snap-mandatory pb-4 scrollbar-hide">
-                {displayPieces.map((knife, index) => {
-                  const knifePrice = formatCurrency(knife.price)
-                  return (
-                    <button
-                      key={knife.slug ?? `${knife._id}-${index}`}
-                      onClick={() => setActiveKnife(knife)}
-                      className={`snap-start min-w-[85vw] text-left border border-primary-foreground/20 rounded-sm p-4 transition-all duration-300 ${
-                        activeKnife.slug === knife.slug
-                          ? 'bg-primary-foreground text-primary shadow-lg'
-                          : 'bg-transparent hover:bg-primary-foreground/10'
-                      }`}
-                    >
-                      <div className="space-y-3">
-                        <div className="flex items-start justify-between gap-4">
-                          <h3 className="text-lg font-serif font-light">{knife.title}</h3>
-                          <span className="text-base font-light whitespace-nowrap">
-                            {knifePrice ? `${knifePrice}€` : 'Sur commande'}
-                          </span>
-                        </div>
-                        <p
-                          className={`text-sm ${
-                            activeKnife.slug === knife.slug
-                              ? 'text-primary/70'
-                              : 'text-primary-foreground/80'
-                          }`}
-                        >
-                          {knife.steelSummary ?? 'Création sur mesure'}
-                        </p>
-                      </div>
-                    </button>
-                  )
-                })}
-              </div>
+          <div className="flex flex-col items-start gap-3 pt-1 lg:flex-row lg:items-center lg:justify-between lg:pt-2">
+            <div className="space-y-1">
+              <p className="text-[0.7rem] uppercase tracking-[0.28em] text-primary-foreground/70">
+                Détails de la pièce
+              </p>
+              <p className="text-base lg:text-lg font-serif font-light">
+                {activeKnife?.title}
+                {activePrice ? ` · ${activePrice}€` : ' · Sur commande'}
+              </p>
             </div>
-
-            {/* CTA */}
-            <div className="pt-2 lg:pt-4">
-              <Link
-                href="/pieces"
-                className="group inline-flex items-center gap-3 text-sm tracking-wide hover:opacity-70 transition-opacity duration-300"
-              >
-                <span>Voir Toutes les Pièces</span>
-                <ArrowRight className="w-4 h-4 group-hover:translate-x-2 transition-transform duration-300" />
-              </Link>
-            </div>
+            <Link
+              href="/pieces"
+              className="group inline-flex items-center gap-3 text-sm tracking-wide hover:opacity-70 transition-opacity duration-300"
+            >
+              <span>Voir Toutes les Pièces</span>
+              <ArrowRight className="h-4 w-4 transition-transform duration-300 group-hover:translate-x-2" />
+            </Link>
           </div>
         </div>
       </div>
