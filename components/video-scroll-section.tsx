@@ -92,11 +92,11 @@ export function VideoScrollSection() {
             ref={videoRef}
             src={mobileVideoSrc}
             className="w-full h-full object-cover"
-            autoPlay={shouldAutoplay}
+            autoPlay={false}
             muted
             loop
             playsInline
-            preload="metadata"
+            preload="none"
             poster="/assets/images/artisan-knife-blade-damascus-steel-dark-workshop.jpg"
           />
           <div className="absolute inset-0 bg-black/55" />

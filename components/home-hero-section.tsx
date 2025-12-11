@@ -13,13 +13,23 @@ export function HomeHeroSection() {
   return (
     <section className="bg-black text-white h-screen">
       <div className="relative w-full h-full">
+        {/* Image mobile - toujours rendue, cachée sur desktop */}
         <Image
-          src={isMobile ? mobileHeroImage : desktopHeroImage}
+          src={mobileHeroImage}
           alt="Atelier Flo RD Coutellerie"
           fill
           priority
-          sizes="(max-width: 768px) 100vw, 1920px"
-          className="object-cover object-center md:object-[center_40%]"
+          sizes="(max-width: 768px) 100vw, 0px"
+          className="object-cover object-center md:hidden"
+        />
+        {/* Image desktop - toujours rendue, cachée sur mobile */}
+        <Image
+          src={desktopHeroImage}
+          alt="Atelier Flo RD Coutellerie"
+          fill
+          priority
+          sizes="(max-width: 768px) 0px, 1920px"
+          className="object-cover object-[center_40%] hidden md:block"
         />
         <div className="absolute inset-0 bg-black/45 md:bg-black/55" />
         <div className="absolute inset-0 bg-gradient-to-b from-black/10 via-transparent to-black/85 md:from-black/40 md:to-black/80" />

@@ -41,14 +41,14 @@ export function SignatureKnivesSection({ pieces }: SignatureKnivesSectionProps) 
       <div className="w-full min-h-screen flex flex-col lg:grid lg:grid-cols-2 lg:h-screen">
         {/* Image - Mobile: stack vertical, Desktop: left side */}
         <div className="relative h-[50vh] lg:h-full bg-secondary/30 flex items-center justify-center overflow-hidden order-2 lg:order-1">
-          <div className="absolute inset-0 transition-opacity duration-500">
+          <div className="absolute inset-0 lg:transition-opacity lg:duration-500">
             <Image
               src={activeImageSrc}
               alt={activeKnife.title}
               fill
               sizes="(max-width: 1024px) 100vw, 50vw"
               priority
-              className="object-cover transition-transform duration-700"
+              className="object-cover lg:transition-transform lg:duration-700"
             />
           </div>
           <div className="absolute inset-0 bg-black/40" />
