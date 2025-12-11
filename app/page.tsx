@@ -3,7 +3,6 @@ import { Navigation } from '@/components/navigation'
 import { HomeHeroSection } from '@/components/home-hero-section'
 import { getSignaturePieces } from '@/lib/sanity/queries'
 
-// Lazy load des sections non-critiques
 const VideoScrollSection = dynamic(
   () => import('@/components/video-scroll-section').then(mod => ({ default: mod.VideoScrollSection })),
   { ssr: true }

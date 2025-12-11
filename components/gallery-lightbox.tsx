@@ -115,7 +115,7 @@ export function GalleryLightbox({ images, currentIndex, onClose, onNavigate }: G
               onClick={() => onNavigate(index)}
               className={`relative flex-shrink-0 w-20 h-20 rounded-sm overflow-hidden transition-all ${
                 index === currentIndex
-                  ? 'ring-2 ring-primary scale-110'
+                  ? 'ring-2 ring-primary md:scale-110'
                   : 'opacity-50 hover:opacity-100'
               }`}
             >

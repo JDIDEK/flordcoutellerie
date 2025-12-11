@@ -47,7 +47,7 @@ export function HorizontalScrollGallery({ collections }: HorizontalScrollGallery
                   alt={collection.title}
                   fill
                   sizes="(max-width: 640px) 100vw, 640px"
-                  className="object-cover transition-transform duration-500 group-hover:scale-105"
+                  className="object-cover md:transition-transform md:duration-500 md:group-hover:scale-105"
                 />
                 <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-black/40 to-transparent" />
                 <div className="absolute inset-0 flex flex-col justify-end p-6 text-white">

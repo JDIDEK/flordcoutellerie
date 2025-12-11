@@ -32,7 +32,7 @@ export function ProductCard({ piece }: { piece: PieceListItem }) {
             width={900}
             height={1200}
             sizes="(max-width: 640px) 100vw, (max-width: 1024px) 50vw, 33vw"
-            className="object-cover w-full h-full transition-transform duration-500 ease-out group-hover:scale-[1.03]"
+            className="object-cover w-full h-full md:transition-transform md:duration-500 md:ease-out md:group-hover:scale-[1.03]"
           />
         </Link>
 

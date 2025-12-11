@@ -57,7 +57,7 @@ export function PieceGallery({ images, status }: PieceGalleryProps) {
         <CarouselContent className="-ml-4">
           {images.map((image, idx) => (
             <CarouselItem key={idx} className="pl-4">
-              <div className="relative aspect-square overflow-hidden rounded-xl bg-muted animate-scale-in">
+              <div className="relative aspect-square overflow-hidden rounded-xl bg-muted md:animate-scale-in">
                 <Image
                   src={image.src}
                   alt={image.alt}
