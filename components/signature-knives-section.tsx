@@ -50,7 +50,7 @@ export function SignatureKnivesSection({ pieces }: SignatureKnivesSectionProps) 
           <div className="absolute inset-0 bg-black/40" />
           <div className="absolute inset-0 bg-gradient-to-t from-black/55 via-black/15 to-black/5" />
           <div className="absolute bottom-6 left-6 right-6 flex items-center justify-between text-[0.65rem] uppercase tracking-[0.28em] text-neutral-100">
-            <span>Pièce mise en avant</span>
+            <span>{activeKnife?.title}</span>
             {activePrice && <span>{activePrice}€</span>}
           </div>
         </div>
@@ -135,16 +135,7 @@ export function SignatureKnivesSection({ pieces }: SignatureKnivesSectionProps) 
             </div>
           </div>
 
-          <div className="flex flex-col items-start gap-3 pt-1 lg:flex-row lg:items-center lg:justify-between lg:pt-2">
-            <div className="space-y-1">
-              <p className="text-[0.7rem] uppercase tracking-[0.28em] text-primary-foreground/70">
-                Détails de la pièce
-              </p>
-              <p className="text-base lg:text-lg font-serif font-light">
-                {activeKnife?.title}
-                {activePrice ? ` · ${activePrice}€` : ' · Sur commande'}
-              </p>
-            </div>
+          <div className="flex items-center justify-end pt-1 lg:pt-2">
             <Link
               href="/pieces"
               className="group inline-flex items-center gap-3 text-sm tracking-wide hover:opacity-70 transition-opacity duration-300"
