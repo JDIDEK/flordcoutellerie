@@ -29,7 +29,6 @@ export function HorizontalScrollGallery({ collections }: HorizontalScrollGallery
   const scrollRef = useRef<HTMLDivElement>(null)
   
   const [hoveredId, setHoveredId] = useState<number | null>(null)
-  const itemCount = Math.max(collections.length, 1)
 
   const stateRef = useRef({ 
     current: 0, 
@@ -147,15 +146,11 @@ export function HorizontalScrollGallery({ collections }: HorizontalScrollGallery
   }, [collections.length, isMobile, measure])
 
   const horizontalPadding = isMobile ? '50vw' : '20vw'
-  const baseHeight = isMobile ? 150 : 210
-  const extraPerItem = isMobile ? 40 : 60
-  const containerHeight = `${baseHeight + (itemCount - 1) * extraPerItem}vh`
 
   return (
     <div
       ref={containerRef}
-      className={cn("relative")}
-      style={{ height: containerHeight }}
+      className={cn("relative", isMobile ? "h-[300vh]" : "h-[400vh]")}
     >
       <div className="sticky top-0 h-screen flex items-center overflow-hidden bg-background">
         <div
@@ -178,7 +173,7 @@ export function HorizontalScrollGallery({ collections }: HorizontalScrollGallery
               data-collection-card
               className={cn(
                 "relative flex-shrink-0 transform-gpu cursor-pointer origin-center",
-                isMobile ? "w-[72vw] max-w-[320px] aspect-[2/3]" : "w-[60vw] max-w-5xl aspect-[16/9]"
+                isMobile ? "w-[85vw] aspect-[3/4]" : "w-[60vw] max-w-5xl aspect-[16/9]"
               )}
               onMouseEnter={() => !isMobile && setHoveredId(collection.id)}
               onMouseLeave={() => !isMobile && setHoveredId(null)}
