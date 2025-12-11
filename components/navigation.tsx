@@ -101,21 +101,22 @@ export function Navigation({ alwaysVisible = false }: NavigationProps) {
       className={`fixed left-0 right-0 z-40 transition-all duration-500 ease-in-out ${
         alwaysVisible || isVisible ? 'top-0' : '-top-32'
       } ${hasBackground ? 'bg-neutral-900/85 backdrop-blur-md border-b border-white/10' : 'bg-transparent'}`}
+      aria-label="Navigation principale"
     >
-      <div className="container mx-auto px-6 py-6">
+      <div className="container mx-auto px-4 py-4 md:px-6 md:py-6">
         <div className="flex items-center justify-between">
           <Link href="/" className="group">
             <div className="flex flex-col">
-              <span className="text-xl font-serif font-light tracking-wider group-hover:text-primary transition-colors">
+              <span className="text-lg md:text-xl font-serif font-light tracking-wider group-hover:text-primary transition-colors">
                 FLO RD
               </span>
-              <span className="text-[10px] tracking-[0.3em] text-muted-foreground uppercase">
+              <span className="text-[9px] md:text-[10px] tracking-[0.3em] text-muted-foreground uppercase">
                 Coutellerie
               </span>
             </div>
           </Link>
 
-          {/* Desktop Navigation */}
+          {/* Desktop Navigation - Hidden by default, shown on md+ */}
           <div className="hidden md:flex items-center gap-6">
             {navLinks.map((link) => (
               <Link
@@ -130,7 +131,7 @@ export function Navigation({ alwaysVisible = false }: NavigationProps) {
             <CartSheet />
           </div>
 
-          {/* Mobile Menu Button */}
+          {/* Mobile Controls - Shown by default, hidden on md+ */}
           <div className="flex items-center gap-3 md:hidden">
             <CartSheet />
             <button

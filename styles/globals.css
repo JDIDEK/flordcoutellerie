@@ -424,3 +424,35 @@ html {
     margin-left: 0.45rem;
   }
 }
+
+/* Mobile-First Optimizations */
+@layer base {
+  /* Touch targets minimum 44x44px pour mobile */
+  button,
+  a[role='button'],
+  [role='button'] {
+    min-height: 44px;
+  }
+
+  /* Tap highlight transparent */
+  * {
+    -webkit-tap-highlight-color: transparent;
+  }
+
+  /* Espacement mobile-friendly */
+  @media (max-width: 768px) {
+    body {
+      font-size: 1rem; /* Minimum 16px sur mobile */
+    }
+  }
+
+  /* Hide scrollbar for mobile horizontal scroll */
+  .scrollbar-hide {
+    -ms-overflow-style: none;
+    scrollbar-width: none;
+  }
+
+  .scrollbar-hide::-webkit-scrollbar {
+    display: none;
+  }
+}

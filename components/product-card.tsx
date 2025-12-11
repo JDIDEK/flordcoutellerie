@@ -24,18 +24,19 @@ export function ProductCard({ piece }: { piece: PieceListItem }) {
       <div className="relative group">
         <Link
           href={`/pieces/${piece.slug}`}
-          className="block overflow-hidden rounded-lg bg-muted/40 aspect-[4/5]"
+          className="block overflow-hidden rounded-sm md:rounded-lg bg-muted/40 aspect-[4/5]"
         >
           <Image
             src={imageUrl}
             alt={piece.title}
             width={900}
             height={1200}
+            sizes="(max-width: 640px) 100vw, (max-width: 1024px) 50vw, 33vw"
             className="object-cover w-full h-full transition-transform duration-500 ease-out group-hover:scale-[1.03]"
           />
         </Link>
 
-        {/* Bouton panier : apparaît au hover de l'image */}
+        {/* Bouton panier : apparaît au hover sur desktop, toujours visible sur mobile */}
         {isAvailable && (
           <AddToCartButton
             piece={{
@@ -52,9 +53,9 @@ export function ProductCard({ piece }: { piece: PieceListItem }) {
                 "absolute bottom-3 right-3 group/cart overflow-hidden",
                 "bg-white text-foreground rounded-full shadow-lg border border-black/5",
                 "h-11 px-3 flex items-center gap-0",
-                "opacity-0 translate-y-2 pointer-events-none",
+                "opacity-100 md:opacity-0 translate-y-0 md:translate-y-2 pointer-events-auto md:pointer-events-none",
                 "transition-all duration-300 ease-out",
-                "group-hover:opacity-100 group-hover:translate-y-0 group-hover:pointer-events-auto",
+                "md:group-hover:opacity-100 md:group-hover:translate-y-0 md:group-hover:pointer-events-auto",
                 "group-hover/cart:gap-2 hover:shadow-xl",
               ].join(" "),
               "aria-label": "Ajouter au panier",

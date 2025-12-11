@@ -38,9 +38,9 @@ export function SignatureKnivesSection({ pieces }: SignatureKnivesSectionProps) 
       className="relative min-h-screen w-screen overflow-visible lg:overflow-hidden"
       style={{ marginLeft: 'calc(50% - 50vw)', marginRight: 'calc(50% - 50vw)' }}
     >
-      <div className="w-full min-h-screen lg:h-screen flex flex-col lg:grid lg:grid-cols-2">
-        {/* Left Side - Image dynamique */}
-        <div className="relative flex-1 min-h-[55vh] lg:h-full bg-secondary/30 flex items-center justify-center overflow-hidden order-1 lg:order-none">
+      <div className="w-full min-h-screen flex flex-col lg:grid lg:grid-cols-2 lg:h-screen">
+        {/* Image - Mobile: stack vertical, Desktop: left side */}
+        <div className="relative h-[50vh] lg:h-full bg-secondary/30 flex items-center justify-center overflow-hidden order-2 lg:order-1">
           <div className="absolute inset-0 transition-opacity duration-500">
             <Image
               src={activeImageSrc}
@@ -52,16 +52,14 @@ export function SignatureKnivesSection({ pieces }: SignatureKnivesSectionProps) 
             />
           </div>
           <div className="absolute inset-0 bg-black/40" />
-          <div className="relative z-10 text-center text-white px-8">
-          </div>
         </div>
 
-        {/* Right Side - Menu des couteaux */}
-        <div className="bg-primary/80 flex flex-col justify-center px-6 lg:px-16 py-12 text-primary-foreground order-2 lg:order-none overflow-visible lg:overflow-hidden lg:h-full">
-          <div className="max-w-xl w-full space-y-6 mx-auto">
+        {/* Content - Mobile: top, Desktop: right side */}
+        <div className="bg-primary/90 lg:bg-primary/80 flex flex-col justify-center px-6 lg:px-16 py-8 lg:py-12 text-primary-foreground order-1 lg:order-2">
+          <div className="max-w-xl w-full space-y-4 lg:space-y-6 mx-auto">
             {/* Titre */}
-            <div className="space-y-4">
-              <h2 className="text-4xl md:text-5xl font-serif font-light tracking-tight">
+            <div className="space-y-2 lg:space-y-4">
+              <h2 className="text-3xl lg:text-4xl xl:text-5xl font-serif font-light tracking-tight">
                 COUTEAUX
                 <br />
                 SIGNATURE
@@ -69,7 +67,7 @@ export function SignatureKnivesSection({ pieces }: SignatureKnivesSectionProps) 
             </div>
 
             {/* Liste desktop */}
-            <div className="space-y-1 pt-8 hidden lg:block">
+            <div className="space-y-1 pt-6 lg:pt-8 hidden lg:block">
               {displayPieces.map((knife, index) => {
                 const knifePrice = formatCurrency(knife.price)
                 return (
@@ -96,44 +94,46 @@ export function SignatureKnivesSection({ pieces }: SignatureKnivesSectionProps) 
               })}
             </div>
 
-            {/* Liste mobile scrollable */}
-            <div className="lg:hidden space-y-3 overflow-y-auto pr-3" style={{ maxHeight: '22vh' }}>
-              {displayPieces.map((knife, index) => {
-                const knifePrice = formatCurrency(knife.price)
-                return (
-                  <button
-                    key={knife.slug ?? `${knife._id}-${index}`}
-                    onClick={() => setActiveKnife(knife)}
-                    className={`w-full text-left border border-primary-foreground/20 rounded-sm p-4 transition-all duration-300 ${
-                      activeKnife.slug === knife.slug
-                        ? 'bg-primary-foreground text-primary shadow-lg shadow-black/10'
-                        : 'bg-transparent hover:bg-primary-foreground/10'
-                    }`}
-                  >
-                    <div className="flex items-center justify-between gap-4">
-                      <div>
-                        <p className="text-xs uppercase tracking-[0.3em] mb-2">{knife.title}</p>
+            {/* Cards mobile scrollables horizontalement */}
+            <div className="lg:hidden -mx-6 px-6">
+              <div className="flex overflow-x-auto gap-3 snap-x snap-mandatory pb-4 scrollbar-hide">
+                {displayPieces.map((knife, index) => {
+                  const knifePrice = formatCurrency(knife.price)
+                  return (
+                    <button
+                      key={knife.slug ?? `${knife._id}-${index}`}
+                      onClick={() => setActiveKnife(knife)}
+                      className={`snap-start min-w-[85vw] text-left border border-primary-foreground/20 rounded-sm p-4 transition-all duration-300 ${
+                        activeKnife.slug === knife.slug
+                          ? 'bg-primary-foreground text-primary shadow-lg'
+                          : 'bg-transparent hover:bg-primary-foreground/10'
+                      }`}
+                    >
+                      <div className="space-y-3">
+                        <div className="flex items-start justify-between gap-4">
+                          <h3 className="text-lg font-serif font-light">{knife.title}</h3>
+                          <span className="text-base font-light whitespace-nowrap">
+                            {knifePrice ? `${knifePrice}€` : 'Sur commande'}
+                          </span>
+                        </div>
                         <p
                           className={`text-sm ${
                             activeKnife.slug === knife.slug
-                              ? 'text-black/70'
+                              ? 'text-primary/70'
                               : 'text-primary-foreground/80'
                           }`}
                         >
                           {knife.steelSummary ?? 'Création sur mesure'}
                         </p>
                       </div>
-                      <span className="text-base font-light whitespace-nowrap">
-                        {knifePrice ? `${knifePrice}€` : 'Sur commande'}
-                      </span>
-                    </div>
-                  </button>
-                )
-              })}
+                    </button>
+                  )
+                })}
+              </div>
             </div>
 
             {/* CTA */}
-            <div className="pt-4">
+            <div className="pt-2 lg:pt-4">
               <Link
                 href="/pieces"
                 className="group inline-flex items-center gap-3 text-sm tracking-wide hover:opacity-70 transition-opacity duration-300"

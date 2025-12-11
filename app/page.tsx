@@ -1,9 +1,18 @@
+import dynamic from 'next/dynamic'
 import { Navigation } from '@/components/navigation'
-import { VideoScrollSection } from '@/components/video-scroll-section'
-import { SignatureKnivesSection } from '@/components/signature-knives-section'
 import { HomeHeroSection } from '@/components/home-hero-section'
 import { getSignaturePieces } from '@/lib/sanity/queries'
 
+// Lazy load des sections non-critiques
+const VideoScrollSection = dynamic(
+  () => import('@/components/video-scroll-section').then(mod => ({ default: mod.VideoScrollSection })),
+  { ssr: true }
+)
+
+const SignatureKnivesSection = dynamic(
+  () => import('@/components/signature-knives-section').then(mod => ({ default: mod.SignatureKnivesSection })),
+  { ssr: true }
+)
 
 export default async function Home() {
   const signaturePieces = await getSignaturePieces()

@@ -25,6 +25,49 @@ interface HorizontalScrollGalleryProps {
 const lerp = (start: number, end: number, factor: number) => start + (end - start) * factor
 
 export function HorizontalScrollGallery({ collections }: HorizontalScrollGalleryProps) {
+  const isMobile = useIsMobile()
+
+  // Version mobile: grille verticale simple
+  if (isMobile) {
+    return (
+      <section className="py-12 px-4 bg-background">
+        <div className="container mx-auto">
+          <h2 className="text-3xl font-serif font-light tracking-tight mb-8 text-center">
+            Collections
+          </h2>
+          <div className="grid gap-6">
+            {collections.map((collection) => (
+              <Link
+                href="/galerie"
+                key={collection.id}
+                className="relative aspect-[4/3] overflow-hidden rounded-sm group"
+              >
+                <Image
+                  src={collection.image}
+                  alt={collection.title}
+                  fill
+                  sizes="(max-width: 640px) 100vw, 640px"
+                  className="object-cover transition-transform duration-500 group-hover:scale-105"
+                />
+                <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-black/40 to-transparent" />
+                <div className="absolute inset-0 flex flex-col justify-end p-6 text-white">
+                  <p className="text-xs uppercase tracking-[0.3em] mb-2 opacity-80">
+                    {collection.category} • {collection.year}
+                  </p>
+                  <h3 className="text-2xl font-serif font-light mb-2">
+                    {collection.title}
+                  </h3>
+                  <p className="text-sm opacity-90">{collection.subtitle}</p>
+                </div>
+              </Link>
+            ))}
+          </div>
+        </div>
+      </section>
+    )
+  }
+
+  // Version desktop: scroll horizontal existant
   const containerRef = useRef<HTMLDivElement>(null)
   const scrollRef = useRef<HTMLDivElement>(null)
   
@@ -37,8 +80,6 @@ export function HorizontalScrollGallery({ collections }: HorizontalScrollGallery
   })
   const requestRef = useRef<number>(0)
   const boundsRef = useRef({ top: 0, height: 0, scrollRange: 1 })
-  
-  const isMobile = useIsMobile()
 
   const measure = useCallback(() => {
     if (!containerRef.current) return
