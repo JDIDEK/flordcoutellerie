@@ -45,7 +45,7 @@ export function SignatureKnivesSection({ pieces }: SignatureKnivesSectionProps) 
             fill
             sizes="(max-width: 1024px) 100vw, 50vw"
             priority
-            className="object-cover transition-transform duration-700"
+            className="object-cover md:transition-transform md:duration-700"
           />
           <div className="absolute inset-0 bg-black/40" />
           <div className="absolute inset-0 bg-gradient-to-t from-black/55 via-black/15 to-black/5" />
@@ -141,7 +141,7 @@ export function SignatureKnivesSection({ pieces }: SignatureKnivesSectionProps) 
               className="group inline-flex items-center gap-3 text-sm tracking-wide hover:opacity-70 transition-opacity duration-300"
             >
               <span>Voir Toutes les Pièces</span>
-              <ArrowRight className="h-4 w-4 transition-transform duration-300 group-hover:translate-x-2" />
+              <ArrowRight className="h-4 w-4 md:transition-transform md:duration-300 md:group-hover:translate-x-2" />
             </Link>
           </div>
         </div>

@@ -102,6 +102,18 @@ html {
 
 /* Enhanced animations for Awwwards-level interactions */
 
+/* Respect user preference for reduced motion */
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+    scroll-behavior: auto !important;
+  }
+}
+
 @keyframes fade-in {
   from {
     opacity: 0;
@@ -115,6 +127,18 @@ html {
   from {
     opacity: 0;
     transform: translateY(20px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+/* Mobile-optimized fade-in-up with less movement */
+@keyframes fade-in-up-mobile {
+  from {
+    opacity: 0;
+    transform: translateY(10px);
   }
   to {
     opacity: 1;
@@ -144,6 +168,18 @@ html {
   }
 }
 
+/* Mobile-optimized slide with less movement */
+@keyframes slide-in-right-mobile {
+  from {
+    opacity: 0;
+    transform: translateX(15px);
+  }
+  to {
+    opacity: 1;
+    transform: translateX(0);
+  }
+}
+
 @keyframes scale-in {
   from {
     opacity: 0;
@@ -155,15 +191,7 @@ html {
   }
 }
 
-/* Désactiver scale-in sur mobile */
-@media (max-width: 768px) {
-  .md\:animate-scale-in {
-    animation: none !important;
-    opacity: 1;
-    transform: none;
-  }
-}
-
+/* Desktop animations - full effect */
 .animate-fade-in {
   animation: fade-in 0.6s ease-out forwards;
 }
@@ -184,6 +212,7 @@ html {
   animation: scale-in 0.6s ease-out forwards;
 }
 
+/* Animation delays - desktop only */
 .animation-delay-200 {
   animation-delay: 0.2s;
   opacity: 0;
@@ -202,6 +231,75 @@ html {
 .animation-delay-800 {
   animation-delay: 0.8s;
   opacity: 0;
+}
+
+/* Mobile optimizations - faster, simpler animations */
+@media (max-width: 768px) {
+  .animate-fade-in {
+    animation: fade-in 0.4s ease-out forwards;
+  }
+
+  .animate-fade-in-up {
+    animation: fade-in-up-mobile 0.5s ease-out forwards;
+  }
+
+  .animate-slide-in-left {
+    animation: fade-in 0.4s ease-out forwards;
+  }
+
+  .animate-slide-in-right {
+    animation: slide-in-right-mobile 0.5s ease-out forwards;
+  }
+
+  .animate-scale-in {
+    animation: fade-in 0.4s ease-out forwards;
+  }
+
+  /* Remove delays on mobile for instant feel */
+  .animation-delay-200,
+  .animation-delay-400,
+  .animation-delay-600,
+  .animation-delay-800 {
+    animation-delay: 0s;
+    opacity: 0;
+  }
+
+  /* Stagger reduced on mobile */
+  .stagger-item {
+    animation: fade-in 0.3s ease-out forwards;
+  }
+
+  .stagger-item:nth-child(1) { animation-delay: 0.05s; }
+  .stagger-item:nth-child(2) { animation-delay: 0.1s; }
+  .stagger-item:nth-child(3) { animation-delay: 0.15s; }
+  .stagger-item:nth-child(4) { animation-delay: 0.2s; }
+  .stagger-item:nth-child(5) { animation-delay: 0.25s; }
+  .stagger-item:nth-child(6) { animation-delay: 0.3s; }
+
+  /* Disable hover-dependent effects */
+  .hover-lift:hover {
+    transform: none;
+    box-shadow: none;
+  }
+
+  /* Simplify image reveal on mobile */
+  .image-reveal::after {
+    display: none;
+  }
+
+  /* Disable glow border on mobile */
+  .glow-border::before {
+    display: none;
+  }
+}
+
+/* Désactiver scale-in sur mobile */
+@media (max-width: 768px) {
+  .md\:animate-scale-in {
+    animation: none !important;
+    opacity: 1;
+    transform: none;
+  }
 }
 
 /* Parallax and hover effects */

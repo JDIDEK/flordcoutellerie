@@ -26,53 +26,11 @@ const lerp = (start: number, end: number, factor: number) => start + (end - star
 
 export function HorizontalScrollGallery({ collections }: HorizontalScrollGalleryProps) {
   const isMobile = useIsMobile()
-
-  // Version mobile: grille verticale simple
-  if (isMobile) {
-    return (
-      <section className="py-12 px-4 bg-background">
-        <div className="container mx-auto">
-          <h2 className="text-3xl font-serif font-light tracking-tight mb-8 text-center">
-            Collections
-          </h2>
-          <div className="grid gap-6">
-            {collections.map((collection) => (
-              <Link
-                href="/galerie"
-                key={collection.id}
-                className="relative aspect-[4/3] overflow-hidden rounded-sm group"
-              >
-                <Image
-                  src={collection.image}
-                  alt={collection.title}
-                  fill
-                  sizes="(max-width: 640px) 100vw, 640px"
-                  className="object-cover md:transition-transform md:duration-500 md:group-hover:scale-105"
-                />
-                <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-black/40 to-transparent" />
-                <div className="absolute inset-0 flex flex-col justify-end p-6 text-white">
-                  <p className="text-xs uppercase tracking-[0.3em] mb-2 opacity-80">
-                    {collection.category} • {collection.year}
-                  </p>
-                  <h3 className="text-2xl font-serif font-light mb-2">
-                    {collection.title}
-                  </h3>
-                  <p className="text-sm opacity-90">{collection.subtitle}</p>
-                </div>
-              </Link>
-            ))}
-          </div>
-        </div>
-      </section>
-    )
-  }
-
-  // Version desktop: scroll horizontal existant
+  
+  // All hooks must be called before any conditional returns
   const containerRef = useRef<HTMLDivElement>(null)
   const scrollRef = useRef<HTMLDivElement>(null)
-  
   const [hoveredId, setHoveredId] = useState<number | null>(null)
-
   const stateRef = useRef({ 
     current: 0, 
     target: 0,
@@ -95,7 +53,8 @@ export function HorizontalScrollGallery({ collections }: HorizontalScrollGallery
   }, [])
 
   useEffect(() => {
-    if (collections.length === 0) return
+    // Skip desktop scroll logic on mobile
+    if (isMobile || collections.length === 0) return
 
     measure()
     window.addEventListener('resize', measure)
@@ -110,7 +69,7 @@ export function HorizontalScrollGallery({ collections }: HorizontalScrollGallery
 
     const animate = () => {
       const state = stateRef.current
-      const easeFactor = isMobile ? 0.1 : 0.08
+      const easeFactor = 0.08
       state.current = lerp(state.current, state.target, easeFactor)
       
       if (state.lastRendered !== -1 && 
@@ -145,21 +104,21 @@ export function HorizontalScrollGallery({ collections }: HorizontalScrollGallery
             const cardRect = card.getBoundingClientRect()
             const cardCenter = cardRect.left + cardRect.width / 2
             
-            const spreadFactor = isMobile ? 0.7 : 1.0
+            const spreadFactor = 1.0
             const distanceNorm = (cardCenter - viewportCenter) / (viewportCenter * spreadFactor)
             
-            const slopeStrength = isMobile ? 100 : 250
+            const slopeStrength = 250
             const translateY = -distanceNorm * slopeStrength
 
             const distanceAbs = Math.abs(distanceNorm)
-            const baseScale = isMobile ? 0.95 : 0.9
+            const baseScale = 0.9
             const scale = baseScale + (Math.exp(-distanceAbs * 2) * 0.1)
 
             const rotateY = distanceNorm * -15
-            const rotateZ = distanceNorm * (isMobile ? 2 : 5)
+            const rotateZ = distanceNorm * 5
 
             card.style.transform = `
-              perspective(${isMobile ? 800 : 1500}px)
+              perspective(1500px)
               translate3d(0, ${translateY}px, 0)
               rotateY(${rotateY}deg)
               rotateZ(${rotateZ}deg)
@@ -186,67 +145,101 @@ export function HorizontalScrollGallery({ collections }: HorizontalScrollGallery
     }
   }, [collections.length, isMobile, measure])
 
-  const horizontalPadding = isMobile ? '50vw' : '20vw'
+  // Mobile version: simple vertical grid
+  if (isMobile) {
+    return (
+      <section className="py-12 px-4 bg-background">
+        <div className="container mx-auto">
+          <h2 className="text-3xl font-serif font-light tracking-tight mb-8 text-center">
+            Collections
+          </h2>
+          <div className="grid gap-6">
+            {collections.map((collection) => (
+              <Link
+                href="/galerie"
+                key={collection.id}
+                className="relative aspect-[4/3] overflow-hidden rounded-sm group"
+              >
+                <Image
+                  src={collection.image}
+                  alt={collection.title}
+                  fill
+                  sizes="(max-width: 640px) 100vw, 640px"
+                  className="object-cover"
+                />
+                <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-black/40 to-transparent" />
+                <div className="absolute inset-0 flex flex-col justify-end p-6 text-white">
+                  <p className="text-xs uppercase tracking-[0.3em] mb-2 opacity-80">
+                    {collection.category} • {collection.year}
+                  </p>
+                  <h3 className="text-2xl font-serif font-light mb-2">
+                    {collection.title}
+                  </h3>
+                  <p className="text-sm opacity-90">{collection.subtitle}</p>
+                </div>
+              </Link>
+            ))}
+          </div>
+        </div>
+      </section>
+    )
+  }
 
+  // Desktop version: horizontal scroll
   return (
     <div
       ref={containerRef}
-      className={cn("relative", isMobile ? "h-[300vh]" : "h-[400vh]")}
+      className="relative h-[400vh]"
     >
       <div className="sticky top-0 h-screen flex items-center overflow-hidden bg-background">
         <div
           ref={scrollRef}
           className="flex items-center will-change-transform"
           style={{
-            paddingLeft: horizontalPadding,
-            paddingRight: horizontalPadding,
-            gap: isMobile ? '2rem' : '5rem' 
+            paddingLeft: '20vw',
+            paddingRight: '20vw',
+            gap: '5rem' 
           }}
         >
           {collections.map((collection, index) => {
             const isHovered = hoveredId === collection.id
-
-            const showWaveLayer = !isMobile && !isHovered
+            const showWaveLayer = !isHovered
 
             return (
-            <article
-              key={collection.id}
-              data-collection-card
-              className={cn(
-                "relative flex-shrink-0 transform-gpu cursor-pointer origin-center",
-                isMobile ? "w-[85vw] aspect-[3/4]" : "w-[60vw] max-w-5xl aspect-[16/9]"
-              )}
-              onMouseEnter={() => !isMobile && setHoveredId(collection.id)}
-              onMouseLeave={() => !isMobile && setHoveredId(null)}
-              style={{
-                transformStyle: 'preserve-3d',
-                willChange: 'transform'
-              }}
-            >
-              <Link
-                href="/galerie"
-                className="block w-full h-full group focus-visible:outline-none"
-                style={{ transformStyle: 'preserve-3d' }}
-                onFocus={() => !isMobile && setHoveredId(collection.id)}
-                onBlur={() => !isMobile && setHoveredId(null)}
+              <article
+                key={collection.id}
+                data-collection-card
+                className="relative flex-shrink-0 transform-gpu cursor-pointer origin-center w-[60vw] max-w-5xl aspect-[16/9]"
+                onMouseEnter={() => setHoveredId(collection.id)}
+                onMouseLeave={() => setHoveredId(null)}
+                style={{
+                  transformStyle: 'preserve-3d',
+                  willChange: 'transform'
+                }}
               >
-                <div 
-                  className="absolute inset-0 w-full h-full overflow-hidden rounded-sm bg-black shadow-2xl"
-                  style={{ transform: 'translateZ(0px)' }} 
+                <Link
+                  href="/galerie"
+                  className="block w-full h-full group focus-visible:outline-none"
+                  style={{ transformStyle: 'preserve-3d' }}
+                  onFocus={() => setHoveredId(collection.id)}
+                  onBlur={() => setHoveredId(null)}
                 >
-                  <div className="relative w-full h-full">
-                    <Image
-                      src={collection.image || '/placeholder.svg'}
-                      alt={collection.title}
-                      fill
-                      sizes={isMobile ? "(max-width: 768px) 85vw, 600px" : "(max-width: 1200px) 60vw, 1200px"}
-                      priority={index === 0}
-                      className="object-cover"
-                    />
-                    <div className="pointer-events-none absolute inset-0 bg-black/20" />
-                  </div>
+                  <div 
+                    className="absolute inset-0 w-full h-full overflow-hidden rounded-sm bg-black shadow-2xl"
+                    style={{ transform: 'translateZ(0px)' }} 
+                  >
+                    <div className="relative w-full h-full">
+                      <Image
+                        src={collection.image || '/placeholder.svg'}
+                        alt={collection.title}
+                        fill
+                        sizes="(max-width: 1200px) 60vw, 1200px"
+                        priority={index === 0}
+                        className="object-cover"
+                      />
+                      <div className="pointer-events-none absolute inset-0 bg-black/20" />
+                    </div>
 
-                  {!isMobile && (
                     <div 
                       className="absolute inset-0 w-full h-full pointer-events-none transition-opacity duration-700 ease-out"
                       style={{
@@ -263,47 +256,37 @@ export function HorizontalScrollGallery({ collections }: HorizontalScrollGallery
                         className="object-cover"
                       />
                     </div>
-                  )}
-                </div>
+                  </div>
 
-                <div 
-                  className="absolute inset-0 flex flex-col items-center justify-center text-center px-4 pointer-events-none"
-                  style={{ 
-                    transform: `translateZ(${isMobile ? 40 : 80}px)`,
-                  }}
-                >
-                  <p className="mb-4 text-[0.6rem] md:text-xs tracking-[0.3em] uppercase text-neutral-200 drop-shadow-lg">
-                    {collection.category} • {collection.year}
-                  </p>
-                  
-                  <h2 className={cn(
-                    "font-serif font-light tracking-[0.05em] text-white drop-shadow-xl mb-3",
-                    isMobile ? "text-3xl" : "text-6xl lg:text-7xl"
-                  )}>
-                    {collection.title}
-                  </h2>
-                  
-                  {!isMobile && (
+                  <div 
+                    className="absolute inset-0 flex flex-col items-center justify-center text-center px-4 pointer-events-none"
+                    style={{ 
+                      transform: 'translateZ(80px)',
+                    }}
+                  >
+                    <p className="mb-4 text-xs tracking-[0.3em] uppercase text-neutral-200 drop-shadow-lg">
+                      {collection.category} • {collection.year}
+                    </p>
+                    
+                    <h2 className="font-serif font-light tracking-[0.05em] text-white drop-shadow-xl mb-3 text-6xl lg:text-7xl">
+                      {collection.title}
+                    </h2>
+                    
                     <p className="max-w-md text-sm text-neutral-100/90 leading-relaxed drop-shadow-md mb-8">
                       {collection.subtitle}
                     </p>
-                  )}
 
-                  <div className="pointer-events-auto mt-4 md:mt-0">
-                    <span
-                      className={cn(
-                        "inline-flex items-center gap-3 rounded-full border border-white/30 bg-black/20 backdrop-blur-sm text-white uppercase tracking-[0.2em]",
-                        isMobile ? "px-4 py-2 text-[0.6rem]" : "px-6 py-3 text-xs hover:bg-white hover:text-black transition-all"
-                      )}
-                    >
-                      Découvrir
-                      <span className="inline-block text-[0.6rem]">→</span>
-                    </span>
+                    <div className="pointer-events-auto">
+                      <span className="inline-flex items-center gap-3 rounded-full border border-white/30 bg-black/20 backdrop-blur-sm text-white uppercase tracking-[0.2em] px-6 py-3 text-xs hover:bg-white hover:text-black transition-all">
+                        Découvrir
+                        <span className="inline-block text-[0.6rem]">→</span>
+                      </span>
+                    </div>
                   </div>
-                </div>
-              </Link>
-            </article>
-          )})}
+                </Link>
+              </article>
+            )
+          })}
         </div>
       </div>
 

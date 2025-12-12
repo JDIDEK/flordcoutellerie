@@ -3,6 +3,7 @@ import { Cormorant_Garamond, Inter } from 'next/font/google'
 import { Analytics } from '@vercel/analytics/next'
 import { SmoothScroll } from '@/components/smooth-scroll'
 import { FooterWrapper } from '@/components/footer-wrapper'
+import { CookieBanner } from '@/components/cookie-banner'
 import '@/styles/globals.css'
 
 const cormorant = Cormorant_Garamond({ 
@@ -43,8 +44,6 @@ export const metadata: Metadata = {
 export const viewport = {
   width: 'device-width',
   initialScale: 1,
-  maximumScale: 1,
-  userScalable: false,
 }
 
 export default function RootLayout({
@@ -58,6 +57,7 @@ export default function RootLayout({
         <SmoothScroll />
         {children}
         <FooterWrapper />
+        <CookieBanner />
         <Analytics />
       </body>
     </html>

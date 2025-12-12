@@ -2,7 +2,7 @@
 
 import Image from 'next/image'
 import Link from 'next/link'
-import { ShoppingBag, Trash2, Minus, Plus } from 'lucide-react'
+import { ShoppingBag, Trash2, Minus, Plus, Loader2 } from 'lucide-react'
 import { useState } from 'react'
 
 import { Button } from '@/components/ui/button'
@@ -28,6 +28,8 @@ type CartSheetProps = {
 export function CartSheet({ className, triggerClassName }: CartSheetProps) {
   const { items, removeItem, setQuantity, clear } = useCart()
   const [open, setOpen] = useState(false)
+  const [isLoading, setIsLoading] = useState(false)
+  const [error, setError] = useState<string | null>(null)
 
   const totalItems = items.reduce((sum, item) => sum + item.quantity, 0)
   const totalPrice = items.reduce(
@@ -35,6 +37,40 @@ export function CartSheet({ className, triggerClassName }: CartSheetProps) {
     0
   )
   const totalLabel = formatCurrency(totalPrice) ?? '0'
+
+  const handleCheckout = async () => {
+    if (items.length === 0) return
+
+    setIsLoading(true)
+    setError(null)
+
+    try {
+      // Build array of product IDs (repeat for quantity)
+      const productIds = items.flatMap((item) =>
+        Array(item.quantity).fill(item.id)
+      )
+
+      const response = await fetch('/api/checkout', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ productIds }),
+      })
+
+      const data = await response.json()
+
+      if (!response.ok) {
+        throw new Error(data.error || 'Erreur lors du paiement')
+      }
+
+      if (data.url) {
+        window.location.href = data.url
+      }
+    } catch (err) {
+      setError(err instanceof Error ? err.message : 'Erreur inattendue')
+    } finally {
+      setIsLoading(false)
+    }
+  }
 
   return (
     <Sheet modal={false} open={open} onOpenChange={setOpen}>
@@ -123,6 +159,7 @@ export function CartSheet({ className, triggerClassName }: CartSheetProps) {
                               {item.slug && (
                                 <Link
                                   href={`/pieces/${item.slug}`}
+                                  onClick={() => setOpen(false)}
                                   className="text-xs text-primary underline-offset-4 hover:underline"
                                 >
                                   Voir la fiche
@@ -192,8 +229,23 @@ export function CartSheet({ className, triggerClassName }: CartSheetProps) {
               {totalLabel} EUR
             </span>
           </div>
-          <Button size="lg" disabled={items.length === 0} className="w-full">
-            Paiement
+          {error && (
+            <p className="text-sm text-destructive text-center">{error}</p>
+          )}
+          <Button
+            size="lg"
+            disabled={items.length === 0 || isLoading}
+            className="w-full"
+            onClick={handleCheckout}
+          >
+            {isLoading ? (
+              <>
+                <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+                Redirection...
+              </>
+            ) : (
+              'Paiement'
+            )}
           </Button>
           {items.length > 0 && (
             <Button

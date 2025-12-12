@@ -4,6 +4,7 @@ import { notFound } from 'next/navigation'
 import { ArrowLeft, Check } from 'lucide-react'
 
 import { AddToCartButton } from '@/components/add-to-cart-button'
+import { BuyNowButton } from '@/components/buy-now-button'
 import { Navigation } from '@/components/navigation'
 import { Button } from '@/components/ui/button'
 import { PieceGallery } from '@/components/piece-gallery'
@@ -75,7 +76,7 @@ export default async function PieceDetailPage({
           <div className="max-w-6xl mx-auto">
             <Link
               href="/pieces"
-              className="inline-flex items-center gap-2 text-sm text-muted-foreground hover:text-foreground transition-colors mb-10 animate-fade-in"
+              className="inline-flex items-center gap-2 text-sm text-muted-foreground hover:text-foreground transition-colors mb-10 md:animate-fade-in"
             >
               <ArrowLeft className="w-4 h-4" />
               Retour aux pieces
@@ -85,7 +86,7 @@ export default async function PieceDetailPage({
               <PieceGallery images={galleryImages} status={piece.status} />
 
               <section className="space-y-8">
-                <div className="space-y-3 animate-slide-in-right">
+                <div className="space-y-3 md:animate-slide-in-right">
                   {piece.category && (
                     <p className="text-xs tracking-[0.35em] text-muted-foreground uppercase">
                       {piece.category}
@@ -101,7 +102,7 @@ export default async function PieceDetailPage({
                   )}
                 </div>
 
-                <div className="space-y-3 animate-fade-in-up animation-delay-200">
+                <div className="space-y-3 md:animate-fade-in-up md:animation-delay-200">
                   <div className="flex items-baseline gap-3">
                     <span className="text-2xl md:text-3xl font-light text-foreground">
                       {formattedPrice ? `${formattedPrice} EUR` : 'Sur demande'}
@@ -128,7 +129,7 @@ export default async function PieceDetailPage({
                   </div>
                 </div>
 
-                <div className="space-y-3 animate-fade-in-up animation-delay-400">
+                <div className="space-y-3 md:animate-fade-in-up md:animation-delay-400">
                   {isAvailable ? (
                     <>
                       <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
@@ -146,7 +147,7 @@ export default async function PieceDetailPage({
                                   <svg
                                     viewBox="0 0 200 200"
                                     preserveAspectRatio="none"
-                                    className="absolute inset-0 w-full h-full text-amber-100 translate-y-[70%] group-hover/cta:translate-y-0 transition-transform duration-600 ease-out"
+                                    className="absolute inset-0 w-full h-full text-amber-100 translate-y-[70%] md:group-hover/cta:translate-y-0 md:transition-transform md:duration-600 ease-out"
                                     aria-hidden="true"
                                   >
                                     <path
@@ -164,14 +165,7 @@ export default async function PieceDetailPage({
                           }}
                         />
 
-                        <Button
-                          size="lg"
-                          variant="outline"
-                          className="w-full hover:shadow-sm"
-                          type="button"
-                        >
-                          Acheter maintenant
-                        </Button>
+                        <BuyNowButton pieceId={piece._id} />
                       </div>
                       <p className="text-xs text-muted-foreground leading-relaxed">
                         Acompte de 20% à la commande — Livraison estimée sous 2 à 4 semaines.
@@ -192,12 +186,12 @@ export default async function PieceDetailPage({
                 </div>
 
                 {piece.description && (
-                  <p className="text-sm text-muted-foreground leading-relaxed animate-fade-in-up animation-delay-600">
+                  <p className="text-sm text-muted-foreground leading-relaxed md:animate-fade-in-up md:animation-delay-600">
                     {piece.description}
                   </p>
                 )}
 
-                <div className="space-y-3 animate-fade-in-up animation-delay-800">
+                <div className="space-y-3 md:animate-fade-in-up md:animation-delay-800">
                   <h2 className="text-lg font-medium text-foreground">Fiche technique</h2>
                   <div className="grid grid-cols-1 gap-2 text-sm text-muted-foreground">
                     {[

@@ -124,7 +124,7 @@ export async function POST(req: Request) {
       mode: 'payment',
       line_items: lineItems,
       success_url: `${origin}/merci?session_id={CHECKOUT_SESSION_ID}`,
-      cancel_url: `${origin}/panier`,
+      cancel_url: `${origin}/pieces`,
       invoice_creation: { enabled: true },
       metadata: { pieceIds: pieceIdsValue },
       payment_intent_data: { metadata: { pieceIds: pieceIdsValue } },
