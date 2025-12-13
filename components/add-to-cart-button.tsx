@@ -18,18 +18,21 @@ type AddToCartButtonProps = {
 }
 
 export function AddToCartButton({ piece, buttonProps }: AddToCartButtonProps) {
-  const { addItem } = useCart()
+  const { addItem, isInCart } = useCart()
   const [loading, setLoading] = useState(false)
 
   const isUnavailable = piece.status && piece.status !== 'available'
-  const disabled = loading || isUnavailable || buttonProps?.disabled
+  const alreadyInCart = isInCart(piece.id)
+  const disabled = loading || isUnavailable || alreadyInCart || buttonProps?.disabled
   const { children, ...restButtonProps } = buttonProps ?? {}
 
   const defaultLabel = loading
     ? 'Ajout...'
     : isUnavailable
       ? 'Indisponible'
-      : 'Ajouter au panier'
+      : alreadyInCart
+        ? 'Déjà dans le panier'
+        : 'Ajouter au panier'
   const showCustomContent = children !== undefined && !loading && !isUnavailable
 
   const handleAdd = () => {

@@ -2,7 +2,7 @@
 
 import Image from 'next/image'
 import Link from 'next/link'
-import { ShoppingBag, Trash2, Minus, Plus, Loader2 } from 'lucide-react'
+import { ShoppingBag, Trash2, Loader2 } from 'lucide-react'
 import { useState } from 'react'
 
 import { Button } from '@/components/ui/button'
@@ -26,7 +26,7 @@ type CartSheetProps = {
 }
 
 export function CartSheet({ className, triggerClassName }: CartSheetProps) {
-  const { items, removeItem, setQuantity, clear } = useCart()
+  const { items, removeItem, clear } = useCart()
   const [open, setOpen] = useState(false)
   const [isLoading, setIsLoading] = useState(false)
   const [error, setError] = useState<string | null>(null)
@@ -179,33 +179,7 @@ export function CartSheet({ className, triggerClassName }: CartSheetProps) {
                             </Button>
                           </div>
 
-                          <div className="flex items-center justify-between gap-2 pt-2">
-                            <div className="flex items-center gap-2">
-                              <Button
-                                size="icon"
-                                variant="outline"
-                                className="h-8 w-8"
-                                onClick={() =>
-                                  setQuantity(item.id, Math.max(1, item.quantity - 1))
-                                }
-                                aria-label="Diminuer la quantite"
-                                type="button"
-                              >
-                                <Minus className="h-4 w-4" />
-                              </Button>
-                              <span className="w-8 text-center text-sm">{item.quantity}</span>
-                              <Button
-                                size="icon"
-                                variant="outline"
-                                className="h-8 w-8"
-                                onClick={() => setQuantity(item.id, item.quantity + 1)}
-                                aria-label="Augmenter la quantite"
-                                type="button"
-                              >
-                                <Plus className="h-4 w-4" />
-                              </Button>
-                            </div>
-
+                          <div className="flex items-center justify-end pt-2">
                             <span className="text-sm font-semibold">
                               {lineTotal ? `${lineTotal} EUR` : '-'}
                             </span>

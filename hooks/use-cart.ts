@@ -18,29 +18,26 @@ type CartStore = {
   removeItem: (id: string) => void
   clear: () => void
   setQuantity: (id: string, quantity: number) => void
+  isInCart: (id: string) => boolean
 }
 
 export const useCart = create<CartStore>()(
   persist(
-    (set) => ({
+    (set, get) => ({
       items: [],
       addItem: (item) =>
         set((state) => {
-          const qty = Math.max(1, item.quantity ?? 1)
+          // Pièces uniques : on ne peut en ajouter qu'une seule
           const existing = state.items.find((cartItem) => cartItem.id === item.id)
 
           if (existing) {
-            return {
-              items: state.items.map((cartItem) =>
-                cartItem.id === item.id
-                  ? { ...cartItem, quantity: cartItem.quantity + qty }
-                  : cartItem
-              ),
-            }
+            // L'article est déjà dans le panier, on ne l'ajoute pas
+            return state
           }
 
-          return { items: [...state.items, { ...item, quantity: qty }] }
+          return { items: [...state.items, { ...item, quantity: 1 }] }
         }),
+      isInCart: (id: string) => get().items.some((item) => item.id === id),
       removeItem: (id) =>
         set((state) => ({ items: state.items.filter((item) => item.id !== id) })),
       setQuantity: (id, quantity) =>

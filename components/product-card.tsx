@@ -1,6 +1,7 @@
 import Image from "next/image"
 import Link from "next/link"
 import { AddToCartButton } from "@/components/add-to-cart-button"
+import { Badge } from "@/components/ui/badge"
 import { formatCurrency } from "@/lib/utils"
 import type { PieceListItem } from "@/lib/sanity/types"
 import { urlFor } from "@/sanity/lib/image"
@@ -17,6 +18,8 @@ export function ProductCard({ piece }: { piece: PieceListItem }) {
     piece.subtitle ? `${piece.title} - ${piece.subtitle}` : piece.title
 
   const isAvailable = !piece.status || piece.status === "available"
+  const statusLabel =
+    piece.status === "sold" ? "Vendu" : piece.status === "reserved" ? "Réservé" : null
 
   return (
     <article>
@@ -35,6 +38,13 @@ export function ProductCard({ piece }: { piece: PieceListItem }) {
             className="object-cover w-full h-full md:transition-transform md:duration-500 md:ease-out md:group-hover:scale-[1.03]"
           />
         </Link>
+
+        {/* Badge Vendu / Réservé */}
+        {statusLabel && (
+          <Badge className="absolute top-3 left-3 bg-destructive/90 text-destructive-foreground">
+            {statusLabel}
+          </Badge>
+        )}
 
         {/* Bouton panier : apparaît au hover sur desktop, toujours visible sur mobile */}
         {isAvailable && (
