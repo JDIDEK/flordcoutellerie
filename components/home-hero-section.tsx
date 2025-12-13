@@ -1,5 +1,6 @@
 'use client'
 
+import { useEffect, useRef } from 'react'
 import Image from 'next/image'
 
 import { TypingText } from '@/components/typing-text'
@@ -9,8 +10,28 @@ const desktopHeroImage = '/assets/images/artisan-knife-blade-damascus-steel-dark
 const mobileHeroImage = '/assets/images/folding-pocket-knife-damascus-premium.jpg'
 
 export function HomeHeroSection() {
+  const sectionRef = useRef<HTMLElement>(null)
+
+  // Lock the height on mobile to prevent resize when browser chrome shows/hides
+  useEffect(() => {
+    const section = sectionRef.current
+    if (!section) return
+
+    const isMobile = window.innerWidth < 768
+    if (!isMobile) return
+
+    // Capture initial height and lock it
+    const initialHeight = window.innerHeight
+    section.style.height = `${initialHeight}px`
+
+    // Don't update on resize to keep it stable
+  }, [])
+
   return (
-    <section className="relative h-[100svh] min-h-[500px] md:min-h-screen bg-black text-white overflow-hidden">
+    <section 
+      ref={sectionRef}
+      className="relative h-screen min-h-[500px] bg-black text-white overflow-hidden"
+    >
       <div className="absolute inset-0 md:hidden">
         <Image
           src={mobileHeroImage}
