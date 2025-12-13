@@ -4,6 +4,7 @@ import Link from 'next/link'
 import { useState, useEffect, useRef, useCallback } from 'react'
 import { motion, AnimatePresence } from 'framer-motion'
 import { CartSheet } from '@/components/cart-sheet'
+import { TransitionLink } from '@/components/transition-link'
 
 interface NavigationProps {
   alwaysVisible?: boolean
@@ -208,7 +209,7 @@ export function Navigation({ alwaysVisible = false }: NavigationProps) {
       >
         <div className="container mx-auto px-4 py-4 md:px-6 md:py-6">
           <div className="flex items-center justify-between">
-            <Link href="/" className="group relative z-50">
+            <TransitionLink href="/" className="group relative z-50">
               <div className="flex flex-col">
                 <span className={`text-lg md:text-xl font-serif font-light tracking-wider transition-colors ${
                   isMobileMenuOpen ? 'text-white' : 'group-hover:text-primary'
@@ -221,19 +222,19 @@ export function Navigation({ alwaysVisible = false }: NavigationProps) {
                   Coutellerie
                 </span>
               </div>
-            </Link>
+            </TransitionLink>
 
             {/* Desktop Navigation - Hidden by default, shown on md+ */}
             <div className="hidden md:flex items-center gap-6">
               {navLinks.map((link) => (
-                <Link
+                <TransitionLink
                   key={link.href}
                   href={link.href}
                   className="text-sm tracking-wide text-foreground/80 hover:text-primary transition-colors relative group"
                 >
                   {link.label}
                   <span className="absolute -bottom-1 left-0 w-0 h-[1px] bg-primary group-hover:w-full transition-all duration-300" />
-                </Link>
+                </TransitionLink>
               ))}
               <CartSheet />
             </div>
@@ -323,7 +324,7 @@ export function Navigation({ alwaysVisible = false }: NavigationProps) {
                     variants={linkVariants}
                     className="w-full"
                   >
-                    <Link
+                    <TransitionLink
                       href={link.href}
                       onClick={closeMenu}
                       className="group flex items-center justify-between py-4 w-full"
@@ -334,7 +335,7 @@ export function Navigation({ alwaysVisible = false }: NavigationProps) {
                       <span className="text-sm text-white/30 font-mono transition-colors duration-200 group-hover:text-amber-400/50">
                         0{index + 1}
                       </span>
-                    </Link>
+                    </TransitionLink>
                     {index < navLinks.length - 1 && (
                       <motion.div
                         variants={lineVariants}
