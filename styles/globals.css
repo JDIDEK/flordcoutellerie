@@ -74,6 +74,45 @@
   }
 }
 
+/* Mobile viewport stabilization - prevents jumping when browser chrome shows/hides */
+@supports (height: 100svh) {
+  :root {
+    --stable-vh: 1svh;
+  }
+}
+
+@supports not (height: 100svh) {
+  :root {
+    --stable-vh: 1vh;
+  }
+}
+
+/* Prevent layout shifts on mobile */
+html {
+  /* Prevent horizontal overflow */
+  overflow-x: hidden;
+  /* Prevent scroll chaining that can cause bounce effects */
+  overscroll-behavior: none;
+}
+
+/* Mobile-specific optimizations */
+@media (max-width: 768px) {
+  html, body {
+    /* Prevent touch-action issues */
+    touch-action: pan-y;
+    /* Prevent text size adjustment on orientation change */
+    -webkit-text-size-adjust: 100%;
+    text-size-adjust: 100%;
+  }
+  
+  /* Prevent overscroll bounce on iOS */
+  body {
+    overscroll-behavior-y: none;
+    /* Prevent pull-to-refresh */
+    overscroll-behavior: contain;
+  }
+}
+
 /* Smooth scroll behavior */
 html {
   scroll-behavior: auto;

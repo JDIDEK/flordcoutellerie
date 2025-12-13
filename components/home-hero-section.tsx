@@ -10,7 +10,7 @@ const mobileHeroImage = '/assets/images/folding-pocket-knife-damascus-premium.jp
 
 export function HomeHeroSection() {
   return (
-    <section className="relative min-h-[100svh] md:min-h-screen bg-black text-white">
+    <section className="relative h-[100svh] min-h-[500px] md:min-h-screen bg-black text-white overflow-hidden">
       <div className="absolute inset-0 md:hidden">
         <Image
           src={mobileHeroImage}
@@ -36,12 +36,12 @@ export function HomeHeroSection() {
       <div className="absolute inset-0 bg-black/45 md:bg-black/55" />
       <div className="absolute inset-0 bg-gradient-to-b from-black/10 via-transparent to-black/85 md:from-black/40 md:to-black/80" />
 
-      <div className="relative z-10 flex min-h-screen flex-col px-4 pt-20 pb-8 md:px-10 md:pt-0 md:pb-16">
-        <p className="text-[0.6rem] uppercase tracking-[0.35em] text-neutral-200 md:hidden">
+      <div className="relative z-10 flex h-full flex-col px-4 pt-20 pb-8 md:px-10 md:pt-0 md:pb-16">
+        <p className="text-[0.6rem] uppercase tracking-[0.35em] text-neutral-200 md:hidden flex-shrink-0">
           Atelier sur-mesure • Fabrication artisanale
         </p>
 
-        <div className="flex flex-1 flex-col justify-center text-center md:text-left max-w-5xl w-full mx-auto md:mx-0 gap-4 md:gap-8">
+        <div className="flex flex-1 flex-col justify-center text-center md:text-left max-w-5xl w-full mx-auto md:mx-0 gap-4 md:gap-8 min-h-0">
           <h1 className="font-serif font-light leading-[1.05] md:leading-[0.9] tracking-tight space-y-1">
             <div className="space-y-1 md:hidden">
               {HERO_LINES.map(line => (

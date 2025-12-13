@@ -13,9 +13,15 @@ export function VideoScrollSection() {
   const [borderRadius, setBorderRadius] = useState(0)
   const [shouldAutoplay, setShouldAutoplay] = useState(true)
   const [isDesktop, setIsDesktop] = useState(false)
+  const [isMounted, setIsMounted] = useState(false)
 
   const desktopVideoSrc = '/assets/videos/main-video.mp4'
   const mobileVideoSrc = '/assets/videos/mobile_main-video.mp4'
+
+  // Track mount state to prevent hydration issues
+  useEffect(() => {
+    setIsMounted(true)
+  }, [])
 
   useEffect(() => {
     const mediaQuery = window.matchMedia('(prefers-reduced-motion: reduce)')
@@ -45,11 +51,25 @@ export function VideoScrollSection() {
     return () => mediaQuery.removeEventListener('change', handleChange)
   }, [])
 
+  // Play video on mobile when mounted
+  useEffect(() => {
+    if (!isMounted) return
+    
+    if (shouldAutoplay && videoRef.current) {
+      // Attempt to play video (works on mobile with muted + playsInline)
+      const playPromise = videoRef.current.play()
+      if (playPromise !== undefined) {
+        playPromise.catch(() => {
+          // Autoplay was prevented, that's ok
+        })
+      }
+    }
+  }, [isMounted, shouldAutoplay, isDesktop])
+
   useEffect(() => {
     if (!isDesktop) {
       setScale(1)
       setBorderRadius(0)
-      videoRef.current?.pause()
       return
     }
 
@@ -96,11 +116,11 @@ export function VideoScrollSection() {
   return (
     <section
       ref={sectionRef}
-      className="relative min-h-[90vh] overflow-hidden bg-black text-white lg:min-h-screen"
+      className="relative min-h-[90svh] overflow-hidden bg-black text-white lg:min-h-screen"
       data-nav-background-trigger
     >
       <div
-        className="relative h-[90vh] lg:h-screen lg:sticky lg:top-0"
+        className="relative h-[90svh] lg:h-screen lg:sticky lg:top-0"
         style={{ overflow: 'hidden' }}
       >
         <div
@@ -115,11 +135,11 @@ export function VideoScrollSection() {
             ref={videoRef}
             src={videoSrc}
             className="h-full w-full object-cover"
-            autoPlay={isDesktop && shouldAutoplay}
+            autoPlay={shouldAutoplay}
             muted
             loop
             playsInline
-            preload={isDesktop ? 'metadata' : 'none'}
+            preload="metadata"
             poster="/assets/images/artisan-knife-blade-damascus-steel-dark-workshop.jpg"
           />
 
