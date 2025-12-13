@@ -99,13 +99,18 @@ export function HorizontalScrollGallery({ collections }: HorizontalScrollGallery
 
     const animate = () => {
       const state = stateRef.current
-      const easeFactor = 0.1
+      
+      // Ease factor dynamique : plus lent quand proche de la cible pour une décélération douce
+      const distance = Math.abs(state.target - state.current)
+      const easeFactor = distance > 0.1 ? 0.12 : 0.06 + distance * 0.6
+      
       state.current = lerp(state.current, state.target, easeFactor)
       
-      // Seuil plus grand pour réduire les mises à jour
+      // Seuil très petit pour éviter les micro-saccades
+      const threshold = 0.0002
       if (state.lastRendered !== -1 && 
-          Math.abs(state.current - state.lastRendered) < 0.001 && 
-          Math.abs(state.target - state.current) < 0.001) {
+          Math.abs(state.current - state.lastRendered) < threshold && 
+          Math.abs(state.target - state.current) < threshold) {
         requestRef.current = requestAnimationFrame(animate)
         return
       }
