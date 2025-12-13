@@ -13,7 +13,7 @@ interface Collection {
   subtitle: string
   year: string
   pieces: number
-  category: string
+  category?: string
   image: string
   description: string
 }
