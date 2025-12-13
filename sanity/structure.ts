@@ -3,7 +3,6 @@ import { orderableDocumentListDeskItem } from '@sanity/orderable-document-list'
 import { 
   ShoppingBag, 
   Images, 
-  FileText, 
   Star, 
   Hammer,
   Eye
@@ -13,7 +12,20 @@ export const structure: StructureResolver = (S, context) =>
   S.list()
     .title('Atelier Flo RD')
     .items([
-      // --- SECTION 1 : BOUTIQUE ---
+      // --- COUTEAUX SIGNATURE (ACCUEIL) ---
+      orderableDocumentListDeskItem({
+        id: 'orderable-piece-signature',
+        title: 'Couteaux Signature (Accueil)',
+        icon: Star,
+        type: 'piece',
+        filter: '_type == "piece" && highlightOnHome == true',
+        S,
+        context,
+      }),
+
+      S.divider(),
+
+      // --- BOUTIQUE ---
       S.listItem()
         .title('Boutique')
         .icon(ShoppingBag)
@@ -21,20 +33,7 @@ export const structure: StructureResolver = (S, context) =>
           S.list()
             .title('Gestion Boutique')
             .items([
-              // 1. Lien rapide vers les couteaux en page d'accueil
-              orderableDocumentListDeskItem({
-                id: 'orderable-piece-signature',
-                title: 'Couteaux Signature (Accueil)',
-                icon: Star,
-                type: 'piece',
-                filter: '_type == "piece" && highlightOnHome == true',
-                S,
-                context,
-              }),
-              
-              S.divider(),
-
-              // 2. Tout le stock
+              // Tout le stock
               orderableDocumentListDeskItem({
                 id: 'orderable-piece-all',
                 title: 'Tous les Couteaux',
@@ -44,7 +43,7 @@ export const structure: StructureResolver = (S, context) =>
                 context,
               }),
 
-              // 3. Filtre rapide : Disponibles
+              // Filtre rapide : Disponibles
               S.listItem()
                 .title('En Stock uniquement')
                 .icon(Eye)
@@ -59,15 +58,13 @@ export const structure: StructureResolver = (S, context) =>
 
       S.divider(),
 
-      // --- SECTION 2 : MÉDIAS ---
-      S.listItem()
-        .title('Galerie Photos')
-        .icon(Images)
-        .child(S.documentTypeList('galleryImage')),
-
-      // --- SECTION 3 : PAGES ---
-      S.listItem()
-        .title('Contenus du Site')
-        .icon(FileText)
-        .child(S.documentTypeList('page')),
+      // --- GALERIE PHOTOS ---
+      orderableDocumentListDeskItem({
+        id: 'orderable-gallery',
+        title: 'Galerie Photos',
+        icon: Images,
+        type: 'galleryImage',
+        S,
+        context,
+      }),
     ])

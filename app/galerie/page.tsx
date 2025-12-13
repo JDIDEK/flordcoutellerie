@@ -10,18 +10,16 @@ export default async function WorksPage() {
     const imageUrl =
       urlFor(item.image).width(2000).height(1200).fit('crop').url() ?? '/placeholder.svg'
     const year = item.createdAt ? new Date(item.createdAt).getFullYear().toString() : ''
-    const title = item.legend ?? 'Image de la galerie'
-    const category = item.category ?? 'galerie'
+    const title = item.label ?? 'Image de la galerie'
 
     return {
       id: index + 1,
       title,
-      subtitle: item.legend ?? 'Photo de la forge',
+      subtitle: item.label ?? '',
       year,
       pieces: 1,
-      category,
       image: imageUrl,
-      description: item.legend ?? '',
+      description: item.label ?? '',
     }
   })
 

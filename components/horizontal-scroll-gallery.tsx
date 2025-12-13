@@ -67,14 +67,45 @@ export function HorizontalScrollGallery({ collections }: HorizontalScrollGallery
       stateRef.current.target = rawProgress
     }
 
+    // Cache des positions des cartes pour éviter les recalculs
+    let cachedCardData: { offsetLeft: number; width: number }[] = []
+    let cachedViewportCenter = window.innerWidth / 2
+    let cachedTranslateRange = { min: 0, max: 0 }
+
+    const cacheCardPositions = () => {
+      const scrollContent = scrollRef.current
+      if (!scrollContent) return
+      
+      cachedViewportCenter = window.innerWidth / 2
+      const cards = Array.from(scrollContent.children) as HTMLElement[]
+      
+      cachedCardData = cards.map(card => ({
+        offsetLeft: card.offsetLeft,
+        width: card.offsetWidth
+      }))
+      
+      if (cachedCardData.length > 0) {
+        const firstCenter = cachedCardData[0].offsetLeft + cachedCardData[0].width / 2
+        const lastCenter = cachedCardData[cachedCardData.length - 1].offsetLeft + cachedCardData[cachedCardData.length - 1].width / 2
+        cachedTranslateRange = {
+          min: cachedViewportCenter - firstCenter,
+          max: cachedViewportCenter - lastCenter
+        }
+      }
+    }
+
+    cacheCardPositions()
+    window.addEventListener('resize', cacheCardPositions)
+
     const animate = () => {
       const state = stateRef.current
-      const easeFactor = 0.08
+      const easeFactor = 0.1
       state.current = lerp(state.current, state.target, easeFactor)
       
+      // Seuil plus grand pour réduire les mises à jour
       if (state.lastRendered !== -1 && 
-          Math.abs(state.current - state.lastRendered) < 0.0001 && 
-          Math.abs(state.target - state.current) < 0.0001) {
+          Math.abs(state.current - state.lastRendered) < 0.001 && 
+          Math.abs(state.target - state.current) < 0.001) {
         requestRef.current = requestAnimationFrame(animate)
         return
       }
@@ -83,49 +114,33 @@ export function HorizontalScrollGallery({ collections }: HorizontalScrollGallery
       const progress = state.current
       const scrollContent = scrollRef.current
 
-      if (scrollContent) {
-        const viewportCenter = window.innerWidth / 2
+      if (scrollContent && cachedCardData.length > 0) {
+        const { min, max } = cachedTranslateRange
+        const currentTranslateX = min + progress * (max - min)
+        scrollContent.style.transform = `translate3d(${currentTranslateX}px, 0, 0)`
+
         const cards = Array.from(scrollContent.children) as HTMLElement[]
         
-        if (cards.length > 0) {
-          const firstCard = cards[0]
-          const lastCard = cards[cards.length - 1]
+        cards.forEach((card, i) => {
+          const cardData = cachedCardData[i]
+          if (!cardData) return
           
-          const firstCenter = firstCard.offsetLeft + firstCard.offsetWidth / 2
-          const lastCenter = lastCard.offsetLeft + lastCard.offsetWidth / 2
+          // Calculer la position estimée de la carte
+          const cardCenterX = cardData.offsetLeft + cardData.width / 2 + currentTranslateX
+          const distanceNorm = (cardCenterX - cachedViewportCenter) / cachedViewportCenter
           
-          const minTranslateX = viewportCenter - firstCenter
-          const maxTranslateX = viewportCenter - lastCenter
-          
-          const currentTranslateX = minTranslateX + progress * (maxTranslateX - minTranslateX)
-          scrollContent.style.transform = `translate3d(${currentTranslateX}px, 0, 0)`
+          const slopeStrength = 250
+          const translateY = -distanceNorm * slopeStrength
 
-          cards.forEach((card) => {
-            const cardRect = card.getBoundingClientRect()
-            const cardCenter = cardRect.left + cardRect.width / 2
-            
-            const spreadFactor = 1.0
-            const distanceNorm = (cardCenter - viewportCenter) / (viewportCenter * spreadFactor)
-            
-            const slopeStrength = 250
-            const translateY = -distanceNorm * slopeStrength
+          const distanceAbs = Math.abs(distanceNorm)
+          const baseScale = 0.9
+          const scale = baseScale + (Math.exp(-distanceAbs * 2) * 0.1)
 
-            const distanceAbs = Math.abs(distanceNorm)
-            const baseScale = 0.9
-            const scale = baseScale + (Math.exp(-distanceAbs * 2) * 0.1)
+          const rotateY = distanceNorm * -15
+          const rotateZ = distanceNorm * 5
 
-            const rotateY = distanceNorm * -15
-            const rotateZ = distanceNorm * 5
-
-            card.style.transform = `
-              perspective(1500px)
-              translate3d(0, ${translateY}px, 0)
-              rotateY(${rotateY}deg)
-              rotateZ(${rotateZ}deg)
-              scale(${scale})
-            `
-          })
-        }
+          card.style.transform = `perspective(1500px) translate3d(0, ${translateY}px, 0) rotateY(${rotateY}deg) rotateZ(${rotateZ}deg) scale(${scale})`
+        })
       }
 
       requestRef.current = requestAnimationFrame(animate)
@@ -141,6 +156,7 @@ export function HorizontalScrollGallery({ collections }: HorizontalScrollGallery
       if (lenis) lenis.off('scroll', handleScroll)
       window.removeEventListener('scroll', handleScroll)
       window.removeEventListener('resize', measure)
+      window.removeEventListener('resize', cacheCardPositions)
       cancelAnimationFrame(requestRef.current)
     }
   }, [collections.length, isMobile, measure])

@@ -71,11 +71,10 @@ const pieceSlugsQuery = groq`*[_type == "piece" && defined(slug.current)]{ "slug
 
 const galleryImagesQuery = groq`
   *[_type == "galleryImage"]
-    | order(_createdAt desc){
+    | order(orderRank asc){
     _id,
     "createdAt": _createdAt,
-    category,
-    legend,
+    label,
     image
   }
 `

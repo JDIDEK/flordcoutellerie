@@ -12,7 +12,7 @@ import { structure } from './sanity/structure'
 
 // Configuration de l'aperçu (Site à droite, Formulaire à gauche)
 function defaultDocumentNode(S: any, { schemaType }: any) {
-  if (['piece', 'page'].includes(schemaType)) {
+  if (['piece', 'galleryImage'].includes(schemaType)) {
     return S.document().views([
       S.view.form(),
       S.view
@@ -23,7 +23,7 @@ function defaultDocumentNode(S: any, { schemaType }: any) {
              const slug = doc?.slug?.current
              
              if (schemaType === 'piece' && slug) return `${domain}/pieces/${slug}`
-             if (schemaType === 'page' && slug) return `${domain}/${slug}`
+             if (schemaType === 'galleryImage') return `${domain}/galerie`
              
              return domain
           },
@@ -41,8 +41,8 @@ export default defineConfig({
   dataset,
   schema,
   plugins: [
-    structureTool({ structure, defaultDocumentNode }), // Menu Custom + Aperçu
-    media(), // Médiathèque avancée
+    structureTool({ structure, defaultDocumentNode }),
+    media(),
     visionTool({ defaultApiVersion: apiVersion }),
   ],
 })

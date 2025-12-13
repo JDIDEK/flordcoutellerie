@@ -31,8 +31,7 @@ export type PieceDetail = PieceListItem & {
 export type GalleryImage = {
   _id: string
   image: SanityImageSource
-  category?: string
-  legend?: string
+  label?: string
   createdAt: string
 }
 
