@@ -1,6 +1,7 @@
 // app/pieces/page.tsx
 import { Navigation } from '@/components/navigation'
 import { ProductCard } from '@/components/product-card'
+import { PageTransitionWrapper } from '@/components/page-transition-wrapper'
 import { getPieces } from '@/lib/sanity/queries'
 
 export default async function PiecesPage() {
@@ -10,7 +11,8 @@ export default async function PiecesPage() {
     <>
       <Navigation />
 
-      <main className="min-h-screen pt-24 md:pt-32 pb-16 md:pb-20 bg-background">
+      <PageTransitionWrapper>
+        <main className="min-h-screen pt-24 md:pt-32 pb-16 md:pb-20 bg-background">
         <div className="container mx-auto px-4 md:px-6 max-w-6xl">
 
           {/* ---------- TITRE CENTRÉ ---------- */}
@@ -33,6 +35,7 @@ export default async function PiecesPage() {
 
         </div>
       </main>
+      </PageTransitionWrapper>
     </>
   )
 }

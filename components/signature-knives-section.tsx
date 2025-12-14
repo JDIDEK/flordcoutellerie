@@ -1,9 +1,9 @@
 'use client'
 
 import { useMemo, useState } from 'react'
-import Link from 'next/link'
 import Image from 'next/image'
 import { ArrowRight } from 'lucide-react'
+import { TransitionLink } from '@/components/transition-link'
 
 import { urlFor } from '@/sanity/lib/image'
 import { formatCurrency } from '@/lib/utils'
@@ -136,13 +136,13 @@ export function SignatureKnivesSection({ pieces }: SignatureKnivesSectionProps) 
           </div>
 
           <div className="flex items-center justify-end pt-1 lg:pt-2">
-            <Link
+            <TransitionLink
               href="/pieces"
               className="group inline-flex items-center gap-3 text-sm tracking-wide hover:opacity-70 transition-opacity duration-300"
             >
               <span>Voir Toutes les Pièces</span>
               <ArrowRight className="h-4 w-4 md:transition-transform md:duration-300 md:group-hover:translate-x-2" />
-            </Link>
+            </TransitionLink>
           </div>
         </div>
       </div>

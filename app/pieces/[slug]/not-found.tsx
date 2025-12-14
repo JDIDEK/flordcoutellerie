@@ -1,6 +1,8 @@
+'use client'
+
 import { Navigation } from '@/components/navigation'
 import { Button } from '@/components/ui/button'
-import Link from 'next/link'
+import { TransitionLink } from '@/components/transition-link'
 
 export default function NotFound() {
   return (
@@ -22,9 +24,9 @@ export default function NotFound() {
               Désolé, cette pièce n'existe pas ou a été retirée de notre catalogue.
             </p>
             <Button asChild size="lg">
-              <Link href="/pieces">
+              <TransitionLink href="/pieces">
                 Voir toutes les pièces
-              </Link>
+              </TransitionLink>
             </Button>
           </div>
         </div>

@@ -1,11 +1,12 @@
 import Image from 'next/image'
-import Link from 'next/link'
 import { notFound } from 'next/navigation'
-import { ArrowLeft, Check } from 'lucide-react'
+import { Check } from 'lucide-react'
 
 import { AddToCartButton } from '@/components/add-to-cart-button'
+import { BackLink } from '@/components/back-link'
 import { BuyNowButton } from '@/components/buy-now-button'
 import { Navigation } from '@/components/navigation'
+import { PageTransitionWrapper } from '@/components/page-transition-wrapper'
 import { Button } from '@/components/ui/button'
 import { PieceGallery } from '@/components/piece-gallery'
 import { getPieceBySlug, getAllPieceSlugs } from '@/lib/sanity/queries'
@@ -71,16 +72,15 @@ export default async function PieceDetailPage({
     <>
       <Navigation />
 
-      <main className="min-h-screen pt-32 pb-20 bg-background">
+      <PageTransitionWrapper>
+        <main className="min-h-screen pt-32 pb-20 bg-background">
         <div className="container mx-auto px-6">
           <div className="max-w-6xl mx-auto">
-            <Link
+            <BackLink
               href="/pieces"
               className="inline-flex items-center gap-2 text-sm text-muted-foreground hover:text-foreground transition-colors mb-10 md:animate-fade-in"
-            >
-              <ArrowLeft className="w-4 h-4" />
-              Retour aux pieces
-            </Link>
+              label="Retour aux pieces"
+            />
 
             <div className="grid lg:grid-cols-[1.1fr_0.9fr] gap-14 items-start">
               <PieceGallery images={galleryImages} status={piece.status} />
@@ -233,6 +233,7 @@ export default async function PieceDetailPage({
           </div>
         </div>
       </main>
+      </PageTransitionWrapper>
     </>
   )
 }

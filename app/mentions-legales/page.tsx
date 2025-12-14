@@ -1,11 +1,13 @@
 import { Navigation } from '@/components/navigation'
+import { PageTransitionWrapper } from '@/components/page-transition-wrapper'
 
 export default function MentionsLegalesPage() {
   return (
     <>
       <Navigation />
       
-      <main className="min-h-screen pt-32 pb-20 bg-background">
+      <PageTransitionWrapper>
+        <main className="min-h-screen pt-32 pb-20 bg-background">
         <div className="container mx-auto px-6">
           <div className="max-w-2xl mx-auto">
             <div className="text-center mb-12">
@@ -67,6 +69,7 @@ export default function MentionsLegalesPage() {
           </div>
         </div>
       </main>
+      </PageTransitionWrapper>
     </>
   )
 }

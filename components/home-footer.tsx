@@ -1,6 +1,6 @@
 'use client'
 
-import Link from 'next/link'
+import { TransitionLink } from '@/components/transition-link'
 
 export function HomeFooter() {
   return (
@@ -15,21 +15,21 @@ export function HomeFooter() {
           </div>
 
           <div className="flex flex-wrap items-center justify-center gap-4 md:gap-6 text-sm text-foreground">
-            <Link href="/atelier" className="hover:text-primary transition-colors">
+            <TransitionLink href="/atelier" className="hover:text-primary transition-colors">
               Atelier
-            </Link>
-            <Link href="/contact" className="hover:text-primary transition-colors">
+            </TransitionLink>
+            <TransitionLink href="/contact" className="hover:text-primary transition-colors">
               Contact
-            </Link>
-            <Link href="/mentions-legales" className="hover:text-primary transition-colors">
+            </TransitionLink>
+            <TransitionLink href="/mentions-legales" className="hover:text-primary transition-colors">
               Mentions Légales
-            </Link>
-            <Link href="/cgv" className="hover:text-primary transition-colors">
+            </TransitionLink>
+            <TransitionLink href="/cgv" className="hover:text-primary transition-colors">
               CGV
-            </Link>
-            <Link href="/politique-confidentialite" className="hover:text-primary transition-colors">
+            </TransitionLink>
+            <TransitionLink href="/politique-confidentialite" className="hover:text-primary transition-colors">
               Confidentialité
-            </Link>
+            </TransitionLink>
           </div>
 
           <div className="flex flex-col items-center md:items-end gap-1 text-xs text-muted-foreground">

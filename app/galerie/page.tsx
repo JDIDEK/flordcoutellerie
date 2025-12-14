@@ -1,4 +1,5 @@
 import { Navigation } from '@/components/navigation'
+import { PageTransitionWrapper } from '@/components/page-transition-wrapper'
 import { HorizontalScrollGallery } from '@/components/horizontal-scroll-gallery'
 import { getGalleryImages } from '@/lib/sanity/queries'
 import { urlFor } from '@/sanity/lib/image'
@@ -27,10 +28,12 @@ export default async function WorksPage() {
     <>
       <Navigation alwaysVisible />
       
-      <main className="min-h-screen">
+      <PageTransitionWrapper>
+        <main className="min-h-screen">
         {/* Horizontal Scroll Gallery */}
         <HorizontalScrollGallery collections={collections} />
       </main>
+      </PageTransitionWrapper>
     </>
   )
 }

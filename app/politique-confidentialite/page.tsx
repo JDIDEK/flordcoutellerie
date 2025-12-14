@@ -1,12 +1,16 @@
+'use client'
+
 import { Navigation } from '@/components/navigation'
-import Link from 'next/link'
+import { PageTransitionWrapper } from '@/components/page-transition-wrapper'
+import { TransitionLink } from '@/components/transition-link'
 
 export default function PolitiqueConfidentialitePage() {
   return (
     <>
       <Navigation />
       
-      <main className="min-h-screen pt-32 pb-20 bg-background">
+      <PageTransitionWrapper>
+        <main className="min-h-screen pt-32 pb-20 bg-background">
         <div className="container mx-auto px-6">
           <div className="max-w-2xl mx-auto">
             <div className="text-center mb-12">
@@ -215,24 +219,25 @@ export default function PolitiqueConfidentialitePage() {
               </p>
 
               <div className="text-center pt-4">
-                <Link 
+                <TransitionLink 
                   href="/mentions-legales" 
                   className="text-sm text-primary hover:underline"
                 >
                   Voir les mentions légales
-                </Link>
+                </TransitionLink>
                 {' • '}
-                <Link 
+                <TransitionLink 
                   href="/cgv" 
                   className="text-sm text-primary hover:underline"
                 >
                   Voir les CGV
-                </Link>
+                </TransitionLink>
               </div>
             </div>
           </div>
         </div>
       </main>
+      </PageTransitionWrapper>
     </>
   )
 }

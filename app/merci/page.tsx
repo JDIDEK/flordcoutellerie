@@ -1,12 +1,13 @@
 'use client'
 
-import Link from 'next/link'
 import { useSearchParams } from 'next/navigation'
 import { CheckCircle, ArrowRight, Package } from 'lucide-react'
 import { Suspense } from 'react'
 
 import { Navigation } from '@/components/navigation'
+import { PageTransitionWrapper } from '@/components/page-transition-wrapper'
 import { Button } from '@/components/ui/button'
+import { TransitionLink } from '@/components/transition-link'
 import { useCart } from '@/hooks/use-cart'
 import { useEffect } from 'react'
 
@@ -23,7 +24,8 @@ function ThankYouContent() {
   }, [sessionId, clear])
 
   return (
-    <main className="min-h-screen pt-32 pb-20 bg-background">
+    <PageTransitionWrapper>
+      <main className="min-h-screen pt-32 pb-20 bg-background">
       <div className="container mx-auto px-6">
         <div className="max-w-2xl mx-auto text-center space-y-8">
           <div className="flex justify-center md:animate-fade-in">
@@ -55,15 +57,15 @@ function ThankYouContent() {
 
           <div className="flex flex-col sm:flex-row gap-4 justify-center md:animate-fade-in-up md:animation-delay-600">
             <Button asChild size="lg">
-              <Link href="/pieces">
+              <TransitionLink href="/pieces">
                 Voir d&apos;autres pièces
                 <ArrowRight className="ml-2 h-4 w-4" />
-              </Link>
+              </TransitionLink>
             </Button>
             <Button asChild variant="outline" size="lg">
-              <Link href="/">
+              <TransitionLink href="/">
                 Retour à l&apos;accueil
-              </Link>
+              </TransitionLink>
             </Button>
           </div>
 
@@ -75,6 +77,7 @@ function ThankYouContent() {
         </div>
       </div>
     </main>
+    </PageTransitionWrapper>
   )
 }
 

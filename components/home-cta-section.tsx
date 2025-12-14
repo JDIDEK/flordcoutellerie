@@ -1,8 +1,8 @@
 'use client'
 
-import Link from 'next/link'
 import { ArrowRight } from 'lucide-react'
 import { Button } from '@/components/ui/button'
+import { TransitionLink } from '@/components/transition-link'
 
 export function HomeCtaSection() {
   return (
@@ -17,10 +17,10 @@ export function HomeCtaSection() {
             conception à la livraison.
           </p>
           <Button asChild size="lg" className="group hover-lift">
-            <Link href="/sur-mesure">
+            <TransitionLink href="/sur-mesure">
               Démarrer un Projet
               <ArrowRight className="ml-2 h-4 w-4 md:group-hover:translate-x-1 md:transition-transform" />
-            </Link>
+            </TransitionLink>
           </Button>
         </div>
       </div>

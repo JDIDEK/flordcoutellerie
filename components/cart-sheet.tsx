@@ -1,11 +1,11 @@
 'use client'
 
 import Image from 'next/image'
-import Link from 'next/link'
 import { ShoppingBag, Trash2, Loader2 } from 'lucide-react'
 import { useState } from 'react'
 
 import { Button } from '@/components/ui/button'
+import { TransitionLink } from '@/components/transition-link'
 import {
   Sheet,
   SheetContent,
@@ -116,9 +116,9 @@ export function CartSheet({ className, triggerClassName }: CartSheetProps) {
             <div className="flex h-full flex-col items-center justify-center gap-4 text-center text-sm text-muted-foreground">
               <p>Aucun article pour le moment.</p>
               <Button variant="outline" asChild>
-                <Link href="/pieces" onClick={() => setOpen(false)}>
+                <TransitionLink href="/pieces" onClick={() => setOpen(false)}>
                   Voir les pieces
-                </Link>
+                </TransitionLink>
               </Button>
             </div>
           ) : (
@@ -157,13 +157,13 @@ export function CartSheet({ className, triggerClassName }: CartSheetProps) {
                                   : 'Prix sur demande'}
                               </p>
                               {item.slug && (
-                                <Link
+                                <TransitionLink
                                   href={`/pieces/${item.slug}`}
                                   onClick={() => setOpen(false)}
                                   className="text-xs text-primary underline-offset-4 hover:underline"
                                 >
                                   Voir la fiche
-                                </Link>
+                                </TransitionLink>
                               )}
                             </div>
 

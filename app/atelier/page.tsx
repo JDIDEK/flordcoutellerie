@@ -1,4 +1,5 @@
 import { Navigation } from '@/components/navigation'
+import { PageTransitionWrapper } from '@/components/page-transition-wrapper'
 import Image from 'next/image'
 
 export default function AboutPage() {
@@ -6,7 +7,8 @@ export default function AboutPage() {
     <>
       <Navigation />
       
-      <main className="min-h-screen pt-32 pb-20 bg-background">
+      <PageTransitionWrapper>
+        <main className="min-h-screen pt-32 pb-20 bg-background">
         <div className="container mx-auto px-6">
           {/* Hero */}
           <h1 className="text-3xl md:text-6xl font-light text-center tracking-tight mb-24 animate-fade-in-up">
@@ -150,6 +152,7 @@ export default function AboutPage() {
           </section>
         </div>
       </main>
+      </PageTransitionWrapper>
     </>
   )
 }

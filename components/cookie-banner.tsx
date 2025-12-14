@@ -1,9 +1,9 @@
 'use client'
 
 import { useState, useEffect } from 'react'
-import Link from 'next/link'
 import { X } from 'lucide-react'
 import { Button } from '@/components/ui/button'
+import { TransitionLink } from '@/components/transition-link'
 
 const COOKIE_CONSENT_KEY = 'cookie-consent'
 
@@ -82,12 +82,12 @@ export function CookieBanner() {
               >
                 Ce site utilise des cookies analytiques pour mesurer l'audience et améliorer votre expérience. 
                 Aucune donnée personnelle n'est vendue à des tiers.{' '}
-                <Link 
+                <TransitionLink 
                   href="/politique-confidentialite" 
                   className="text-primary underline-offset-4 hover:underline"
                 >
                   En savoir plus
-                </Link>
+                </TransitionLink>
               </p>
             </div>
 

@@ -1,6 +1,7 @@
 'use client'
 
 import { Navigation } from '@/components/navigation'
+import { PageTransitionWrapper } from '@/components/page-transition-wrapper'
 import { CustomOrderWizard } from '@/components/custom-order-wizard'
 
 export default function SurMesurePage() {
@@ -8,7 +9,8 @@ export default function SurMesurePage() {
     <>
       <Navigation />
       
-      <main className="min-h-screen pt-32 pb-20 bg-background">
+      <PageTransitionWrapper>
+        <main className="min-h-screen pt-32 pb-20 bg-background">
         <div className="container mx-auto px-6">
           <div className="max-w-3xl mx-auto">
             {/* Header */}
@@ -32,6 +34,7 @@ export default function SurMesurePage() {
           </div>
         </div>
       </main>
+      </PageTransitionWrapper>
     </>
   )
 }

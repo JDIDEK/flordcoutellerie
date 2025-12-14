@@ -1,5 +1,5 @@
 import Image from "next/image"
-import Link from "next/link"
+import { TransitionLink } from "@/components/transition-link"
 import { AddToCartButton } from "@/components/add-to-cart-button"
 import { Badge } from "@/components/ui/badge"
 import { formatCurrency } from "@/lib/utils"
@@ -25,7 +25,7 @@ export function ProductCard({ piece }: { piece: PieceListItem }) {
     <article>
       {/* --------- IMAGE + QUICK ADD --------- */}
       <div className="relative group">
-        <Link
+        <TransitionLink
           href={`/pieces/${piece.slug}`}
           className="block overflow-hidden rounded-sm md:rounded-lg bg-muted/40 aspect-[4/5]"
         >
@@ -37,7 +37,7 @@ export function ProductCard({ piece }: { piece: PieceListItem }) {
             sizes="(max-width: 640px) 100vw, (max-width: 1024px) 50vw, 33vw"
             className="object-cover w-full h-full md:transition-transform md:duration-500 md:ease-out md:group-hover:scale-[1.03]"
           />
-        </Link>
+        </TransitionLink>
 
         {/* Badge Vendu / Réservé */}
         {statusLabel && (
@@ -91,12 +91,12 @@ export function ProductCard({ piece }: { piece: PieceListItem }) {
 
       {/* --------- TITRE + PRIX EN DESSOUS --------- */}
       <div className="flex items-center gap-2 text-sm mt-3 px-1">
-        <Link
+        <TransitionLink
           href={`/pieces/${piece.slug}`}
           className="font-medium leading-tight hover:opacity-80 transition-opacity"
         >
           {title}
-        </Link>
+        </TransitionLink>
 
         <span>—</span>
 

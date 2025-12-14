@@ -1,9 +1,9 @@
 'use client'
 
 import { useEffect, useRef, useCallback, useState } from 'react'
-import Link from 'next/link'
 import Image from 'next/image'
 import Lenis from 'lenis'
+import { TransitionLink } from '@/components/transition-link'
 import { useIsMobile } from '@/hooks/use-mobile'
 import { cn } from '@/lib/utils'
 
@@ -176,7 +176,7 @@ export function HorizontalScrollGallery({ collections }: HorizontalScrollGallery
           </h2>
           <div className="grid gap-6">
             {collections.map((collection) => (
-              <Link
+              <TransitionLink
                 href="/galerie"
                 key={collection.id}
                 className="relative aspect-[4/3] overflow-hidden rounded-sm group"
@@ -198,7 +198,7 @@ export function HorizontalScrollGallery({ collections }: HorizontalScrollGallery
                   </h3>
                   <p className="text-sm opacity-90">{collection.subtitle}</p>
                 </div>
-              </Link>
+              </TransitionLink>
             ))}
           </div>
         </div>
@@ -238,7 +238,7 @@ export function HorizontalScrollGallery({ collections }: HorizontalScrollGallery
                   willChange: 'transform'
                 }}
               >
-                <Link
+                <TransitionLink
                   href="/galerie"
                   className="block w-full h-full group focus-visible:outline-none"
                   style={{ transformStyle: 'preserve-3d' }}
@@ -304,7 +304,7 @@ export function HorizontalScrollGallery({ collections }: HorizontalScrollGallery
                       </span>
                     </div>
                   </div>
-                </Link>
+                </TransitionLink>
               </article>
             )
           })}
