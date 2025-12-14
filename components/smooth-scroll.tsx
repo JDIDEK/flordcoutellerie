@@ -15,6 +15,7 @@ export function SmoothScroll() {
     const isMobile = window.innerWidth < 768
     const isStudio = pathname?.startsWith('/studio')
 
+    // Désactiver Lenis sur mobile pour meilleures performances
     if (isReduced || isMobile || isStudio) {
       document.documentElement.style.scrollBehavior = 'auto'
       return

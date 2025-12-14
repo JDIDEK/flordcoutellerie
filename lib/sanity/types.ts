@@ -28,6 +28,13 @@ export type PieceDetail = PieceListItem & {
   gallery?: SanityImageSource[]
 }
 
+export type GalleryImage = {
+  _id: string
+  image: SanityImageSource
+  label?: string
+  createdAt: string
+}
+
 export type SignaturePiece = {
   _id: string
   slug: string

@@ -1,9 +1,9 @@
 'use client'
 
 import { useMemo, useState } from 'react'
-import Link from 'next/link'
 import Image from 'next/image'
 import { ArrowRight } from 'lucide-react'
+import { TransitionLink } from '@/components/transition-link'
 
 import { urlFor } from '@/sanity/lib/image'
 import { formatCurrency } from '@/lib/utils'
@@ -22,73 +22,103 @@ const placeholderPiece: SignaturePiece = {
 
 export function SignatureKnivesSection({ pieces }: SignatureKnivesSectionProps) {
   const displayPieces = pieces.length ? pieces : [placeholderPiece]
-  const [activeKnife, setActiveKnife] = useState(displayPieces[0])
+  const [activeIndex, setActiveIndex] = useState(0)
+
+  const activeKnife = displayPieces[activeIndex] ?? displayPieces[0]
 
   const activeImageSrc = useMemo(() => {
-    if (activeKnife.mainImage) {
+    if (activeKnife?.mainImage) {
       return urlFor(activeKnife.mainImage).width(1600).height(1600).fit('crop').url()
     }
     return '/placeholder.jpg'
-  }, [activeKnife.mainImage])
+  }, [activeKnife])
 
-  const activePrice = formatCurrency(activeKnife.price)
-  const priceLabel = activePrice ? `${activePrice}€` : 'Sur commande'
+  const activePrice = formatCurrency(activeKnife?.price)
 
   return (
-    <section
-      className="relative h-screen overflow-hidden w-screen"
-      style={{ marginLeft: 'calc(50% - 50vw)', marginRight: 'calc(50% - 50vw)' }}
-    >
-      <div className="w-full h-screen flex flex-col lg:grid lg:grid-cols-2">
-        {/* Left Side - Image dynamique */}
-        <div className="relative flex-1 lg:h-full bg-secondary/30 flex items-center justify-center overflow-hidden h-full order-1 lg:order-none">
-          <div className="absolute inset-0 transition-opacity duration-500">
-            <Image
-              src={activeImageSrc}
-              alt={activeKnife.title}
-              fill
-              sizes="(max-width: 1024px) 100vw, 50vw"
-              priority
-              className="object-cover transition-transform duration-700"
-            />
-          </div>
+    <section className="relative w-full overflow-hidden">
+      <div className="flex flex-col min-h-[100svh] lg:grid lg:grid-rows-1 lg:grid-cols-2 lg:h-screen">
+        <div className="order-2 lg:order-1 relative min-h-[52svh] lg:h-full w-full overflow-hidden bg-secondary/30">
+          <Image
+            src={activeImageSrc}
+            alt={activeKnife?.title ?? 'Pièce signature'}
+            fill
+            sizes="(max-width: 1024px) 100vw, 50vw"
+            priority
+            className="object-cover md:transition-transform md:duration-700"
+          />
           <div className="absolute inset-0 bg-black/40" />
-          <div className="relative z-10 text-center text-white px-8">
-            <h3 className="text-5xl md:text-6xl lg:text-7xl font-serif font-light tracking-tight">
-              {activeKnife.title}
-            </h3>
-            <p className="text-sm uppercase tracking-[0.3em] mt-4 text-white/70">
-              {activeKnife.steelSummary ?? 'Signature en création'}
-            </p>
-            <p className="mt-6 text-xs tracking-[0.35em] text-white/60">{priceLabel}</p>
+          <div className="absolute inset-0 bg-gradient-to-t from-black/55 via-black/15 to-black/5" />
+          <div className="absolute bottom-6 left-6 right-6 flex items-center justify-between text-[0.65rem] uppercase tracking-[0.28em] text-neutral-100">
+            <span>{activeKnife?.title}</span>
+            {activePrice && <span>{activePrice}€</span>}
           </div>
         </div>
 
-        {/* Right Side - Menu des couteaux */}
-        <div className="bg-primary/80 flex flex-col justify-center px-6 lg:px-16 py-12 text-primary-foreground h-full order-2 lg:order-none overflow-hidden">
-          <div className="max-w-xl w-full space-y-6 mx-auto">
-            {/* Titre */}
-            <div className="space-y-4">
-              <h2 className="text-4xl md:text-5xl font-serif font-light tracking-tight">
-                COUTEAUX
-                <br />
-                SIGNATURE
-              </h2>
-            </div>
+        <div className="order-1 lg:order-2 flex flex-col justify-center bg-primary/90 lg:bg-primary/80 px-5 py-10 lg:px-16 lg:py-14 text-primary-foreground gap-6">
+          <div className="space-y-2">
+            <p className="text-[0.65rem] uppercase tracking-[0.35em] text-primary-foreground/80">
+              Collection atelier
+            </p>
+            <h2 className="text-3xl lg:text-4xl xl:text-5xl font-serif font-light tracking-tight">
+              COUTEAUX
+              <br />
+              SIGNATURE
+            </h2>
+          </div>
 
-            {/* Liste desktop */}
-            <div className="space-y-1 pt-8 hidden lg:block">
+          <div className="-mx-3 lg:mx-0">
+            <div className="flex overflow-x-auto snap-x snap-mandatory gap-3 px-3 pb-2 lg:hidden scrollbar-hide">
               {displayPieces.map((knife, index) => {
                 const knifePrice = formatCurrency(knife.price)
+                const isActive = index === activeIndex
+
                 return (
-                  <div
+                  <button
                     key={knife.slug ?? `${knife._id}-${index}`}
-                    onMouseEnter={() => setActiveKnife(knife)}
-                    className={`border-b border-primary-foreground/20 py-6 transition-all duration-300 cursor-pointer px-4 -mx-4 ${
-                      activeKnife.slug === knife.slug
-                        ? 'bg-primary-foreground/10'
-                        : 'hover:bg-primary-foreground/5'
+                    type="button"
+                    onClick={() => setActiveIndex(index)}
+                    className={`snap-start min-w-[78vw] rounded-sm border border-primary-foreground/20 p-4 text-left transition-all duration-300 ${
+                      isActive
+                        ? 'bg-primary-foreground text-primary shadow-lg'
+                        : 'bg-transparent hover:bg-primary-foreground/10'
                     }`}
+                    aria-pressed={isActive}
+                  >
+                    <div className="space-y-3">
+                      <div className="flex items-start justify-between gap-4">
+                        <h3 className="text-lg font-serif font-light">{knife.title}</h3>
+                        <span className="text-base font-light whitespace-nowrap">
+                          {knifePrice ? `${knifePrice}€` : 'Sur commande'}
+                        </span>
+                      </div>
+                      <p
+                        className={`text-sm leading-relaxed ${
+                          isActive ? 'text-primary/70' : 'text-primary-foreground/80'
+                        }`}
+                      >
+                        {knife.steelSummary ?? 'Création sur mesure'}
+                      </p>
+                    </div>
+                  </button>
+                )
+              })}
+            </div>
+
+            <div className="hidden lg:flex lg:flex-col">
+              {displayPieces.map((knife, index) => {
+                const knifePrice = formatCurrency(knife.price)
+                const isActive = index === activeIndex
+
+                return (
+                  <button
+                    key={knife.slug ?? `${knife._id}-${index}`}
+                    type="button"
+                    onMouseEnter={() => setActiveIndex(index)}
+                    className={`text-left border-b border-primary-foreground/20 py-6 px-4 -mx-4 transition-all duration-300 ${
+                      isActive ? 'bg-primary-foreground/10' : 'hover:bg-primary-foreground/5'
+                    }`}
+                    aria-pressed={isActive}
                   >
                     <div className="flex items-baseline justify-between gap-4 mb-2">
                       <h3 className="text-xl md:text-2xl font-serif font-light">{knife.title}</h3>
@@ -99,57 +129,20 @@ export function SignatureKnivesSection({ pieces }: SignatureKnivesSectionProps) 
                     <p className="text-sm opacity-80 leading-relaxed">
                       {knife.steelSummary ?? 'Création sur mesure'}
                     </p>
-                  </div>
-                )
-              })}
-            </div>
-
-            {/* Liste mobile scrollable */}
-            <div className="lg:hidden space-y-3 overflow-y-auto pr-3" style={{ maxHeight: '22vh' }}>
-              {displayPieces.map((knife, index) => {
-                const knifePrice = formatCurrency(knife.price)
-                return (
-                  <button
-                    key={knife.slug ?? `${knife._id}-${index}`}
-                    onClick={() => setActiveKnife(knife)}
-                    className={`w-full text-left border border-primary-foreground/20 rounded-sm p-4 transition-all duration-300 ${
-                      activeKnife.slug === knife.slug
-                        ? 'bg-primary-foreground text-primary shadow-lg shadow-black/10'
-                        : 'bg-transparent hover:bg-primary-foreground/10'
-                    }`}
-                  >
-                    <div className="flex items-center justify-between gap-4">
-                      <div>
-                        <p className="text-xs uppercase tracking-[0.3em] mb-2">{knife.title}</p>
-                        <p
-                          className={`text-sm ${
-                            activeKnife.slug === knife.slug
-                              ? 'text-black/70'
-                              : 'text-primary-foreground/80'
-                          }`}
-                        >
-                          {knife.steelSummary ?? 'Création sur mesure'}
-                        </p>
-                      </div>
-                      <span className="text-base font-light whitespace-nowrap">
-                        {knifePrice ? `${knifePrice}€` : 'Sur commande'}
-                      </span>
-                    </div>
                   </button>
                 )
               })}
             </div>
+          </div>
 
-            {/* CTA */}
-            <div className="pt-4">
-              <Link
-                href="/pieces"
-                className="group inline-flex items-center gap-3 text-sm tracking-wide hover:opacity-70 transition-opacity duration-300"
-              >
-                <span>Voir Toutes les Pièces</span>
-                <ArrowRight className="w-4 h-4 group-hover:translate-x-2 transition-transform duration-300" />
-              </Link>
-            </div>
+          <div className="flex items-center justify-end pt-1 lg:pt-2">
+            <TransitionLink
+              href="/pieces"
+              className="group inline-flex items-center gap-3 text-sm tracking-wide hover:opacity-70 transition-opacity duration-300"
+            >
+              <span>Voir Toutes les Pièces</span>
+              <ArrowRight className="h-4 w-4 md:transition-transform md:duration-300 md:group-hover:translate-x-2" />
+            </TransitionLink>
           </div>
         </div>
       </div>

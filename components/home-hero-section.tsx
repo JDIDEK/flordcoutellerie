@@ -1,115 +1,100 @@
 'use client'
 
+import { useEffect, useRef } from 'react'
 import Image from 'next/image'
 
 import { TypingText } from '@/components/typing-text'
-import { useIsMobile } from '@/hooks/use-mobile'
+
+const HERO_LINES = ['LAMES', 'QUI TRAVERSENT', 'LES GÉNÉRATIONS.']
+const desktopHeroImage = '/assets/images/artisan-knife-blade-damascus-steel-dark-workshop.jpg'
+const mobileHeroImage = '/assets/images/folding-pocket-knife-damascus-premium.jpg'
 
 export function HomeHeroSection() {
-  const isMobile = useIsMobile()
-  const desktopHeroImage = '/assets/images/artisan-knife-blade-damascus-steel-dark-workshop.jpg'
-  const mobileHeroImage = '/assets/images/folding-pocket-knife-damascus-premium.jpg'
+  const sectionRef = useRef<HTMLElement>(null)
 
-  if (isMobile) {
-    return (
-      <section className="bg-black text-white h-screen">
-        <div className="relative w-full h-full">
-          <Image
-            src={mobileHeroImage}
-            alt="Atelier Flo RD Coutellerie"
-            fill
-            priority
-            sizes="(max-width: 768px) 100vw, 768px"
-            className="object-cover"
-          />
-          <div className="absolute inset-0 bg-black/45" />
-          <div className="absolute inset-0 bg-gradient-to-b from-black/10 via-transparent to-black/85" />
+  // Lock the height on mobile to prevent resize when browser chrome shows/hides
+  useEffect(() => {
+    const section = sectionRef.current
+    if (!section) return
 
-          <div className="absolute inset-0 flex flex-col justify-between px-6 pt-24 pb-8 text-center">
-            <p className="text-[0.6rem] uppercase tracking-[0.35em] text-neutral-200">
-              Atelier sur-mesure • Fabrication artisanale
-            </p>
-            <div className="space-y-4">
-              <h1 className="font-serif font-light text-3xl leading-[1.05] tracking-tight space-y-1">
-                <span className="block">LAMES</span>
-                <span className="block">QUI TRAVERSENT</span>
-                <span className="block">LES GÉNÉRATIONS.</span>
-              </h1>
-              <p className="text-sm text-neutral-100 leading-relaxed">
-                Dans mon atelier, chaque couteau est une pièce unique façonnée dans les aciers les plus
-                nobles. Des commandes sur mesure pour chefs, collectionneurs et passionnés qui
-                recherchent une âme dans la lame.
-              </p>
-            </div>
-            <p className="text-[0.6rem] uppercase tracking-[0.35em] text-neutral-300">
-              Service sur-mesure • Pièces uniques
-            </p>
-          </div>
-        </div>
-      </section>
-    )
-  }
+    const isMobile = window.innerWidth < 768
+    if (!isMobile) return
+
+    // Capture initial height and lock it
+    const initialHeight = window.innerHeight
+    section.style.height = `${initialHeight}px`
+
+    // Don't update on resize to keep it stable
+  }, [])
 
   return (
-    <section className="relative overflow-hidden text-white h-screen">
-      <div className="absolute inset-0">
+    <section 
+      ref={sectionRef}
+      className="relative h-screen min-h-[500px] bg-black text-white overflow-hidden"
+    >
+      <div className="absolute inset-0 md:hidden">
+        <Image
+          src={mobileHeroImage}
+          alt="Atelier Flo RD Coutellerie"
+          fill
+          priority
+          sizes="100vw"
+          className="object-cover object-center"
+        />
+      </div>
+
+      <div className="absolute inset-0 hidden md:block">
         <Image
           src={desktopHeroImage}
           alt="Atelier Flo RD Coutellerie"
           fill
           priority
-          sizes="(max-width: 768px) 100vw, (max-width: 1920px) 100vw, 1920px"
-          className="object-cover"
+          sizes="(max-width: 1280px) 100vw, 1920px"
+          className="object-cover object-[center_40%]"
         />
       </div>
 
-      <div className="absolute inset-0 bg-black/55" />
-      <div className="absolute inset-0 bg-gradient-to-b from-black/40 via-transparent to-black/80" />
+      <div className="absolute inset-0 bg-black/45 md:bg-black/55" />
+      <div className="absolute inset-0 bg-gradient-to-b from-black/10 via-transparent to-black/85 md:from-black/40 md:to-black/80" />
 
-      <div className="relative z-10 flex flex-col h-screen">
-        <div className="flex flex-1 flex-col items-center justify-center px-6 pt-24 pb-12 text-center md:px-0 md:pt-0">
-          <div className="w-full max-w-5xl">
-            <h1 className="font-serif font-light leading-[0.9] tracking-tight">
-              <TypingText
-                lines={['LAMES']}
-                className=""
-                lineClassName="block text-4xl sm:text-5xl md:text-7xl lg:text-[5.5rem]"
-                speed={50}
-                startDelay={500}
-                disabled={isMobile}
-              />
-              <TypingText
-                lines={['QUI TRAVERSENT']}
-                className=""
-                lineClassName="block text-4xl sm:text-5xl md:text-7xl lg:text-[5.5rem]"
-                speed={40}
-                startDelay={500}
-                disabled={isMobile}
-              />
-              <TypingText
-                lines={['LES GÉNÉRATIONS.']}
-                className=""
-                lineClassName="block text-4xl sm:text-5xl md:text-7xl lg:text-[5.5rem]"
-                speed={40}
-                startDelay={500}
-                disabled={isMobile}
-              />
-            </h1>
-          </div>
+      <div className="relative z-10 flex h-full flex-col px-4 pt-20 pb-8 md:px-10 md:pt-0 md:pb-16">
+        <p className="text-[0.6rem] uppercase tracking-[0.35em] text-neutral-200 md:hidden flex-shrink-0">
+          Atelier sur-mesure • Fabrication artisanale
+        </p>
+
+        <div className="flex flex-1 flex-col justify-center text-center md:text-left max-w-5xl w-full mx-auto md:mx-0 gap-4 md:gap-8 min-h-0">
+          <h1 className="font-serif font-light leading-[1.05] md:leading-[0.9] tracking-tight space-y-1">
+            <div className="space-y-1 md:hidden">
+              {HERO_LINES.map(line => (
+                <span key={line} className="block text-3xl">
+                  {line}
+                </span>
+              ))}
+            </div>
+
+            <div className="hidden md:block space-y-2">
+              {HERO_LINES.map((line, index) => (
+                <TypingText
+                  key={line}
+                  lines={[line]}
+                  lineClassName="block text-4xl sm:text-5xl md:text-7xl lg:text-[5.5rem]"
+                  speed={index === 0 ? 50 : 40}
+                  startDelay={500}
+                />
+              ))}
+            </div>
+          </h1>
+
+          <p className="text-sm md:text-base text-neutral-100 md:text-neutral-200 leading-relaxed max-w-xl mx-auto md:mx-0 md:max-w-none">
+            Dans mon atelier, chaque couteau est une pièce unique façonnée dans les aciers les plus
+            nobles. Des commandes sur mesure pour chefs, collectionneurs et passionnés qui recherchent
+            une âme dans la lame.
+          </p>
         </div>
 
-        <div className="container mx-auto px-6 pb-10 md:pb-14">
-          <div className="flex flex-col gap-6 md:flex-row md:items-end md:justify-between md:gap-8">
-            <p className="max-w-xl text-sm md:text-base text-neutral-200 leading-relaxed">
-              Dans mon atelier, chaque couteau est une pièce unique façonnée dans les aciers les
-              plus nobles. Des commandes sur mesure pour chefs, collectionneurs et passionnés
-              qui recherchent une âme dans la lame.
-            </p>
-            <p className="text-[0.7rem] uppercase tracking-[0.35em] text-neutral-300 text-right">
-              Service sur-mesure • Pièces uniques
-            </p>
-          </div>
-        </div>
+        <p className="text-[0.6rem] md:text-[0.7rem] uppercase tracking-[0.35em] text-neutral-300 md:text-right">
+          Service sur-mesure • Pièces uniques
+        </p>
       </div>
     </section>
   )

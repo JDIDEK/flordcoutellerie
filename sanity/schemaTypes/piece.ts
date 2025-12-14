@@ -1,48 +1,59 @@
 import { defineField, defineType } from 'sanity'
+import { orderRankField, orderRankOrdering } from '@sanity/orderable-document-list'
+
+import { AutoSlugInput } from '../components/autoSlugInput'
+import { slugifyString } from '../lib/slugify'
 
 export const piece = defineType({
   name: 'piece',
   title: 'Pièce',
   type: 'document',
+  // Définition des onglets
+  groups: [
+    { name: 'main', title: 'Infos', default: true },
+    { name: 'tech', title: 'Technique' },
+    { name: 'sales', title: 'Vente & Stock' },
+    { name: 'home', title: 'Accueil' },
+  ],
   fields: [
+    orderRankField({ type: 'piece', hidden: true }),
+    // --- ONGLET INFOS ---
     defineField({
       name: 'title',
       title: 'Nom du couteau',
       type: 'string',
+      group: 'main',
       validation: (rule) => rule.required(),
     }),
     defineField({
-      name: 'slug',
-      title: 'Slug',
-      type: 'slug',
-      options: {
-        source: 'title',
-        maxLength: 96,
-      },
-      validation: (rule) => rule.required(),
+      name: 'mainImage',
+      title: 'Photo principale',
+      type: 'image',
+      options: { hotspot: true },
+      group: 'main',
     }),
     defineField({
-      name: 'subtitle',
-      title: 'Sous-titre',
-      type: 'string',
+      name: 'gallery',
+      title: 'Galerie photos',
+      type: 'array',
+      of: [{ type: 'image' }],
+      options: { layout: 'grid' },
+      group: 'main',
     }),
     defineField({
-      name: 'category',
-      title: 'Catégorie',
-      type: 'string',
-      options: {
-        list: [
-          { title: 'Cuisine', value: 'cuisine' },
-          { title: 'Outdoor', value: 'outdoor' },
-          { title: 'Pliants', value: 'pliants' },
-          { title: 'Sur mesure', value: 'sur-mesure' },
-        ],
-      },
+      name: 'description',
+      title: 'Description',
+      type: 'text',
+      rows: 4,
+      group: 'main',
     }),
+
+    // --- ONGLET VENTE ---
     defineField({
       name: 'status',
-      title: 'Statut',
+      title: 'Disponibilité',
       type: 'string',
+      group: 'sales',
       options: {
         list: [
           { title: 'Disponible', value: 'available' },
@@ -52,99 +63,65 @@ export const piece = defineType({
         layout: 'radio',
       },
       initialValue: 'available',
-      validation: (rule) => rule.required(),
     }),
     defineField({
       name: 'price',
       title: 'Prix (€)',
       type: 'number',
-      validation: (rule) => rule.min(0),
+      group: 'sales',
     }),
     defineField({
-      name: 'originalPrice',
-      title: 'Prix original (€)',
-      type: 'number',
-      validation: (rule) => rule.min(0),
+      name: 'slug',
+      title: 'Lien (Slug)',
+      type: 'slug',
+      options: {
+        source: 'title',
+        slugify: slugifyString,
+      },
+      components: { input: AutoSlugInput },
+      group: 'sales',
+      validation: (rule) => rule.required(),
     }),
-    defineField({
-      name: 'steel',
-      title: 'Acier',
-      type: 'string',
-    }),
-    defineField({
-      name: 'layers',
-      title: 'Couches',
-      type: 'string',
-    }),
-    defineField({
-      name: 'hrc',
-      title: 'Dureté (HRC)',
-      type: 'string',
-    }),
-    defineField({
-      name: 'handle',
-      title: 'Manche',
-      type: 'string',
-    }),
-    defineField({
-      name: 'length',
-      title: 'Longueur',
-      type: 'string',
-    }),
-    defineField({
-      name: 'weight',
-      title: 'Poids',
-      type: 'string',
-    }),
-    defineField({
-      name: 'description',
-      title: 'Description',
-      type: 'text',
-      rows: 4,
-    }),
-    defineField({
+
+    // --- ONGLET TECHNIQUE ---
+  defineField({
       name: 'features',
       title: 'Caractéristiques',
       type: 'array',
       of: [{ type: 'string' }],
+      group: 'tech',
     }),
-    defineField({
-      name: 'mainImage',
-      title: 'Image principale',
-      type: 'image',
-      options: {
-        hotspot: true,
-      },
-    }),
-    defineField({
-      name: 'gallery',
-      title: 'Galerie',
-      type: 'array',
-      of: [{ type: 'image' }],
-    }),
-    defineField({
-      name: 'steelSummary',
-      title: 'Texte court pour la section signature',
-      type: 'string',
-    }),
+
+    // --- ONGLET ACCUEIL ---
     defineField({
       name: 'highlightOnHome',
-      title: 'Mettre en avant en home',
+      title: 'Afficher dans "Signature Knives" (Accueil)',
       type: 'boolean',
       initialValue: false,
+      group: 'home',
     }),
     defineField({
       name: 'homeOrder',
-      title: 'Ordre en signature',
+      title: 'Ordre d’affichage',
       type: 'number',
-      description: 'Ordre d’affichage dans la section Signature knives',
+      group: 'home',
     }),
   ],
+  orderings: [orderRankOrdering],
   preview: {
     select: {
       title: 'title',
-      subtitle: 'status',
+      status: 'status',
+      price: 'price',
       media: 'mainImage',
+    },
+    prepare({ title, status, price, media }) {
+      const emojis = { available: '🟢', reserved: '🟠', sold: '🔴' }
+      return {
+        title: title,
+        subtitle: `${emojis[status as keyof typeof emojis] || ''} ${price ? price + '€' : ''}`,
+        media: media,
+      }
     },
   },
 })

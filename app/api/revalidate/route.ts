@@ -15,7 +15,6 @@ export async function POST(req: NextRequest) {
 
     if (body?._type === 'piece') {
       revalidateTag('piece', 'default')
-      console.log('Cache nettoyé pour le tag: piece')
     }
 
     return NextResponse.json({ body })
