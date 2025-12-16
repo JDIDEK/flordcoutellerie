@@ -4,10 +4,10 @@ import { useSearchParams } from 'next/navigation'
 import { CheckCircle, ArrowRight, Package } from 'lucide-react'
 import { Suspense } from 'react'
 
-import { Navigation } from '@/components/navigation'
-import { PageTransitionWrapper } from '@/components/page-transition-wrapper'
+import { Navigation } from '@/components/Navigation'
+import { PageTransitionWrapper } from '@/components/PageTransitionWrapper'
 import { Button } from '@/components/ui/button'
-import { TransitionLink } from '@/components/transition-link'
+import { TransitionLink } from '@/components/TransitionLink'
 import { useCart } from '@/hooks/use-cart'
 import { useEffect } from 'react'
 

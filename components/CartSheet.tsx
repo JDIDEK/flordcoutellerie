@@ -5,7 +5,7 @@ import { ShoppingBag, Trash2, Loader2 } from 'lucide-react'
 import { useState } from 'react'
 
 import { Button } from '@/components/ui/button'
-import { TransitionLink } from '@/components/transition-link'
+import { TransitionLink } from '@/components/TransitionLink'
 import {
   Sheet,
   SheetContent,

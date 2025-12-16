@@ -1,8 +1,8 @@
 'use client'
 
-import { Navigation } from '@/components/navigation'
-import { PageTransitionWrapper } from '@/components/page-transition-wrapper'
-import { TransitionLink } from '@/components/transition-link'
+import { Navigation } from '@/components/Navigation'
+import { PageTransitionWrapper } from '@/components/PageTransitionWrapper'
+import { TransitionLink } from '@/components/TransitionLink'
 
 export default function PolitiqueConfidentialitePage() {
   return (

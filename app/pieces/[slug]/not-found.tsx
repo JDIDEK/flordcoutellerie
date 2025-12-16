@@ -1,8 +1,8 @@
 'use client'
 
-import { Navigation } from '@/components/navigation'
+import { Navigation } from '@/components/Navigation'
 import { Button } from '@/components/ui/button'
-import { TransitionLink } from '@/components/transition-link'
+import { TransitionLink } from '@/components/TransitionLink'
 
 export default function NotFound() {
   return (

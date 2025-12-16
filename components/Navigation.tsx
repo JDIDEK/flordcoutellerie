@@ -3,8 +3,8 @@
 import Link from 'next/link'
 import { useState, useEffect, useRef, useCallback } from 'react'
 import { motion, AnimatePresence } from 'framer-motion'
-import { CartSheet } from '@/components/cart-sheet'
-import { TransitionLink } from '@/components/transition-link'
+import { CartSheet } from '@/components/CartSheet'
+import { TransitionLink } from '@/components/TransitionLink'
 
 interface NavigationProps {
   alwaysVisible?: boolean

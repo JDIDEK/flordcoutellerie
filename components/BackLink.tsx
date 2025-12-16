@@ -1,7 +1,7 @@
 'use client'
 
 import { ArrowLeft } from 'lucide-react'
-import { TransitionLink } from '@/components/transition-link'
+import { TransitionLink } from '@/components/TransitionLink'
 
 interface BackLinkProps {
   href: string

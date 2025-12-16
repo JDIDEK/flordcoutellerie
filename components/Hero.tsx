@@ -3,7 +3,7 @@
 import { useEffect, useRef } from 'react'
 import Image from 'next/image'
 
-import { TypingText } from '@/components/typing-text'
+import { TypingText } from '@/components/TypingText'
 
 const HERO_LINES = ['LAMES', 'QUI TRAVERSENT', 'LES GÉNÉRATIONS.']
 const desktopHeroImage = '/assets/images/artisan-knife-blade-damascus-steel-dark-workshop.jpg'

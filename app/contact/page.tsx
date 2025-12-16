@@ -1,7 +1,7 @@
 'use client'
 
-import { Navigation } from '@/components/navigation'
-import { PageTransitionWrapper } from '@/components/page-transition-wrapper'
+import { Navigation } from '@/components/Navigation'
+import { PageTransitionWrapper } from '@/components/PageTransitionWrapper'
 import { useState } from 'react'
 
 export default function ContactPage() {

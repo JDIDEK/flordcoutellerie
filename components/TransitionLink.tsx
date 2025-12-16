@@ -1,7 +1,7 @@
 'use client'
 
 import NextLink from 'next/link'
-import { usePageTransition } from './transition-provider'
+import { usePageTransition } from './TransitionProvider'
 import { type ComponentProps, useCallback } from 'react'
 
 type TransitionLinkProps = ComponentProps<typeof NextLink> & {

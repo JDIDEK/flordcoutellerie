@@ -1,5 +1,5 @@
-import { Navigation } from '@/components/navigation'
-import { PageTransitionWrapper } from '@/components/page-transition-wrapper'
+import { Navigation } from '@/components/Navigation'
+import { PageTransitionWrapper } from '@/components/PageTransitionWrapper'
 
 export default function CGVPage() {
   return (

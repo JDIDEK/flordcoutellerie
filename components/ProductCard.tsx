@@ -1,6 +1,6 @@
 import Image from "next/image"
-import { TransitionLink } from "@/components/transition-link"
-import { AddToCartButton } from "@/components/add-to-cart-button"
+import { TransitionLink } from "@/components/TransitionLink"
+import { AddToCartButton } from "@/components/AddToCartButton"
 import { Badge } from "@/components/ui/badge"
 import { formatCurrency } from "@/lib/utils"
 import type { PieceListItem } from "@/lib/sanity/types"

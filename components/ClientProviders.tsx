@@ -1,9 +1,9 @@
 'use client'
 
-import { TransitionProvider } from '@/components/transition-provider'
-import { SmoothScroll } from '@/components/smooth-scroll'
-import { FooterWrapper } from '@/components/footer-wrapper'
-import { CookieBanner } from '@/components/cookie-banner'
+import { TransitionProvider } from '@/components/TransitionProvider'
+import { SmoothScroll } from '@/components/SmoothScroll'
+import { FooterWrapper } from '@/components/FooterWraper'
+import { CookieBanner } from '@/components/CookieBanner'
 
 export function ClientProviders({ children }: { children: React.ReactNode }) {
   return (

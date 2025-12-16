@@ -2,7 +2,7 @@
 
 import { ArrowRight } from 'lucide-react'
 import { Button } from '@/components/ui/button'
-import { TransitionLink } from '@/components/transition-link'
+import { TransitionLink } from '@/components/TransitionLink'
 
 export function HomeCtaSection() {
   return (

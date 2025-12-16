@@ -1,7 +1,7 @@
 // app/pieces/page.tsx
-import { Navigation } from '@/components/navigation'
-import { ProductCard } from '@/components/product-card'
-import { PageTransitionWrapper } from '@/components/page-transition-wrapper'
+import { Navigation } from '@/components/Navigation'
+import { ProductCard } from '@/components/ProductCard'
+import { PageTransitionWrapper } from '@/components/PageTransitionWrapper'
 import { getPieces } from '@/lib/sanity/queries'
 
 export default async function PiecesPage() {

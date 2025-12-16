@@ -1,16 +1,16 @@
 import dynamic from 'next/dynamic'
-import { Navigation } from '@/components/navigation'
-import { PageTransitionWrapper } from '@/components/page-transition-wrapper'
-import { HomeHeroSection } from '@/components/home-hero-section'
+import { Navigation } from '@/components/Navigation'
+import { PageTransitionWrapper } from '@/components/PageTransitionWrapper'
+import { HomeHeroSection } from '@/components/Hero'
 import { getSignaturePieces } from '@/lib/sanity/queries'
 
 const VideoScrollSection = dynamic(
-  () => import('@/components/video-scroll-section').then(mod => ({ default: mod.VideoScrollSection })),
+  () => import('@/components/Video').then(mod => ({ default: mod.VideoScrollSection })),
   { ssr: true }
 )
 
 const SignatureKnivesSection = dynamic(
-  () => import('@/components/signature-knives-section').then(mod => ({ default: mod.SignatureKnivesSection })),
+  () => import('@/components/SignatureKnives').then(mod => ({ default: mod.SignatureKnivesSection })),
   { ssr: true }
 )
 

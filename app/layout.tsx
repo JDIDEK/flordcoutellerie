@@ -1,8 +1,8 @@
 import type { Metadata } from 'next'
 import { Cormorant_Garamond, Inter } from 'next/font/google'
 import { Analytics } from '@vercel/analytics/next'
-import { ClientProviders } from '@/components/client-providers'
-import { SiteLoader } from '@/components/site-loader'
+import { ClientProviders } from '@/components/ClientProviders'
+import { SiteLoader } from '@/components/Loader'
 import '@/styles/globals.css'
 
 const cormorant = Cormorant_Garamond({ 

@@ -3,7 +3,7 @@
 import { useMemo, useState } from 'react'
 import Image from 'next/image'
 import { ArrowRight } from 'lucide-react'
-import { TransitionLink } from '@/components/transition-link'
+import { TransitionLink } from '@/components/TransitionLink'
 
 import { urlFor } from '@/sanity/lib/image'
 import { formatCurrency } from '@/lib/utils'

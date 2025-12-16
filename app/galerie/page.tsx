@@ -1,6 +1,6 @@
-import { Navigation } from '@/components/navigation'
-import { PageTransitionWrapper } from '@/components/page-transition-wrapper'
-import { HorizontalScrollGallery } from '@/components/horizontal-scroll-gallery'
+import { Navigation } from '@/components/Navigation'
+import { PageTransitionWrapper } from '@/components/PageTransitionWrapper'
+import { HorizontalScrollGallery } from '@/components/HorizontalScrollGallery'
 import { getGalleryImages } from '@/lib/sanity/queries'
 import { urlFor } from '@/sanity/lib/image'
 
