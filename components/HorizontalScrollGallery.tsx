@@ -26,6 +26,7 @@ const lerp = (start: number, end: number, factor: number) => start + (end - star
 export function HorizontalScrollGallery({ collections }: HorizontalScrollGalleryProps) {
   const isMobile = useIsMobile()
   
+  // All hooks must be called before any conditional returns
   const containerRef = useRef<HTMLDivElement>(null)
   const scrollRef = useRef<HTMLDivElement>(null)
   const [hoveredId, setHoveredId] = useState<number | null>(null)
@@ -53,15 +54,6 @@ export function HorizontalScrollGallery({ collections }: HorizontalScrollGallery
   useEffect(() => {
     if (collections.length === 0) return
 
-    // Fixer la hauteur du viewport sur mobile pour éviter les problèmes de barre d'adresse
-    const setVH = () => {
-      const vh = window.innerHeight * 0.01
-      document.documentElement.style.setProperty('--vh', `${vh}px`)
-    }
-    
-    setVH()
-    window.addEventListener('resize', setVH)
-
     measure()
     window.addEventListener('resize', measure)
 
@@ -73,6 +65,7 @@ export function HorizontalScrollGallery({ collections }: HorizontalScrollGallery
       stateRef.current.target = rawProgress
     }
 
+    // Cache des positions des cartes pour éviter les recalculs
     let cachedCardData: { offsetLeft: number; width: number }[] = []
     let cachedViewportCenter = window.innerWidth / 2
     let cachedTranslateRange = { min: 0, max: 0 }
@@ -102,14 +95,21 @@ export function HorizontalScrollGallery({ collections }: HorizontalScrollGallery
     cacheCardPositions()
     window.addEventListener('resize', cacheCardPositions)
 
+    // Paramètres adaptés mobile/desktop
+    const slopeStrength = isMobile ? 80 : 250
+    const rotateYMultiplier = isMobile ? -8 : -15
+    const rotateZMultiplier = isMobile ? 2 : 5
+
     const animate = () => {
       const state = stateRef.current
       
+      // Ease factor dynamique : plus lent quand proche de la cible pour une décélération douce
       const distance = Math.abs(state.target - state.current)
       const easeFactor = distance > 0.1 ? 0.12 : 0.06 + distance * 0.6
       
       state.current = lerp(state.current, state.target, easeFactor)
       
+      // Seuil très petit pour éviter les micro-saccades
       const threshold = 0.0002
       if (state.lastRendered !== -1 && 
           Math.abs(state.current - state.lastRendered) < threshold && 
@@ -133,19 +133,18 @@ export function HorizontalScrollGallery({ collections }: HorizontalScrollGallery
           const cardData = cachedCardData[i]
           if (!cardData) return
           
+          // Calculer la position estimée de la carte
           const cardCenterX = cardData.offsetLeft + cardData.width / 2 + currentTranslateX
           const distanceNorm = (cardCenterX - cachedViewportCenter) / cachedViewportCenter
           
-          // Effets réduits sur mobile
-          const slopeStrength = isMobile ? 80 : 250
           const translateY = -distanceNorm * slopeStrength
 
           const distanceAbs = Math.abs(distanceNorm)
-          const baseScale = isMobile ? 0.95 : 0.9
-          const scale = baseScale + (Math.exp(-distanceAbs * 2) * 0.1)
+          const baseScale = isMobile ? 0.85 : 0.9
+          const scale = baseScale + (Math.exp(-distanceAbs * 2) * (isMobile ? 0.15 : 0.1))
 
-          const rotateY = isMobile ? distanceNorm * -8 : distanceNorm * -15
-          const rotateZ = isMobile ? distanceNorm * 2 : distanceNorm * 5
+          const rotateY = distanceNorm * rotateYMultiplier
+          const rotateZ = distanceNorm * rotateZMultiplier
 
           card.style.transform = `perspective(1500px) translate3d(0, ${translateY}px, 0) rotateY(${rotateY}deg) rotateZ(${rotateZ}deg) scale(${scale})`
         })
@@ -164,34 +163,38 @@ export function HorizontalScrollGallery({ collections }: HorizontalScrollGallery
       if (lenis) lenis.off('scroll', handleScroll)
       window.removeEventListener('scroll', handleScroll)
       window.removeEventListener('resize', measure)
-      window.removeEventListener('resize', setVH)
       window.removeEventListener('resize', cacheCardPositions)
       cancelAnimationFrame(requestRef.current)
     }
   }, [collections.length, isMobile, measure])
 
-  // Hauteur responsive selon la plateforme
-  const containerHeight = isMobile ? '300vh' : '400vh'
-
+  // Unified horizontal scroll for both mobile and desktop
   return (
     <div
       ref={containerRef}
       className="relative"
-      style={{ height: containerHeight }}
+      style={{ 
+        height: isMobile ? '300svh' : '400vh'
+      }}
     >
-      <div className="sticky top-0 flex items-center overflow-hidden bg-background" style={{ height: 'calc(var(--vh, 1vh) * 100)' }}>
+      <div 
+        className="sticky top-0 flex items-center overflow-hidden bg-background"
+        style={{
+          height: isMobile ? '100svh' : '100vh'
+        }}
+      >
         <div
           ref={scrollRef}
           className="flex items-center will-change-transform"
           style={{
             paddingLeft: isMobile ? '10vw' : '20vw',
             paddingRight: isMobile ? '10vw' : '20vw',
-            gap: isMobile ? '2rem' : '5rem' 
+            gap: isMobile ? '1.5rem' : '5rem' 
           }}
         >
           {collections.map((collection, index) => {
             const isHovered = hoveredId === collection.id
-            const showWaveLayer = !isHovered // Wave sur mobile ET desktop maintenant
+            const showWaveLayer = !isHovered && !isMobile
 
             return (
               <article
@@ -202,8 +205,8 @@ export function HorizontalScrollGallery({ collections }: HorizontalScrollGallery
                     ? 'w-[80vw] aspect-[3/4]' 
                     : 'w-[60vw] max-w-5xl aspect-[16/9]'
                 }`}
-                onMouseEnter={() => !isMobile && setHoveredId(collection.id)}
-                onMouseLeave={() => !isMobile && setHoveredId(null)}
+                onMouseEnter={() => setHoveredId(collection.id)}
+                onMouseLeave={() => setHoveredId(null)}
                 style={{
                   transformStyle: 'preserve-3d',
                   willChange: 'transform'
@@ -232,7 +235,7 @@ export function HorizontalScrollGallery({ collections }: HorizontalScrollGallery
                       <div className="pointer-events-none absolute inset-0 bg-black/20" />
                     </div>
 
-                    {/* Effet wave adapté selon la plateforme */}
+                    {/* Wave layer */}
                     <div 
                       className="absolute inset-0 w-full h-full pointer-events-none transition-opacity duration-700 ease-out"
                       style={{
@@ -255,36 +258,38 @@ export function HorizontalScrollGallery({ collections }: HorizontalScrollGallery
 
                   <div 
                     className={`absolute inset-0 flex flex-col items-center justify-center text-center pointer-events-none ${
-                      isMobile ? 'px-4' : 'px-8'
+                      isMobile ? 'px-4 justify-end pb-8' : 'px-4'
                     }`}
                     style={{ 
                       transform: isMobile ? 'translateZ(40px)' : 'translateZ(80px)',
                     }}
                   >
-                    <p className={`mb-2 tracking-[0.3em] uppercase text-neutral-200 drop-shadow-lg ${
-                      isMobile ? 'text-[0.6rem]' : 'text-xs'
+                    <p className={`tracking-[0.3em] uppercase text-neutral-200 drop-shadow-lg ${
+                      isMobile ? 'text-[0.6rem] mb-2' : 'text-xs mb-4'
                     }`}>
                       {collection.category} • {collection.year}
                     </p>
                     
-                    <h2 className={`font-serif font-light tracking-[0.05em] text-white drop-shadow-xl mb-2 ${
-                      isMobile ? 'text-3xl' : 'text-6xl lg:text-7xl'
+                    <h2 className={`font-serif font-light tracking-[0.05em] text-white drop-shadow-xl ${
+                      isMobile ? 'text-3xl mb-2' : 'text-6xl lg:text-7xl mb-3'
                     }`}>
                       {collection.title}
                     </h2>
                     
-                    <p className={`max-w-md text-neutral-100/90 leading-relaxed drop-shadow-md mb-6 ${
-                      isMobile ? 'text-xs' : 'text-sm'
+                    <p className={`text-neutral-100/90 leading-relaxed drop-shadow-md ${
+                      isMobile ? 'text-xs max-w-[80%] mb-4' : 'text-sm max-w-md mb-8'
                     }`}>
                       {collection.subtitle}
                     </p>
 
                     <div className="pointer-events-auto">
-                      <span className={`inline-flex items-center gap-2 rounded-full border border-white/30 bg-black/20 backdrop-blur-sm text-white uppercase tracking-[0.2em] hover:bg-white hover:text-black transition-all ${
-                        isMobile ? 'px-4 py-2 text-[0.65rem]' : 'px-6 py-3 text-xs'
+                      <span className={`inline-flex items-center gap-3 rounded-full border border-white/30 bg-black/20 backdrop-blur-sm text-white uppercase tracking-[0.2em] transition-all ${
+                        isMobile 
+                          ? 'px-4 py-2 text-[0.6rem] gap-2' 
+                          : 'px-6 py-3 text-xs hover:bg-white hover:text-black'
                       }`}>
                         Découvrir
-                        <span className="inline-block text-[0.6rem]">→</span>
+                        <span className={isMobile ? 'text-[0.5rem]' : 'text-[0.6rem]'}>→</span>
                       </span>
                     </div>
                   </div>
@@ -295,10 +300,10 @@ export function HorizontalScrollGallery({ collections }: HorizontalScrollGallery
         </div>
       </div>
 
-      {/* Filtres SVG pour les distorsions */}
+      {/* SVG Filters */}
       <svg className="absolute h-0 w-0 pointer-events-none" xmlns="http://www.w3.org/2000/svg">
         <defs>
-          {/* Filtre desktop - distorsion forte */}
+          {/* Desktop filter - stronger effect */}
           <filter id="wave-distortion-filter" x="-20%" y="-20%" width="140%" height="140%">
             <feTurbulence type="fractalNoise" baseFrequency="0.01 0.005" numOctaves="1" result="warp">
               <animate 
@@ -311,14 +316,14 @@ export function HorizontalScrollGallery({ collections }: HorizontalScrollGallery
             </feTurbulence>
             <feDisplacementMap xChannelSelector="R" yChannelSelector="G" scale="60" in="SourceGraphic" in2="warp" />
           </filter>
-
-          {/* Filtre mobile - distorsion subtile */}
+          
+          {/* Mobile filter - lighter effect for better performance */}
           <filter id="wave-distortion-filter-mobile" x="-10%" y="-10%" width="120%" height="120%">
             <feTurbulence type="fractalNoise" baseFrequency="0.008 0.004" numOctaves="1" result="warp">
               <animate 
                 attributeName="baseFrequency" 
-                values="0.008 0.004; 0.015 0.007; 0.008 0.004" 
-                dur="45s" 
+                values="0.008 0.004; 0.012 0.006; 0.008 0.004" 
+                dur="90s" 
                 repeatCount="indefinite"
                 keyTimes="0; 0.5; 1"
               />
