@@ -6,9 +6,17 @@ const DESKTOP_SCALE_START = 0.9
 const DESKTOP_RADIUS_START = 24
 const SCROLL_THRESHOLD_RATIO = 0.6
 
+type HeroVideoStatus = 'loading' | 'canplay' | 'playing' | 'error'
+
+function emitHeroVideo(status: HeroVideoStatus) {
+  // Émet un event global pour que le loader puisse attendre la VRAIE vidéo
+  window.dispatchEvent(new CustomEvent('hero-video-status', { detail: { status } }))
+}
+
 export function VideoScrollSection() {
   const sectionRef = useRef<HTMLElement>(null)
   const videoRef = useRef<HTMLVideoElement>(null)
+
   const [scale, setScale] = useState(1)
   const [borderRadius, setBorderRadius] = useState(0)
   const [shouldAutoplay, setShouldAutoplay] = useState(true)
@@ -23,6 +31,7 @@ export function VideoScrollSection() {
     setIsMounted(true)
   }, [])
 
+  // prefers-reduced-motion -> contrôle autoplay
   useEffect(() => {
     const mediaQuery = window.matchMedia('(prefers-reduced-motion: reduce)')
 
@@ -41,6 +50,7 @@ export function VideoScrollSection() {
     return () => mediaQuery.removeEventListener('change', handleChange)
   }, [])
 
+  // desktop breakpoint
   useEffect(() => {
     const mediaQuery = window.matchMedia('(min-width: 1024px)')
     const handleChange = (event: MediaQueryListEvent) => setIsDesktop(event.matches)
@@ -51,21 +61,45 @@ export function VideoScrollSection() {
     return () => mediaQuery.removeEventListener('change', handleChange)
   }, [])
 
-  // Play video on mobile when mounted
+  const videoSrc = isDesktop ? desktopVideoSrc : mobileVideoSrc
+
+  // 🔥 Brancher les events du VRAI <video> et notifier le loader
   useEffect(() => {
     if (!isMounted) return
-    
-    if (shouldAutoplay && videoRef.current) {
-      // Attempt to play video (works on mobile with muted + playsInline)
-      const playPromise = videoRef.current.play()
+
+    const v = videoRef.current
+    if (!v) return
+
+    emitHeroVideo('loading')
+
+    const onCanPlay = () => emitHeroVideo('canplay')
+    const onPlaying = () => emitHeroVideo('playing')
+    const onError = () => emitHeroVideo('error')
+
+    v.addEventListener('canplay', onCanPlay)
+    v.addEventListener('playing', onPlaying)
+    v.addEventListener('error', onError)
+
+    // On force le navigateur à recharger correctement la source courante
+    v.load()
+
+    if (shouldAutoplay) {
+      const playPromise = v.play()
       if (playPromise !== undefined) {
         playPromise.catch(() => {
-          // Autoplay was prevented, that's ok
+          // Autoplay bloqué : pas grave, le loader a un timeout de sécurité.
         })
       }
     }
-  }, [isMounted, shouldAutoplay, isDesktop])
 
+    return () => {
+      v.removeEventListener('canplay', onCanPlay)
+      v.removeEventListener('playing', onPlaying)
+      v.removeEventListener('error', onError)
+    }
+  }, [isMounted, videoSrc, shouldAutoplay])
+
+  // Desktop scroll animation
   useEffect(() => {
     if (!isDesktop) {
       setScale(1)
@@ -99,19 +133,14 @@ export function VideoScrollSection() {
       }
     }
 
-    window.addEventListener('scroll', handleScroll)
+    window.addEventListener('scroll', handleScroll, { passive: true })
     handleScroll()
 
-    if (shouldAutoplay) {
-      videoRef.current?.play().catch(() => {})
-    }
-
     return () => window.removeEventListener('scroll', handleScroll)
-  }, [isDesktop, shouldAutoplay])
+  }, [isDesktop])
 
   const activeScale = isDesktop ? scale : 1
   const activeBorderRadius = isDesktop ? borderRadius : 0
-  const videoSrc = isDesktop ? desktopVideoSrc : mobileVideoSrc
 
   return (
     <section
@@ -119,10 +148,7 @@ export function VideoScrollSection() {
       className="relative min-h-[90svh] overflow-hidden bg-black text-white lg:min-h-screen"
       data-nav-background-trigger
     >
-      <div
-        className="relative h-[90svh] lg:h-screen lg:sticky lg:top-0"
-        style={{ overflow: 'hidden' }}
-      >
+      <div className="relative h-[90svh] lg:h-screen lg:sticky lg:top-0" style={{ overflow: 'hidden' }}>
         <div
           className="absolute inset-0 transition-all duration-500 ease-out"
           style={{
@@ -132,6 +158,7 @@ export function VideoScrollSection() {
           }}
         >
           <video
+            key={videoSrc} // ✅ remount quand la source change
             ref={videoRef}
             src={videoSrc}
             className="h-full w-full object-cover"
@@ -139,7 +166,7 @@ export function VideoScrollSection() {
             muted
             loop
             playsInline
-            preload="metadata"
+            preload="auto" // ✅ plus agressif que metadata
             poster="/assets/images/artisan-knife-blade-damascus-steel-dark-workshop.jpg"
           />
 
@@ -148,7 +175,7 @@ export function VideoScrollSection() {
         </div>
 
         <div className="relative z-10 flex h-full flex-col px-6 md:px-10">
-          <div className="flex-1 flex items-center justify-center lg:justify-start">
+          <div className="flex flex-1 items-center justify-center lg:justify-start">
             <div className="text-center lg:text-left">
               <h2 className="font-serif font-light leading-[0.95] tracking-tight">
                 <span className="block text-4xl sm:text-5xl lg:text-6xl xl:text-7xl">L&apos;ART</span>
@@ -157,12 +184,12 @@ export function VideoScrollSection() {
             </div>
           </div>
 
-          <div className="pb-10 lg:pb-14 flex flex-col gap-5 text-center lg:text-left lg:flex-row lg:items-end lg:justify-between">
-            <p className="text-sm sm:text-base text-neutral-200 leading-relaxed max-w-2xl mx-auto lg:mx-0">
+          <div className="flex flex-col gap-5 pb-10 text-center lg:flex-row lg:items-end lg:justify-between lg:pb-14 lg:text-left">
+            <p className="mx-auto max-w-2xl text-sm leading-relaxed text-neutral-200 sm:text-base lg:mx-0">
               Découvrez le processus de création, de la forge à la finition. Chaque lame raconte une
               histoire.
             </p>
-            <p className="text-[0.65rem] sm:text-[0.7rem] uppercase tracking-[0.35em] text-neutral-300">
+            <p className="text-[0.65rem] uppercase tracking-[0.35em] text-neutral-300 sm:text-[0.7rem]">
               Atelier • Tradition • Passion
             </p>
           </div>
