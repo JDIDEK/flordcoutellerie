@@ -53,6 +53,15 @@ export function HorizontalScrollGallery({ collections }: HorizontalScrollGallery
   useEffect(() => {
     if (collections.length === 0) return
 
+    // Fixer la hauteur du viewport sur mobile pour éviter les problèmes de barre d'adresse
+    const setVH = () => {
+      const vh = window.innerHeight * 0.01
+      document.documentElement.style.setProperty('--vh', `${vh}px`)
+    }
+    
+    setVH()
+    window.addEventListener('resize', setVH)
+
     measure()
     window.addEventListener('resize', measure)
 
@@ -155,6 +164,7 @@ export function HorizontalScrollGallery({ collections }: HorizontalScrollGallery
       if (lenis) lenis.off('scroll', handleScroll)
       window.removeEventListener('scroll', handleScroll)
       window.removeEventListener('resize', measure)
+      window.removeEventListener('resize', setVH)
       window.removeEventListener('resize', cacheCardPositions)
       cancelAnimationFrame(requestRef.current)
     }
@@ -169,7 +179,7 @@ export function HorizontalScrollGallery({ collections }: HorizontalScrollGallery
       className="relative"
       style={{ height: containerHeight }}
     >
-      <div className="sticky top-0 h-screen flex items-center overflow-hidden bg-background">
+      <div className="sticky top-0 flex items-center overflow-hidden bg-background" style={{ height: 'calc(var(--vh, 1vh) * 100)' }}>
         <div
           ref={scrollRef}
           className="flex items-center will-change-transform"
@@ -181,7 +191,7 @@ export function HorizontalScrollGallery({ collections }: HorizontalScrollGallery
         >
           {collections.map((collection, index) => {
             const isHovered = hoveredId === collection.id
-            const showWaveLayer = !isHovered && !isMobile // Pas d'effet wave sur mobile
+            const showWaveLayer = !isHovered // Wave sur mobile ET desktop maintenant
 
             return (
               <article
@@ -222,24 +232,25 @@ export function HorizontalScrollGallery({ collections }: HorizontalScrollGallery
                       <div className="pointer-events-none absolute inset-0 bg-black/20" />
                     </div>
 
-                    {!isMobile && (
-                      <div 
-                        className="absolute inset-0 w-full h-full pointer-events-none transition-opacity duration-700 ease-out"
-                        style={{
-                          opacity: showWaveLayer ? 1 : 0, 
-                          filter: 'url(#wave-distortion-filter) grayscale(0.6) brightness(0.7)',
-                          transform: 'scale(1.05)'
-                        }}
-                      >
-                        <Image
-                          src={collection.image || '/placeholder.svg'}
-                          alt=""
-                          fill
-                          sizes="(max-width: 1200px) 60vw, 1200px"
-                          className="object-cover"
-                        />
-                      </div>
-                    )}
+                    {/* Effet wave adapté selon la plateforme */}
+                    <div 
+                      className="absolute inset-0 w-full h-full pointer-events-none transition-opacity duration-700 ease-out"
+                      style={{
+                        opacity: showWaveLayer ? 1 : 0, 
+                        filter: isMobile 
+                          ? 'url(#wave-distortion-filter-mobile) grayscale(0.5) brightness(0.75)'
+                          : 'url(#wave-distortion-filter) grayscale(0.6) brightness(0.7)',
+                        transform: 'scale(1.05)'
+                      }}
+                    >
+                      <Image
+                        src={collection.image || '/placeholder.svg'}
+                        alt=""
+                        fill
+                        sizes={isMobile ? '80vw' : '(max-width: 1200px) 60vw, 1200px'}
+                        className="object-cover"
+                      />
+                    </div>
                   </div>
 
                   <div 
@@ -284,24 +295,38 @@ export function HorizontalScrollGallery({ collections }: HorizontalScrollGallery
         </div>
       </div>
 
-      {!isMobile && (
-        <svg className="absolute h-0 w-0 pointer-events-none" xmlns="http://www.w3.org/2000/svg">
-          <defs>
-            <filter id="wave-distortion-filter" x="-20%" y="-20%" width="140%" height="140%">
-              <feTurbulence type="fractalNoise" baseFrequency="0.01 0.005" numOctaves="1" result="warp">
-                <animate 
-                  attributeName="baseFrequency" 
-                  values="0.01 0.005; 0.02 0.009; 0.01 0.005" 
-                  dur="60s" 
-                  repeatCount="indefinite"
-                  keyTimes="0; 0.5; 1"
-                />
-              </feTurbulence>
-              <feDisplacementMap xChannelSelector="R" yChannelSelector="G" scale="60" in="SourceGraphic" in2="warp" />
-            </filter>
-          </defs>
-        </svg>
-      )}
+      {/* Filtres SVG pour les distorsions */}
+      <svg className="absolute h-0 w-0 pointer-events-none" xmlns="http://www.w3.org/2000/svg">
+        <defs>
+          {/* Filtre desktop - distorsion forte */}
+          <filter id="wave-distortion-filter" x="-20%" y="-20%" width="140%" height="140%">
+            <feTurbulence type="fractalNoise" baseFrequency="0.01 0.005" numOctaves="1" result="warp">
+              <animate 
+                attributeName="baseFrequency" 
+                values="0.01 0.005; 0.02 0.009; 0.01 0.005" 
+                dur="60s" 
+                repeatCount="indefinite"
+                keyTimes="0; 0.5; 1"
+              />
+            </feTurbulence>
+            <feDisplacementMap xChannelSelector="R" yChannelSelector="G" scale="60" in="SourceGraphic" in2="warp" />
+          </filter>
+
+          {/* Filtre mobile - distorsion subtile */}
+          <filter id="wave-distortion-filter-mobile" x="-10%" y="-10%" width="120%" height="120%">
+            <feTurbulence type="fractalNoise" baseFrequency="0.008 0.004" numOctaves="1" result="warp">
+              <animate 
+                attributeName="baseFrequency" 
+                values="0.008 0.004; 0.015 0.007; 0.008 0.004" 
+                dur="45s" 
+                repeatCount="indefinite"
+                keyTimes="0; 0.5; 1"
+              />
+            </feTurbulence>
+            <feDisplacementMap xChannelSelector="R" yChannelSelector="G" scale="30" in="SourceGraphic" in2="warp" />
+          </filter>
+        </defs>
+      </svg>
     </div>
   )
 }
