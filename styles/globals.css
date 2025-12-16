@@ -610,3 +610,23 @@ html {
     display: none;
   }
 }
+
+/* Site loader animation */
+@keyframes loader-line {
+  0% {
+    left: 0;
+    width: 0;
+  }
+  50% {
+    left: 0;
+    width: 100%;
+  }
+  100% {
+    left: 100%;
+    width: 0;
+  }
+}
+
+.animate-loader-line {
+  animation: loader-line 1.5s ease-in-out infinite;
+}
