@@ -1,6 +1,8 @@
 'use client'
 
 import { useEffect, useRef, useState } from 'react'
+import BackgroundVideo from 'next-video/background-video'
+import mainVideo from '@/videos/main-video.mp4'
 
 const DESKTOP_SCALE_START = 0.9
 const DESKTOP_RADIUS_START = 24
@@ -9,7 +11,6 @@ const SCROLL_THRESHOLD_RATIO = 0.6
 type HeroVideoStatus = 'loading' | 'canplay' | 'playing' | 'error'
 
 function emitHeroVideo(status: HeroVideoStatus) {
-  // Émet un event global pour que le loader puisse attendre la VRAIE vidéo
   window.dispatchEvent(new CustomEvent('hero-video-status', { detail: { status } }))
 }
 
@@ -21,17 +22,7 @@ export function VideoScrollSection() {
   const [borderRadius, setBorderRadius] = useState(0)
   const [shouldAutoplay, setShouldAutoplay] = useState(true)
   const [isDesktop, setIsDesktop] = useState(false)
-  const [isMounted, setIsMounted] = useState(false)
 
-  const desktopVideoSrc = '/assets/videos/main-video.mp4'
-  const mobileVideoSrc = '/assets/videos/mobile_main-video.mp4'
-
-  // Track mount state to prevent hydration issues
-  useEffect(() => {
-    setIsMounted(true)
-  }, [])
-
-  // prefers-reduced-motion -> contrôle autoplay
   useEffect(() => {
     const mediaQuery = window.matchMedia('(prefers-reduced-motion: reduce)')
 
@@ -50,7 +41,6 @@ export function VideoScrollSection() {
     return () => mediaQuery.removeEventListener('change', handleChange)
   }, [])
 
-  // desktop breakpoint
   useEffect(() => {
     const mediaQuery = window.matchMedia('(min-width: 1024px)')
     const handleChange = (event: MediaQueryListEvent) => setIsDesktop(event.matches)
@@ -61,45 +51,25 @@ export function VideoScrollSection() {
     return () => mediaQuery.removeEventListener('change', handleChange)
   }, [])
 
-  const videoSrc = isDesktop ? desktopVideoSrc : mobileVideoSrc
-
-  // 🔥 Brancher les events du VRAI <video> et notifier le loader
   useEffect(() => {
-    if (!isMounted) return
-
-    const v = videoRef.current
-    if (!v) return
-
     emitHeroVideo('loading')
+  }, [])
 
-    const onCanPlay = () => emitHeroVideo('canplay')
-    const onPlaying = () => emitHeroVideo('playing')
-    const onError = () => emitHeroVideo('error')
+  useEffect(() => {
+    if (!videoRef.current) return
 
-    v.addEventListener('canplay', onCanPlay)
-    v.addEventListener('playing', onPlaying)
-    v.addEventListener('error', onError)
-
-    // On force le navigateur à recharger correctement la source courante
-    v.load()
-
-    if (shouldAutoplay) {
-      const playPromise = v.play()
-      if (playPromise !== undefined) {
-        playPromise.catch(() => {
-          // Autoplay bloqué : pas grave, le loader a un timeout de sécurité.
-        })
-      }
+    if (!shouldAutoplay) {
+      videoRef.current.pause()
+      return
     }
 
-    return () => {
-      v.removeEventListener('canplay', onCanPlay)
-      v.removeEventListener('playing', onPlaying)
-      v.removeEventListener('error', onError)
+    const playPromise = videoRef.current.play()
+    if (playPromise !== undefined) {
+      playPromise.catch(() => {
+      })
     }
-  }, [isMounted, videoSrc, shouldAutoplay])
+  }, [shouldAutoplay])
 
-  // Desktop scroll animation
   useEffect(() => {
     if (!isDesktop) {
       setScale(1)
@@ -157,17 +127,19 @@ export function VideoScrollSection() {
             overflow: 'hidden',
           }}
         >
-          <video
-            key={videoSrc} // ✅ remount quand la source change
+          <BackgroundVideo
             ref={videoRef}
-            src={videoSrc}
+            src={mainVideo}
             className="h-full w-full object-cover"
             autoPlay={shouldAutoplay}
             muted
             loop
             playsInline
-            preload="auto" // ✅ plus agressif que metadata
-            poster="/assets/images/artisan-knife-blade-damascus-steel-dark-workshop.jpg"
+            preload="auto"
+            onLoadStart={() => emitHeroVideo('loading')}
+            onCanPlay={() => emitHeroVideo('canplay')}
+            onPlaying={() => emitHeroVideo('playing')}
+            onError={() => emitHeroVideo('error')}
           />
 
           <div className="absolute inset-0 bg-black/55 lg:bg-black/50" />

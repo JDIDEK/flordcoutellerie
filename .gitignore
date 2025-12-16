@@ -61,3 +61,9 @@ Thumbs.db
 # Media (if needed - comment out if you want to track assets)
 # public/assets/images/
 # public/assets/videos/
+# next-video
+videos/*
+!videos/*.json
+!videos/*.js
+!videos/*.ts
+public/_next-video
