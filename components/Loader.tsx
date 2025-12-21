@@ -1,6 +1,6 @@
 'use client'
 
-import { useCallback, useEffect, useState } from 'react'
+import { useCallback, useEffect, useRef, useState } from 'react'
 
 type HeroVideoStatus = 'loading' | 'canplay' | 'playing' | 'error'
 
@@ -8,9 +8,12 @@ export function SiteLoader() {
   const [isLoading, setIsLoading] = useState(true)
   const [isVisible, setIsVisible] = useState(true)
   const [progress, setProgress] = useState(0)
+  const targetProgressRef = useRef(0)
+  const autoProgressRef = useRef(0)
 
   const finishLoading = useCallback(() => {
-    setProgress(100)
+    targetProgressRef.current = 100
+    autoProgressRef.current = 100
     setTimeout(() => {
       setIsLoading(false)
       setTimeout(() => setIsVisible(false), 700)
@@ -29,7 +32,7 @@ export function SiteLoader() {
       Object.values(resources).forEach((r) => {
         if (r.loaded) total += r.weight
       })
-      setProgress(total)
+      targetProgressRef.current = total
 
       if (total >= 100) {
         finishLoading()
@@ -85,6 +88,40 @@ export function SiteLoader() {
       window.removeEventListener('hero-video-status', onHeroVideoStatus)
     }
   }, [finishLoading])
+
+  useEffect(() => {
+    if (!isVisible) return
+
+    let rafId = 0
+    let lastTime = performance.now()
+
+    const tick = (now: number) => {
+      const delta = now - lastTime
+      lastTime = now
+
+      if (targetProgressRef.current < 100) {
+        const nextAuto = autoProgressRef.current + delta * 0.012
+        autoProgressRef.current = Math.min(90, nextAuto)
+      } else {
+        autoProgressRef.current = 100
+      }
+
+      const visualTarget = Math.max(targetProgressRef.current, autoProgressRef.current)
+      setProgress((prev) => {
+        const diff = visualTarget - prev
+        if (Math.abs(diff) < 0.2) return visualTarget
+        return prev + diff * 0.1
+      })
+
+      rafId = requestAnimationFrame(tick)
+    }
+
+    rafId = requestAnimationFrame(tick)
+
+    return () => {
+      cancelAnimationFrame(rafId)
+    }
+  }, [isVisible])
 
   if (!isVisible) return null
 
