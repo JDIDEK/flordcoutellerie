@@ -6,7 +6,7 @@ import { TransitionLink } from '@/components/TransitionLink'
 
 export function HomeCtaSection() {
   return (
-    <section className="py-32 bg-secondary/30 texture-overlay">
+    <section className="min-h-[80dvh] py-32 bg-secondary/30 texture-overlay">
       <div className="container mx-auto px-6">
         <div className="max-w-3xl mx-auto text-center space-y-8 md:animate-fade-in-up">
           <h2 className="text-4xl md:text-5xl font-serif font-light tracking-tight text-balance">

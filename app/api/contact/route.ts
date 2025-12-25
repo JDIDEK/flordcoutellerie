@@ -76,7 +76,7 @@ export async function POST(req: Request) {
     )
   }
 
-  const adminEmail = process.env.CONTACT_TO_EMAIL || fromEmail || 'floribadeaudumas@gmail.com'
+  const adminEmail = fromEmail
 
   const estimatedPrice =
     typeof payload.estimatedPrice === 'number' && Number.isFinite(payload.estimatedPrice)
