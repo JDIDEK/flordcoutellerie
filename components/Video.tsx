@@ -20,25 +20,16 @@ export function VideoScrollSection() {
 
   const [scale, setScale] = useState(1)
   const [borderRadius, setBorderRadius] = useState(0)
-  const [shouldAutoplay, setShouldAutoplay] = useState(true)
   const [isDesktop, setIsDesktop] = useState(false)
 
   useEffect(() => {
-    const mediaQuery = window.matchMedia('(prefers-reduced-motion: reduce)')
+    if (!videoRef.current) return
 
-    const handleChange = (event: MediaQueryListEvent) => {
-      const autoplay = !event.matches
-      setShouldAutoplay(autoplay)
-
-      if (!autoplay && videoRef.current) {
-        videoRef.current.pause()
-      }
+    const playPromise = videoRef.current.play()
+    if (playPromise !== undefined) {
+      playPromise.catch(() => {
+      })
     }
-
-    setShouldAutoplay(!mediaQuery.matches)
-    mediaQuery.addEventListener('change', handleChange)
-
-    return () => mediaQuery.removeEventListener('change', handleChange)
   }, [])
 
   useEffect(() => {
@@ -54,21 +45,6 @@ export function VideoScrollSection() {
   useEffect(() => {
     emitHeroVideo('loading')
   }, [])
-
-  useEffect(() => {
-    if (!videoRef.current) return
-
-    if (!shouldAutoplay) {
-      videoRef.current.pause()
-      return
-    }
-
-    const playPromise = videoRef.current.play()
-    if (playPromise !== undefined) {
-      playPromise.catch(() => {
-      })
-    }
-  }, [shouldAutoplay])
 
   useEffect(() => {
     if (!isDesktop) {
@@ -111,6 +87,7 @@ export function VideoScrollSection() {
 
   const activeScale = isDesktop ? scale : 1
   const activeBorderRadius = isDesktop ? borderRadius : 0
+  const shouldAutoplay = true
 
   return (
     <section

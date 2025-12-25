@@ -10,13 +10,11 @@ export function SmoothScroll() {
   useEffect(() => {
     if (typeof window === 'undefined') return
 
-    const mediaQuery = window.matchMedia('(prefers-reduced-motion: reduce)')
-    const isReduced = mediaQuery.matches
     const isMobile = window.innerWidth < 768
     const isStudio = pathname?.startsWith('/studio')
 
     // Désactiver Lenis sur mobile pour meilleures performances
-    if (isReduced || isMobile || isStudio) {
+    if (isMobile || isStudio) {
       document.documentElement.style.scrollBehavior = 'auto'
       return
     }
@@ -44,20 +42,7 @@ export function SmoothScroll() {
 
     requestAnimationFrame(raf)
 
-    const handleChange = (event: MediaQueryListEvent) => {
-      if (event.matches) {
-        lenis.destroy()
-        ;(window as any).lenis = null
-        document.documentElement.style.scrollBehavior = 'auto'
-      } else {
-        document.documentElement.style.scrollBehavior = 'smooth'
-      }
-    }
-
-    mediaQuery.addEventListener('change', handleChange)
-
     return () => {
-      mediaQuery.removeEventListener('change', handleChange)
       lenis.destroy()
       ;(window as any).lenis = null
       document.documentElement.style.scrollBehavior = ''
