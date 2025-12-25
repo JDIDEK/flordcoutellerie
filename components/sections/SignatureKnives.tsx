@@ -36,7 +36,10 @@ export function SignatureKnivesSection({ pieces }: SignatureKnivesSectionProps) 
   const activePrice = formatCurrency(activeKnife?.price)
 
   return (
-    <section className="relative w-full overflow-hidden">
+    <section
+      className="relative z-30 w-full min-h-[100svh] overflow-hidden bg-background lg:sticky lg:top-0"
+      data-stack-section
+    >
       <div className="flex flex-col min-h-[100svh] lg:grid lg:grid-rows-1 lg:grid-cols-2 lg:h-screen">
         <div className="order-2 lg:order-1 relative min-h-[52svh] lg:h-full w-full overflow-hidden bg-secondary/30">
           <Image

@@ -1,16 +1,16 @@
 import dynamic from 'next/dynamic'
 import { Navigation } from '@/components/Navigation'
 import { PageTransitionWrapper } from '@/components/PageTransitionWrapper'
-import { HomeHeroSection } from '@/components/Hero'
 import { getSignaturePieces } from '@/lib/sanity/queries'
+import { CustomOrderSection } from '@/components/sections/CustomOrder'
 
-const VideoScrollSection = dynamic(
-  () => import('@/components/Video').then(mod => ({ default: mod.VideoScrollSection })),
+const HomeHeroSection = dynamic(
+  () => import('@/components/sections/Hero').then(mod => ({ default: mod.HomeHeroSection })),
   { ssr: true }
 )
 
 const SignatureKnivesSection = dynamic(
-  () => import('@/components/SignatureKnives').then(mod => ({ default: mod.SignatureKnivesSection })),
+  () => import('@/components/sections/SignatureKnives').then(mod => ({ default: mod.SignatureKnivesSection })),
   { ssr: true }
 )
 
@@ -22,11 +22,11 @@ export default async function Home() {
       <Navigation />
 
       <PageTransitionWrapper>
-        <main className="min-h-screen">
-        <HomeHeroSection />
-        <VideoScrollSection />
-        <SignatureKnivesSection pieces={signaturePieces} />
-      </main>
+        <main className="relative isolate min-h-screen overflow-visible">
+          <HomeHeroSection />
+          <CustomOrderSection />
+          <SignatureKnivesSection pieces={signaturePieces} />
+        </main>
       </PageTransitionWrapper>
     </>
   )

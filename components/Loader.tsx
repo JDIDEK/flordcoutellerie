@@ -123,6 +123,13 @@ export function SiteLoader() {
     }
   }, [isVisible])
 
+  useEffect(() => {
+    if (isLoading) return
+
+    document.documentElement.dataset.siteLoaderComplete = 'true'
+    window.dispatchEvent(new Event('site-loader-finished'))
+  }, [isLoading])
+
   if (!isVisible) return null
 
   return (

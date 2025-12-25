@@ -2,7 +2,7 @@
 
 import { usePathname } from 'next/navigation'
 
-import { HomeFooter } from './Footer'
+import { HomeFooter } from './sections/Footer'
 
 export function FooterWrapper() {
   const pathname = usePathname()
