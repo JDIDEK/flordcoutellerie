@@ -16,7 +16,11 @@ export function SiteLoader() {
     autoProgressRef.current = 100
     setTimeout(() => {
       setIsLoading(false)
-      setTimeout(() => setIsVisible(false), 700)
+      setTimeout(() => {
+        setIsVisible(false)
+        document.documentElement.dataset.siteLoaderComplete = 'true'
+        window.dispatchEvent(new Event('site-loader-finished'))
+      }, 700)
     }, 300)
   }, [])
 
