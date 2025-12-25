@@ -100,6 +100,10 @@ export function CustomOrderWizard() {
     name: '',
     email: '',
   })
+  const [submitStatus, setSubmitStatus] = useState<'idle' | 'loading' | 'success' | 'error'>(
+    'idle'
+  )
+  const [submitError, setSubmitError] = useState<string | null>(null)
 
   const calculatePrice = () => {
     let total = 0
@@ -139,31 +143,36 @@ export function CustomOrderWizard() {
     }
   }
 
-  const handleSubmit = () => {
-    const price = calculatePrice()
-    const subject = encodeURIComponent(`Devis Sur Mesure - ${config.usage}`)
-    const body = encodeURIComponent(`Bonjour,
+  const handleSubmit = async () => {
+    if (submitStatus === 'loading' || submitStatus === 'success') return
 
-Je souhaite commander un couteau sur mesure avec la configuration suivante :
+    setSubmitStatus('loading')
+    setSubmitError(null)
 
-Usage : ${config.usage}
-Forme : ${config.forme}
-Acier : ${config.acier}
-Manche : ${config.manche} ${config.mancheVariant ? `(${config.mancheVariant})` : ''}
-Guillochage : ${config.guillochage}
-Gravure : ${config.gravure || 'Non'}
-Notes : ${config.notes || 'Aucune'}
+    try {
+      const response = await fetch('/api/contact', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          ...config,
+          estimatedPrice: calculatePrice(),
+        }),
+      })
 
-Prix estimé : ${price}€
+      if (!response.ok) {
+        const data = await response.json().catch(() => null)
+        const message = data?.error ?? "Une erreur s'est produite. Veuillez reessayer."
+        throw new Error(message)
+      }
 
-Nom : ${config.name}
-Email : ${config.email}
-
-Merci de me contacter pour finaliser la commande.
-
-Cordialement`)
-
-    window.location.href = `mailto:floribadeaudumas@gmail.com?subject=${subject}&body=${body}`
+      setSubmitStatus('success')
+    } catch (error) {
+      console.error('Custom order submission failed', error)
+      setSubmitStatus('error')
+      setSubmitError(
+        error instanceof Error ? error.message : "Une erreur s'est produite. Veuillez reessayer."
+      )
+    }
   }
 
   const getFormesByUsage = () => {
@@ -488,11 +497,28 @@ Cordialement`)
                 className="w-full" 
                 size="lg"
                 onClick={handleSubmit}
-                disabled={!config.name || !config.email}
+                disabled={
+                  !config.name ||
+                  !config.email ||
+                  submitStatus === 'loading' ||
+                  submitStatus === 'success'
+                }
               >
                 <Mail className="mr-2 h-4 w-4" />
-                Demander un Devis Gratuit
+                {submitStatus === 'loading'
+                  ? 'Envoi en cours...'
+                  : submitStatus === 'success'
+                    ? 'Demande envoyee'
+                    : 'Demander un Devis Gratuit'}
               </Button>
+              {submitStatus === 'success' && (
+                <p className="mt-3 text-sm text-emerald-600">
+                  Merci ! Votre demande a bien ete envoyee. Nous revenons vers vous rapidement.
+                </p>
+              )}
+              {submitStatus === 'error' && submitError && (
+                <p className="mt-3 text-sm text-destructive">{submitError}</p>
+              )}
             </Card>
           </div>
         )}

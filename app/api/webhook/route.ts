@@ -56,6 +56,8 @@ function parsePieceIdsFromMetadata(
   return Array.from(new Set(ids))
 }
 
+const piecesStatusQuery = `*[_id in $ids]{ _id, status }`
+
 export async function POST(req: Request) {
   const signature = req.headers.get('stripe-signature')
   const webhookSecret = process.env.STRIPE_WEBHOOK_SECRET
@@ -124,9 +126,37 @@ export async function POST(req: Request) {
   }
 
   try {
-    const tx = sanity.transaction()
-    pieceIds.forEach((id) => tx.patch(id, { set: { status: 'sold' } }))
-    await tx.commit()
+    const pieces = await sanity.fetch<{ _id: string; status?: string }[]>(piecesStatusQuery, {
+      ids: pieceIds,
+    })
+    const foundIds = new Set(pieces.map((piece) => piece._id))
+    const missingIds = pieceIds.filter((id) => !foundIds.has(id))
+
+    if (missingIds.length > 0) {
+      console.warn('Some piece IDs were not found in Sanity', {
+        missingIds,
+        sessionId: session.id,
+      })
+    }
+
+    const soldIds = new Set(
+      pieces.filter((piece) => piece.status === 'sold').map((piece) => piece._id)
+    )
+
+    if (soldIds.size > 0) {
+      console.error('CRITICAL: Double Purchase Detected - Refund Needed', {
+        pieceIds: Array.from(soldIds),
+        sessionId: session.id,
+      })
+    }
+
+    const idsToUpdate = pieceIds.filter((id) => foundIds.has(id) && !soldIds.has(id))
+
+    if (idsToUpdate.length > 0) {
+      const tx = sanity.transaction()
+      idsToUpdate.forEach((id) => tx.patch(id, { set: { status: 'sold' } }))
+      await tx.commit()
+    }
   } catch (error) {
     console.error('Failed to update Sanity pieces to sold', error)
     return NextResponse.json(
@@ -146,20 +176,24 @@ export async function POST(req: Request) {
         throw new Error('Missing environment variable: RESEND_FROM_EMAIL')
       }
 
-      await resend.emails.send({
-        from: fromEmail,
-        to: customerEmail,
-        subject: 'Confirmation de commande - Flor D Coutellerie',
-        text: [
-          'Merci pour votre commande !',
-          '',
-          'Votre paiement a bien ete recu et vos pieces sont reservees.',
-          '',
-          'Un grand merci pour votre confiance.',
-        ].join('\n'),
-      })
+      try {
+        await resend.emails.send({
+          from: fromEmail,
+          to: customerEmail,
+          subject: 'Confirmation de commande - Flor D Coutellerie',
+          text: [
+            'Merci pour votre commande !',
+            '',
+            'Votre paiement a bien ete recu et vos pieces sont reservees.',
+            '',
+            'Un grand merci pour votre confiance.',
+          ].join('\n'),
+        })
+      } catch (error) {
+        console.error('Failed to send confirmation email via Resend', error)
+      }
     } catch (error) {
-      console.error('Failed to send confirmation email via Resend', error)
+      console.error('Failed to prepare confirmation email via Resend', error)
     }
   } else {
     console.warn('No customer email found on checkout session', session.id)
