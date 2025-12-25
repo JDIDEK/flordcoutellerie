@@ -37,9 +37,9 @@ export function SmoothScroll() {
 
     let snapTimeout: number | null = null
     let isSnapping = false
+    let lastInputId = 0
 
-    const SNAP_DELAY = 240
-    const RESNAP_DELAY = 80
+    const SNAP_DELAY = 1000
     const SNAP_DISTANCE = 50
 
     const clearSnapTimeout = () => {
@@ -97,24 +97,28 @@ export function SmoothScroll() {
       })
     }
 
-    const scheduleSnap = (delay = SNAP_DELAY) => {
+    const scheduleSnap = () => {
       if (isSnapping) return
       clearSnapTimeout()
+      const inputId = ++lastInputId
       snapTimeout = window.setTimeout(() => {
         snapTimeout = null
-        if (isSnapping) return
-        if (lenis.isScrolling) {
-          scheduleSnap(RESNAP_DELAY)
-          return
-        }
+        if (isSnapping || inputId !== lastInputId) return
         snapToClosestSection()
-      }, delay)
+      }, SNAP_DELAY)
     }
+
+    const removeVirtualScrollListener = lenis.on('virtual-scroll', () => {
+      if (isSnapping) return
+      scheduleSnap()
+    })
 
     const removeScrollListener = lenis.on('scroll', (instance) => {
       if (isSnapping) return
       if (instance.userData?.initiator === 'stack-snap') return
-      scheduleSnap()
+      if (instance.isScrolling === 'native') {
+        scheduleSnap()
+      }
     })
 
     function raf(time: number) {
@@ -126,6 +130,7 @@ export function SmoothScroll() {
 
     return () => {
       clearSnapTimeout()
+      removeVirtualScrollListener()
       removeScrollListener()
       lenis.destroy()
       ;(window as any).lenis = null
