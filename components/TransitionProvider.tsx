@@ -24,41 +24,34 @@ export function TransitionProvider({ children }: { children: ReactNode }) {
   const [isTransitioning, setIsTransitioning] = useState(false)
   const [phase, setPhase] = useState<'idle' | 'enter' | 'exit'>('idle')
 
-  const startTransition = useCallback((href: string) => {
-    if (isTransitioning) return
+  const startTransition = useCallback(
+    (href: string) => {
+      if (isTransitioning) return
 
-    setIsTransitioning(true)
-    setPhase('enter')
+      setIsTransitioning(true)
+      setPhase('enter')
 
-    // Wait for curtain to close, then navigate
-    setTimeout(() => {
-      router.push(href)
-      
-      // Small delay to let the page load, then open curtain
       setTimeout(() => {
-        setPhase('exit')
-        
+        router.push(href)
+
         setTimeout(() => {
-          setIsTransitioning(false)
-          setPhase('idle')
-        }, 500)
-      }, 100)
-    }, 500)
-  }, [router, isTransitioning])
+          setPhase('exit')
+
+          setTimeout(() => {
+            setIsTransitioning(false)
+            setPhase('idle')
+          }, 500)
+        }, 100)
+      }, 500)
+    },
+    [router, isTransitioning]
+  )
 
   return (
     <TransitionContext.Provider value={{ startTransition, isTransitioning }}>
       {children}
-      
-      {/* Curtain overlay */}
-      <div
-        className={cn(
-          'fixed inset-0 z-[9999] pointer-events-none',
-          isTransitioning && 'pointer-events-auto'
-        )}
-        aria-hidden="true"
-      >
-        {/* Top curtain */}
+
+      <div className={cn('fixed inset-0 z-[9999] pointer-events-none', isTransitioning && 'pointer-events-auto')} aria-hidden="true">
         <div
           className={cn(
             'absolute inset-x-0 top-0 h-1/2 bg-background origin-top transition-transform duration-500 ease-[cubic-bezier(0.77,0,0.175,1)]',
@@ -67,8 +60,7 @@ export function TransitionProvider({ children }: { children: ReactNode }) {
             phase === 'idle' && 'scale-y-0'
           )}
         />
-        
-        {/* Bottom curtain */}
+
         <div
           className={cn(
             'absolute inset-x-0 bottom-0 h-1/2 bg-background origin-bottom transition-transform duration-500 ease-[cubic-bezier(0.77,0,0.175,1)]',

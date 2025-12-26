@@ -10,10 +10,14 @@ export function SmoothScroll() {
   useEffect(() => {
     if (typeof window === 'undefined') return
 
+    const previousScrollBehavior = document.documentElement.style.scrollBehavior
+
     const isStudio = pathname?.startsWith('/studio')
     if (isStudio) {
       document.documentElement.style.scrollBehavior = 'auto'
-      return
+      return () => {
+        document.documentElement.style.scrollBehavior = previousScrollBehavior
+      }
     }
 
     const isCoarsePointer = window.matchMedia('(pointer: coarse)').matches
@@ -23,7 +27,9 @@ export function SmoothScroll() {
     document.documentElement.style.scrollBehavior = 'auto'
 
     if (isMobile) {
-      return
+      return () => {
+        document.documentElement.style.scrollBehavior = previousScrollBehavior
+      }
     }
 
     const lenis = new Lenis({
@@ -135,7 +141,7 @@ export function SmoothScroll() {
       removeScrollListener()
       lenis.destroy()
       ;(window as any).lenis = null
-      document.documentElement.style.scrollBehavior = ''
+      document.documentElement.style.scrollBehavior = previousScrollBehavior
     }
   }, [pathname])
 

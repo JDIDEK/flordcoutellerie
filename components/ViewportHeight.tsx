@@ -3,7 +3,7 @@
 import { useEffect } from 'react'
 
 function setAppHeight() {
-  const h = window.visualViewport?.height ?? window.innerHeight
+  const h = window.innerHeight
   document.documentElement.style.setProperty('--app-height', `${h}px`)
 }
 
@@ -13,24 +13,21 @@ export function ViewportHeight() {
 
     setAppHeight()
 
-    const vv = window.visualViewport
-    const onChange = () => setAppHeight()
-
-    window.addEventListener('resize', onChange, { passive: true })
-    window.addEventListener('orientationchange', onChange, { passive: true })
-
-    if (vv) {
-      vv.addEventListener('resize', onChange as any, { passive: true } as any)
-      vv.addEventListener('scroll', onChange as any, { passive: true } as any)
+    const onOrientation = () => {
+      setTimeout(() => setAppHeight(), 50)
+      setTimeout(() => setAppHeight(), 250)
     }
 
+    const onPageShow = () => {
+      setTimeout(() => setAppHeight(), 50)
+    }
+
+    window.addEventListener('orientationchange', onOrientation, { passive: true })
+    window.addEventListener('pageshow', onPageShow as any, { passive: true })
+
     return () => {
-      window.removeEventListener('resize', onChange as any)
-      window.removeEventListener('orientationchange', onChange as any)
-      if (vv) {
-        vv.removeEventListener('resize', onChange as any)
-        vv.removeEventListener('scroll', onChange as any)
-      }
+      window.removeEventListener('orientationchange', onOrientation as any)
+      window.removeEventListener('pageshow', onPageShow as any)
     }
   }, [])
 

@@ -25,18 +25,9 @@ export const metadata: Metadata = {
   keywords: ['coutellerie artisanale', 'couteaux sur mesure', 'damasteel', 'forge française', 'lames artisanales'],
   icons: {
     icon: [
-      {
-        url: '/assets/images/icon-light-32x32.png',
-        media: '(prefers-color-scheme: light)',
-      },
-      {
-        url: '/assets/images/icon-dark-32x32.png',
-        media: '(prefers-color-scheme: dark)',
-      },
-      {
-        url: '/assets/images/icon.svg',
-        type: 'image/svg+xml',
-      },
+      { url: '/assets/images/icon-light-32x32.png', media: '(prefers-color-scheme: light)' },
+      { url: '/assets/images/icon-dark-32x32.png', media: '(prefers-color-scheme: dark)' },
+      { url: '/assets/images/icon.svg', type: 'image/svg+xml' },
     ],
     apple: '/assets/images/apple-icon.png',
   },
@@ -45,13 +36,10 @@ export const metadata: Metadata = {
 export const viewport = {
   width: 'device-width',
   initialScale: 1,
+  viewportFit: 'cover',
 }
 
-export default function RootLayout({
-  children,
-}: Readonly<{
-  children: React.ReactNode
-}>) {
+export default function RootLayout({ children }: { children: React.ReactNode }) {
   return (
     <html lang="fr">
       <body className={`${inter.variable} ${cormorant.variable} font-sans antialiased`}>

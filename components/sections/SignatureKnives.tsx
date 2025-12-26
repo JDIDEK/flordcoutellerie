@@ -60,9 +60,7 @@ export function SignatureKnivesSection({ pieces }: SignatureKnivesSectionProps) 
 
         <div className="order-1 lg:order-2 flex flex-col justify-center bg-primary/90 lg:bg-primary/80 px-5 py-10 lg:px-16 lg:py-14 text-primary-foreground gap-6">
           <div className="space-y-2">
-            <p className="text-[0.65rem] uppercase tracking-[0.35em] text-primary-foreground/80">
-              Collection atelier
-            </p>
+            <p className="text-[0.65rem] uppercase tracking-[0.35em] text-primary-foreground/80">Collection atelier</p>
             <h2 className="text-3xl lg:text-4xl xl:text-5xl font-serif font-light tracking-tight">
               COUTEAUX
               <br />
@@ -82,24 +80,16 @@ export function SignatureKnivesSection({ pieces }: SignatureKnivesSectionProps) 
                     type="button"
                     onClick={() => setActiveIndex(index)}
                     className={`snap-start min-w-[78vw] rounded-sm border border-primary-foreground/20 p-4 text-left transition-all duration-300 ${
-                      isActive
-                        ? 'bg-primary-foreground text-primary shadow-lg'
-                        : 'bg-transparent hover:bg-primary-foreground/10'
+                      isActive ? 'bg-primary-foreground text-primary shadow-lg' : 'bg-transparent hover:bg-primary-foreground/10'
                     }`}
                     aria-pressed={isActive}
                   >
                     <div className="space-y-3">
                       <div className="flex items-start justify-between gap-4">
                         <h3 className="text-lg font-serif font-light">{knife.title}</h3>
-                        <span className="text-base font-light whitespace-nowrap">
-                          {knifePrice ? `${knifePrice}€` : 'Sur commande'}
-                        </span>
+                        <span className="text-base font-light whitespace-nowrap">{knifePrice ? `${knifePrice}€` : 'Sur commande'}</span>
                       </div>
-                      <p
-                        className={`text-sm leading-relaxed ${
-                          isActive ? 'text-primary/70' : 'text-primary-foreground/80'
-                        }`}
-                      >
+                      <p className={`text-sm leading-relaxed ${isActive ? 'text-primary/70' : 'text-primary-foreground/80'}`}>
                         {knife.steelSummary ?? 'Création sur mesure'}
                       </p>
                     </div>
@@ -125,13 +115,9 @@ export function SignatureKnivesSection({ pieces }: SignatureKnivesSectionProps) 
                   >
                     <div className="flex items-baseline justify-between gap-4 mb-2">
                       <h3 className="text-xl md:text-2xl font-serif font-light">{knife.title}</h3>
-                      <span className="text-base font-light whitespace-nowrap">
-                        {knifePrice ? `${knifePrice}€` : 'Sur commande'}
-                      </span>
+                      <span className="text-base font-light whitespace-nowrap">{knifePrice ? `${knifePrice}€` : 'Sur commande'}</span>
                     </div>
-                    <p className="text-sm opacity-80 leading-relaxed">
-                      {knife.steelSummary ?? 'Création sur mesure'}
-                    </p>
+                    <p className="text-sm opacity-80 leading-relaxed">{knife.steelSummary ?? 'Création sur mesure'}</p>
                   </button>
                 )
               })}

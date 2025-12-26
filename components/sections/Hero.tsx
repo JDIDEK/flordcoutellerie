@@ -1,6 +1,6 @@
 'use client'
 
-import { useEffect, useRef, useState } from 'react'
+import { useEffect, useMemo, useRef, useState } from 'react'
 import BackgroundVideo from 'next-video/background-video'
 import mainVideo from '@/videos/main-video.mp4'
 import { useParallax } from '@/hooks/use-parallax'
@@ -13,8 +13,16 @@ function emitHeroVideo(status: HeroVideoStatus) {
 
 export function HomeHeroSection() {
   const videoRef = useRef<HTMLVideoElement>(null)
-  const videoParallaxRef = useParallax<HTMLDivElement>({ strength: 10, scale: 1.03 })
   const [isRevealed, setIsRevealed] = useState(false)
+
+  const isMobile = useMemo(() => {
+    if (typeof window === 'undefined') return false
+    const isCoarsePointer = window.matchMedia('(pointer: coarse)').matches
+    const isSmallScreen = window.matchMedia('(max-width: 1024px)').matches
+    return isCoarsePointer || isSmallScreen
+  }, [])
+
+  const videoParallaxRef = useParallax<HTMLDivElement>({ strength: 10, scale: 1.03, disabled: isMobile })
 
   useEffect(() => {
     if (document.documentElement.dataset.siteLoaderComplete === 'true') {
@@ -97,8 +105,8 @@ export function HomeHeroSection() {
                 isRevealed ? 'animate-fade-in-up animation-delay-600' : 'opacity-0 translate-y-4'
               }`}
             >
-              Des pièces uniques forgées en France, pensées pour les chefs et collectionneurs qui
-              recherchent une lame équilibrée, élégante et durable.
+              Des pièces uniques forgées en France, pensées pour les chefs et collectionneurs qui recherchent une
+              lame équilibrée, élégante et durable.
             </p>
           </div>
         </div>

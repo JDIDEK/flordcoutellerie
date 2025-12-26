@@ -8,35 +8,12 @@ import { TransitionLink } from '@/components/TransitionLink'
 export function CustomOrderSection() {
   const sectionRef = useRef<HTMLElement>(null)
   const imageInnerRef = useRef<HTMLDivElement>(null)
-  const viewportHRef = useRef<number>(0)
 
   useEffect(() => {
-    const setVH = () => {
-      viewportHRef.current = window.visualViewport?.height ?? window.innerHeight
-    }
+    const isCoarsePointer = window.matchMedia('(pointer: coarse)').matches
+    const isSmallScreen = window.matchMedia('(max-width: 1024px)').matches
+    const isMobile = isCoarsePointer || isSmallScreen
 
-    setVH()
-
-    const vv = window.visualViewport
-    window.addEventListener('resize', setVH, { passive: true })
-    window.addEventListener('orientationchange', setVH, { passive: true })
-
-    if (vv) {
-      vv.addEventListener('resize', setVH, { passive: true } as any)
-      vv.addEventListener('scroll', setVH, { passive: true } as any)
-    }
-
-    return () => {
-      window.removeEventListener('resize', setVH as any)
-      window.removeEventListener('orientationchange', setVH as any)
-      if (vv) {
-        vv.removeEventListener('resize', setVH as any)
-        vv.removeEventListener('scroll', setVH as any)
-      }
-    }
-  }, [])
-
-  useEffect(() => {
     let raf = 0
 
     const clamp01 = (n: number) => Math.max(0, Math.min(1, n))
@@ -47,7 +24,7 @@ export function CustomOrderSection() {
       const img = imageInnerRef.current
       if (!section || !img) return
 
-      const windowHeight = viewportHRef.current || 1
+      const windowHeight = window.innerHeight || 1
       const rect = section.getBoundingClientRect()
       const sectionTopInDoc = window.scrollY + rect.top
       const sectionHeight = rect.height || 1
@@ -69,11 +46,12 @@ export function CustomOrderSection() {
     schedule()
 
     window.addEventListener('scroll', schedule, { passive: true })
-    window.addEventListener('resize', schedule)
+    if (!isMobile) window.addEventListener('resize', schedule)
+
     return () => {
       if (raf) window.cancelAnimationFrame(raf)
       window.removeEventListener('scroll', schedule)
-      window.removeEventListener('resize', schedule)
+      if (!isMobile) window.removeEventListener('resize', schedule)
     }
   }, [])
 
@@ -86,11 +64,7 @@ export function CustomOrderSection() {
       <div className="mx-auto max-w-7xl px-6 py-16 md:px-12 md:py-24 lg:px-16 lg:py-32">
         <div className="grid gap-12 lg:grid-cols-2 lg:gap-16 lg:items-center">
           <div className="relative aspect-square overflow-hidden rounded-sm bg-secondary/20 border border-border/60">
-            <div
-              ref={imageInnerRef}
-              className="absolute inset-0 will-change-transform"
-              style={{ transform: 'translate3d(0,0,0)' }}
-            >
+            <div ref={imageInnerRef} className="absolute inset-0 will-change-transform" style={{ transform: 'translate3d(0,0,0)' }}>
               <div className="relative w-full h-full scale-110">
                 <Image
                   src="/assets/images/flo/flo.png"
@@ -107,9 +81,7 @@ export function CustomOrderSection() {
 
           <div className="space-y-6 lg:space-y-8">
             <div className="space-y-2">
-              <p className="text-[0.65rem] uppercase tracking-[0.35em] text-muted-foreground">
-                Création exclusive
-              </p>
+              <p className="text-[0.65rem] uppercase tracking-[0.35em] text-muted-foreground">Création exclusive</p>
               <h2 className="text-3xl lg:text-4xl xl:text-5xl font-serif font-light tracking-tight text-foreground">
                 COMMANDE
                 <br />
@@ -119,16 +91,16 @@ export function CustomOrderSection() {
 
             <div className="space-y-4 text-sm md:text-base leading-relaxed text-muted-foreground max-w-xl">
               <p>
-                Chaque projet sur-mesure est une collaboration unique. Ensemble, nous définissons vos
-                besoins, vos préférences esthétiques et l'usage que vous ferez de votre pièce.
+                Chaque projet sur-mesure est une collaboration unique. Ensemble, nous définissons vos besoins, vos
+                préférences esthétiques et l&apos;usage que vous ferez de votre pièce.
               </p>
               <p>
-                Du choix de l'acier à la forme du manche, en passant par les dimensions et les
-                finitions, chaque détail est pensé pour créer un couteau qui vous ressemble.
+                Du choix de l&apos;acier à la forme du manche, en passant par les dimensions et les finitions, chaque
+                détail est pensé pour créer un couteau qui vous ressemble.
               </p>
               <p>
-                Le processus complet prend généralement entre 8 et 12 semaines, de la première esquisse
-                à la livraison de votre pièce unique.
+                Le processus complet prend généralement entre 8 et 12 semaines, de la première esquisse à la livraison
+                de votre pièce unique.
               </p>
             </div>
 
