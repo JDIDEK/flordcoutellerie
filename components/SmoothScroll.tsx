@@ -11,16 +11,23 @@ export function SmoothScroll() {
     if (typeof window === 'undefined') return
 
     const isStudio = pathname?.startsWith('/studio')
-
     if (isStudio) {
       document.documentElement.style.scrollBehavior = 'auto'
       return
     }
 
+    const isCoarsePointer = window.matchMedia('(pointer: coarse)').matches
+    const isSmallScreen = window.matchMedia('(max-width: 1024px)').matches
+    const isMobile = isCoarsePointer || isSmallScreen
+
     document.documentElement.style.scrollBehavior = 'auto'
 
+    if (isMobile) {
+      return
+    }
+
     const lenis = new Lenis({
-      duration: 2.4,
+      duration: 1.6,
       easing: (t) => Math.min(1, 1.001 - Math.pow(2, -10 * t)),
       orientation: 'vertical',
       gestureOrientation: 'vertical',
