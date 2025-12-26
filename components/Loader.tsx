@@ -4,128 +4,154 @@ import { useCallback, useEffect, useRef, useState } from 'react'
 
 type HeroVideoStatus = 'loading' | 'canplay' | 'playing' | 'error'
 
+type ResourceKey = 'dom' | 'fonts' | 'video'
+
+type ResourceState = {
+  loaded: boolean
+  weight: number
+  startedAt?: number
+  endedAt?: number
+}
+
 export function SiteLoader() {
   const [isLoading, setIsLoading] = useState(true)
   const [isVisible, setIsVisible] = useState(true)
   const [progress, setProgress] = useState(0)
-  const targetProgressRef = useRef(0)
-  const autoProgressRef = useRef(0)
+
+  const rafIdRef = useRef<number | null>(null)
+  const startTimeRef = useRef<number>(0)
+  const finishingRef = useRef(false)
+
+  const resourcesRef = useRef<Record<ResourceKey, ResourceState>>({
+    video: { loaded: false, weight: 70 },
+    dom: { loaded: false, weight: 20 },
+    fonts: { loaded: false, weight: 10 },
+  })
+
+  const markLoaded = useCallback((key: ResourceKey) => {
+    const r = resourcesRef.current[key]
+    if (r.loaded) return
+    r.loaded = true
+    r.endedAt = performance.now()
+  }, [])
+
+  const computeRealProgress = useCallback(() => {
+    const resources = resourcesRef.current
+    let total = 0
+    ;(Object.keys(resources) as ResourceKey[]).forEach((k) => {
+      const r = resources[k]
+      if (r.loaded) total += r.weight
+    })
+    return Math.max(0, Math.min(100, total))
+  }, [])
 
   const finishLoading = useCallback(() => {
-    targetProgressRef.current = 100
-    autoProgressRef.current = 100
+    if (finishingRef.current) return
+    finishingRef.current = true
+
+    setProgress(100)
     setTimeout(() => {
       setIsLoading(false)
       setTimeout(() => setIsVisible(false), 700)
-    }, 300)
+    }, 250)
   }, [])
 
   useEffect(() => {
-    const resources = {
-      video: { loaded: false, weight: 70 }, // ✅ on attend que la VRAIE vidéo soit "playing"
-      dom: { loaded: false, weight: 20 },
-      fonts: { loaded: false, weight: 10 },
-    }
+    startTimeRef.current = performance.now()
 
-    const updateProgress = () => {
-      let total = 0
-      Object.values(resources).forEach((r) => {
-        if (r.loaded) total += r.weight
-      })
-      targetProgressRef.current = total
+    const resources = resourcesRef.current
+    ;(Object.keys(resources) as ResourceKey[]).forEach((k) => {
+      resources[k].startedAt = performance.now()
+    })
 
-      if (total >= 100) {
-        finishLoading()
-      }
-    }
-
-    // DOM
     const checkDOM = () => {
       if (document.readyState === 'interactive' || document.readyState === 'complete') {
-        resources.dom.loaded = true
-        updateProgress()
+        markLoaded('dom')
       }
     }
 
     checkDOM()
     document.addEventListener('DOMContentLoaded', checkDOM)
 
-    // Fonts
-    if (document.fonts?.ready) {
-      document.fonts.ready.then(() => {
-        resources.fonts.loaded = true
-        updateProgress()
-      })
+    let fontsDone = false
+    const fontsTimeout = window.setTimeout(() => {
+      if (!fontsDone) markLoaded('fonts')
+    }, 2500)
+
+    if ((document as any).fonts?.ready) {
+      ;(document as any).fonts.ready
+        .then(() => {
+          fontsDone = true
+          clearTimeout(fontsTimeout)
+          markLoaded('fonts')
+        })
+        .catch(() => {
+          fontsDone = true
+          clearTimeout(fontsTimeout)
+          markLoaded('fonts')
+        })
     } else {
-      // Fallback
-      resources.fonts.loaded = true
-      updateProgress()
+      fontsDone = true
+      clearTimeout(fontsTimeout)
+      markLoaded('fonts')
     }
 
-    // Vidéo réelle : on écoute l'event envoyé par VideoScrollSection
     const onHeroVideoStatus = (e: Event) => {
       const evt = e as CustomEvent<{ status: HeroVideoStatus }>
       const status = evt.detail?.status
-
-      // "playing" = la vidéo tourne réellement (c'est ce que tu veux avant de hide le loader)
-      // "error" = on ne bloque pas l'UX si le navigateur refuse/autre problème
       if (status === 'playing' || status === 'error') {
-        resources.video.loaded = true
-        updateProgress()
+        markLoaded('video')
       }
     }
 
     window.addEventListener('hero-video-status', onHeroVideoStatus)
 
-    // Timeout sécurité (évite un loader infini sur iOS/autoplay bloqué)
-    const timeout = setTimeout(() => {
+    const hardTimeout = window.setTimeout(() => {
+      markLoaded('video')
+      markLoaded('dom')
+      markLoaded('fonts')
       finishLoading()
     }, 8000)
 
     return () => {
-      clearTimeout(timeout)
+      clearTimeout(hardTimeout)
+      clearTimeout(fontsTimeout)
       document.removeEventListener('DOMContentLoaded', checkDOM)
       window.removeEventListener('hero-video-status', onHeroVideoStatus)
     }
-  }, [finishLoading])
+  }, [finishLoading, markLoaded])
 
   useEffect(() => {
     if (!isVisible) return
 
-    let rafId = 0
-    let lastTime = performance.now()
-
-    const tick = (now: number) => {
-      const delta = now - lastTime
-      lastTime = now
-
-      if (targetProgressRef.current < 100) {
-        const nextAuto = autoProgressRef.current + delta * 0.012
-        autoProgressRef.current = Math.min(90, nextAuto)
-      } else {
-        autoProgressRef.current = 100
-      }
-
-      const visualTarget = Math.max(targetProgressRef.current, autoProgressRef.current)
+    const tick = () => {
+      const real = computeRealProgress()
       setProgress((prev) => {
-        const diff = visualTarget - prev
-        if (Math.abs(diff) < 0.2) return visualTarget
-        return prev + diff * 0.1
+        if (real >= 100) return 100
+        const step = Math.max(0.6, (real - prev) * 0.18)
+        const next = prev + step
+        return next > real ? real : next
       })
 
-      rafId = requestAnimationFrame(tick)
+      const current = computeRealProgress()
+      if (current >= 100) {
+        finishLoading()
+        return
+      }
+
+      rafIdRef.current = requestAnimationFrame(tick)
     }
 
-    rafId = requestAnimationFrame(tick)
+    rafIdRef.current = requestAnimationFrame(tick)
 
     return () => {
-      cancelAnimationFrame(rafId)
+      if (rafIdRef.current) cancelAnimationFrame(rafIdRef.current)
+      rafIdRef.current = null
     }
-  }, [isVisible])
+  }, [computeRealProgress, finishLoading, isVisible])
 
   useEffect(() => {
     if (isLoading) return
-
     document.documentElement.dataset.siteLoaderComplete = 'true'
     window.dispatchEvent(new Event('site-loader-finished'))
   }, [isLoading])
@@ -161,7 +187,7 @@ export function SiteLoader() {
 
         <div className="relative mt-4 h-[1px] w-32 overflow-hidden bg-neutral-800">
           <div
-            className="absolute inset-y-0 left-0 bg-white transition-all duration-300 ease-out"
+            className="absolute inset-y-0 left-0 bg-white transition-[width] duration-150 ease-out"
             style={{ width: `${progress}%` }}
           />
         </div>

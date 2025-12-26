@@ -3,22 +3,24 @@ import { Cormorant_Garamond, Inter } from 'next/font/google'
 import { Analytics } from '@vercel/analytics/next'
 import { ClientProviders } from '@/components/ClientProviders'
 import { SiteLoader } from '@/components/Loader'
+import { ViewportHeight } from '@/components/ViewportHeight'
 import '@/styles/globals.css'
 
-const cormorant = Cormorant_Garamond({ 
-  subsets: ["latin"],
+const cormorant = Cormorant_Garamond({
+  subsets: ['latin'],
   weight: ['300', '400', '500', '600', '700'],
-  variable: '--font-serif'
-});
+  variable: '--font-serif',
+})
 
-const inter = Inter({ 
-  subsets: ["latin"],
-  variable: '--font-sans'
-});
+const inter = Inter({
+  subsets: ['latin'],
+  variable: '--font-sans',
+})
 
 export const metadata: Metadata = {
-  title: 'Flo RD Coutellerie | Couteaux d\'Art Français',
-  description: 'Coutelier d\'art français créant des lames sur mesure et pièces uniques. Aciers Damasteel, VG10, 14C28N. Guillochage fleuri et manches en bois précieux.',
+  title: "Flo RD Coutellerie | Couteaux d'Art Français",
+  description:
+    "Coutelier d'art français créant des lames sur mesure et pièces uniques. Aciers Damasteel, VG10, 14C28N. Guillochage fleuri et manches en bois précieux.",
   generator: 'v0.app',
   keywords: ['coutellerie artisanale', 'couteaux sur mesure', 'damasteel', 'forge française', 'lames artisanales'],
   icons: {
@@ -53,10 +55,9 @@ export default function RootLayout({
   return (
     <html lang="fr">
       <body className={`${inter.variable} ${cormorant.variable} font-sans antialiased`}>
+        <ViewportHeight />
         <SiteLoader />
-        <ClientProviders>
-          {children}
-        </ClientProviders>
+        <ClientProviders>{children}</ClientProviders>
         <Analytics />
       </body>
     </html>

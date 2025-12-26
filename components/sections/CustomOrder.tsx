@@ -8,6 +8,33 @@ import { TransitionLink } from '@/components/TransitionLink'
 export function CustomOrderSection() {
   const sectionRef = useRef<HTMLElement>(null)
   const imageInnerRef = useRef<HTMLDivElement>(null)
+  const viewportHRef = useRef<number>(0)
+
+  useEffect(() => {
+    const setVH = () => {
+      viewportHRef.current = window.visualViewport?.height ?? window.innerHeight
+    }
+
+    setVH()
+
+    const vv = window.visualViewport
+    window.addEventListener('resize', setVH, { passive: true })
+    window.addEventListener('orientationchange', setVH, { passive: true })
+
+    if (vv) {
+      vv.addEventListener('resize', setVH, { passive: true } as any)
+      vv.addEventListener('scroll', setVH, { passive: true } as any)
+    }
+
+    return () => {
+      window.removeEventListener('resize', setVH as any)
+      window.removeEventListener('orientationchange', setVH as any)
+      if (vv) {
+        vv.removeEventListener('resize', setVH as any)
+        vv.removeEventListener('scroll', setVH as any)
+      }
+    }
+  }, [])
 
   useEffect(() => {
     let raf = 0
@@ -20,7 +47,7 @@ export function CustomOrderSection() {
       const img = imageInnerRef.current
       if (!section || !img) return
 
-      const windowHeight = window.innerHeight || 1
+      const windowHeight = viewportHRef.current || 1
       const rect = section.getBoundingClientRect()
       const sectionTopInDoc = window.scrollY + rect.top
       const sectionHeight = rect.height || 1
@@ -53,7 +80,7 @@ export function CustomOrderSection() {
   return (
     <section
       ref={sectionRef as any}
-      className="relative z-20 w-full min-h-[100svh] bg-background text-foreground lg:sticky lg:top-0"
+      className="relative z-20 w-full min-h-[var(--app-height)] bg-background text-foreground lg:sticky lg:top-0"
       data-stack-section
     >
       <div className="mx-auto max-w-7xl px-6 py-16 md:px-12 md:py-24 lg:px-16 lg:py-32">
