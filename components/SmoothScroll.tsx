@@ -28,7 +28,7 @@ export function SmoothScroll() {
       wheelMultiplier: 0.55,
       syncTouch: true,
       syncTouchLerp: 0.08,
-      touchMultiplier: 0.8,
+      touchMultiplier: 1.3,
       allowNestedScroll: true,
       infinite: false,
       autoRaf: true,
