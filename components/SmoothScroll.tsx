@@ -17,7 +17,7 @@ export function SmoothScroll() {
       return
     }
 
-    document.documentElement.style.scrollBehavior = 'smooth'
+    document.documentElement.style.scrollBehavior = 'auto'
 
     const lenis = new Lenis({
       duration: 2.4,
@@ -31,6 +31,7 @@ export function SmoothScroll() {
       touchMultiplier: 0.8,
       allowNestedScroll: true,
       infinite: false,
+      autoRaf: true,
     })
 
     ;(window as any).lenis = lenis
@@ -120,13 +121,6 @@ export function SmoothScroll() {
         scheduleSnap()
       }
     })
-
-    function raf(time: number) {
-      lenis.raf(time)
-      requestAnimationFrame(raf)
-    }
-
-    requestAnimationFrame(raf)
 
     return () => {
       clearSnapTimeout()
