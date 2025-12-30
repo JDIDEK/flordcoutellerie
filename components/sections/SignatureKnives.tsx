@@ -37,11 +37,11 @@ export function SignatureKnivesSection({ pieces }: SignatureKnivesSectionProps) 
 
   return (
     <section
-      className="sticky top-0 z-30 w-full min-h-[var(--app-height)] overflow-hidden bg-background"
+      className="sticky top-0 z-30 w-full h-[var(--app-height)] overflow-hidden bg-background"
       data-stack-section
     >
-      <div className="flex flex-col min-h-[var(--app-height)] lg:grid lg:grid-rows-1 lg:grid-cols-2 lg:h-screen">
-        <div className="order-2 lg:order-1 relative min-h-[52svh] flex-1 lg:h-full w-full overflow-hidden bg-secondary/30">
+      <div className="flex h-full min-h-0 flex-col lg:grid lg:grid-rows-1 lg:grid-cols-2 lg:h-full">
+        <div className="order-2 lg:order-1 relative flex-1 min-h-0 w-full overflow-hidden bg-secondary/30">
           <Image
             src={activeImageSrc}
             alt={activeKnife?.title ?? 'Pièce signature'}

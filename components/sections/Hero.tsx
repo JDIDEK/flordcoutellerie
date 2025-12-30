@@ -49,7 +49,7 @@ export function HomeHeroSection() {
 
   return (
     <section
-      className="sticky top-0 z-10 min-h-[var(--app-height)] w-full overflow-hidden bg-black text-white"
+      className="sticky top-0 z-10 h-[var(--app-height)] w-full overflow-hidden bg-black text-white"
       data-stack-section
     >
       <div ref={videoParallaxRef} className="absolute inset-0 will-change-transform">
@@ -72,7 +72,7 @@ export function HomeHeroSection() {
       <div className="absolute inset-0 bg-black/45" />
       <div className="absolute inset-0 bg-gradient-to-b from-black/5 via-black/40 to-black/85" />
 
-      <div className="relative z-10 flex min-h-[var(--app-height)] flex-col px-6 pb-10 pt-24 md:px-12 lg:px-16">
+      <div className="relative z-10 flex h-full flex-col px-6 pb-10 pt-24 md:px-12 lg:px-16">
         <div className="flex flex-1 items-end">
           <div className="ml-auto w-full max-w-3xl space-y-5 text-left md:text-right">
             <p
