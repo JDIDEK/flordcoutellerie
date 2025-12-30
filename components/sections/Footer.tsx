@@ -4,7 +4,7 @@ import { TransitionLink } from '@/components/TransitionLink'
 
 export function HomeFooter() {
   return (
-    <footer className="bg-background text-foreground border-t border-border">
+    <footer className="bg-background text-foreground border-t border-border" data-snap-footer>
       <div className="container mx-auto px-6 py-10 md:py-12">
         <div className="grid gap-8 md:grid-cols-[1fr_auto_1fr] items-center">
           <div className="space-y-2 text-center md:text-left">

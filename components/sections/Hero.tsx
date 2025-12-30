@@ -49,7 +49,7 @@ export function HomeHeroSection() {
 
   return (
     <section
-      className="relative z-10 min-h-[var(--app-height)] w-full overflow-hidden bg-black text-white lg:sticky lg:top-0"
+      className="sticky top-0 z-10 min-h-[var(--app-height)] w-full overflow-hidden bg-black text-white"
       data-stack-section
     >
       <div ref={videoParallaxRef} className="absolute inset-0 will-change-transform">

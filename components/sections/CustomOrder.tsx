@@ -58,12 +58,12 @@ export function CustomOrderSection() {
   return (
     <section
       ref={sectionRef as any}
-      className="relative z-20 w-full min-h-[var(--app-height)] bg-background text-foreground lg:sticky lg:top-0"
+      className="sticky top-0 z-20 w-full h-[var(--app-height)] overflow-hidden bg-background text-foreground"
       data-stack-section
     >
-      <div className="mx-auto max-w-7xl px-6 py-16 md:px-12 md:py-24 lg:px-16 lg:py-32">
-        <div className="grid gap-12 lg:grid-cols-2 lg:gap-16 lg:items-center">
-          <div className="relative aspect-square overflow-hidden rounded-sm bg-secondary/20 border border-border/60">
+      <div className="mx-auto h-full max-w-7xl px-6 py-12 md:px-12 md:py-24 lg:px-16 lg:py-32">
+        <div className="grid h-full min-h-0 grid-rows-[auto,1fr] gap-8 md:gap-10 lg:grid-cols-2 lg:grid-rows-1 lg:gap-16 lg:items-center">
+          <div className="relative h-[clamp(160px,24svh,240px)] overflow-hidden rounded-sm bg-secondary/20 border border-border/60 sm:aspect-square sm:h-auto">
             <div ref={imageInnerRef} className="absolute inset-0 will-change-transform" style={{ transform: 'translate3d(0,0,0)' }}>
               <div className="relative w-full h-full scale-110">
                 <Image
@@ -79,7 +79,7 @@ export function CustomOrderSection() {
             <div className="absolute inset-0 bg-gradient-to-t from-black/55 via-black/20 to-black/5 pointer-events-none" />
           </div>
 
-          <div className="space-y-6 lg:space-y-8">
+          <div className="flex min-h-0 flex-col gap-6 lg:gap-8">
             <div className="space-y-2">
               <p className="text-[0.65rem] uppercase tracking-[0.35em] text-muted-foreground">Création exclusive</p>
               <h2 className="text-3xl lg:text-4xl xl:text-5xl font-serif font-light tracking-tight text-foreground">
@@ -89,19 +89,35 @@ export function CustomOrderSection() {
               </h2>
             </div>
 
-            <div className="space-y-4 text-sm md:text-base leading-relaxed text-muted-foreground max-w-xl">
-              <p>
-                Chaque projet sur-mesure est une collaboration unique. Ensemble, nous définissons vos besoins, vos
-                préférences esthétiques et l&apos;usage que vous ferez de votre pièce.
-              </p>
-              <p>
-                Du choix de l&apos;acier à la forme du manche, en passant par les dimensions et les finitions, chaque
-                détail est pensé pour créer un couteau qui vous ressemble.
-              </p>
-              <p>
-                Le processus complet prend généralement entre 8 et 12 semaines, de la première esquisse à la livraison
-                de votre pièce unique.
-              </p>
+            <div className="text-sm md:text-base leading-relaxed text-muted-foreground max-w-xl space-y-4">
+              <div className="space-y-3 md:hidden">
+                <p>
+                  Votre couteau sur-mesure, pensé pour votre usage et votre style.
+                </p>
+                <p>
+                  Ensemble, nous définissons les besoins, l&apos;équilibre et l&apos;esthétique qui vous conviennent.
+                </p>
+                <p>
+                  Du choix de l&apos;acier au manche et aux finitions, chaque détail est ajusté avec vous.
+                </p>
+                <p>
+                  Le processus prend généralement 8 à 12 semaines, de la première esquisse à la livraison.
+                </p>
+              </div>
+              <div className="hidden space-y-4 md:block">
+                <p>
+                  Chaque projet sur-mesure est une collaboration unique. Ensemble, nous définissons vos besoins, vos
+                  préférences esthétiques et l&apos;usage que vous ferez de votre pièce.
+                </p>
+                <p>
+                  Du choix de l&apos;acier à la forme du manche, en passant par les dimensions et les finitions, chaque
+                  détail est pensé pour créer un couteau qui vous ressemble.
+                </p>
+                <p>
+                  Le processus complet prend généralement entre 8 et 12 semaines, de la première esquisse à la livraison
+                  de votre pièce unique.
+                </p>
+              </div>
             </div>
 
             <div className="flex flex-col sm:flex-row gap-4 pt-2">
@@ -120,20 +136,6 @@ export function CustomOrderSection() {
               </TransitionLink>
             </div>
 
-            <div className="grid grid-cols-3 gap-6 pt-6 border-t border-border/60">
-              <div>
-                <p className="text-2xl font-serif font-light text-primary">8-12</p>
-                <p className="text-xs uppercase tracking-wider text-muted-foreground mt-1">Semaines</p>
-              </div>
-              <div>
-                <p className="text-2xl font-serif font-light text-primary">100%</p>
-                <p className="text-xs uppercase tracking-wider text-muted-foreground mt-1">Artisanal</p>
-              </div>
-              <div>
-                <p className="text-2xl font-serif font-light text-primary">∞</p>
-                <p className="text-xs uppercase tracking-wider text-muted-foreground mt-1">Possibilités</p>
-              </div>
-            </div>
           </div>
         </div>
       </div>
