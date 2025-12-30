@@ -3,6 +3,7 @@
 import { useEffect } from 'react'
 import { usePathname } from 'next/navigation'
 import Lenis from 'lenis'
+import Snap from 'lenis/snap'
 
 export function SmoothScroll() {
   const pathname = usePathname()
@@ -20,17 +21,7 @@ export function SmoothScroll() {
       }
     }
 
-    const isCoarsePointer = window.matchMedia('(pointer: coarse)').matches
-    const isSmallScreen = window.matchMedia('(max-width: 1024px)').matches
-    const isMobile = isCoarsePointer || isSmallScreen
-
     document.documentElement.style.scrollBehavior = 'auto'
-
-    if (isMobile) {
-      return () => {
-        document.documentElement.style.scrollBehavior = previousScrollBehavior
-      }
-    }
 
     const lenis = new Lenis({
       duration: 1.6,
@@ -49,96 +40,22 @@ export function SmoothScroll() {
 
     ;(window as any).lenis = lenis
 
-    let snapTimeout: number | null = null
-    let isSnapping = false
-    let lastInputId = 0
-
-    const SNAP_DELAY = 1000
-    const SNAP_DISTANCE = 50
-
-    const clearSnapTimeout = () => {
-      if (snapTimeout) {
-        window.clearTimeout(snapTimeout)
-        snapTimeout = null
-      }
-    }
-
-    const getDocumentTop = (element: HTMLElement) => {
-      let top = element.offsetTop
-      let parent = element.offsetParent as HTMLElement | null
-
-      while (parent) {
-        top += parent.offsetTop
-        parent = parent.offsetParent as HTMLElement | null
-      }
-
-      return top
-    }
-
-    const snapToClosestSection = () => {
-      const sections = Array.from(document.querySelectorAll<HTMLElement>('[data-stack-section]'))
-      if (sections.length < 2) return
-
-      const currentScroll = window.scrollY
-      let closestSection: HTMLElement | null = null
-      let closestDistance = Number.POSITIVE_INFINITY
-
-      for (const section of sections) {
-        const sectionTop = getDocumentTop(section)
-        const distance = Math.abs(sectionTop - currentScroll)
-
-        if (distance < closestDistance) {
-          closestDistance = distance
-          closestSection = section
-        }
-      }
-
-      if (!closestSection) return
-
-      const targetOffset = getDocumentTop(closestSection)
-      if (Math.abs(targetOffset - currentScroll) < SNAP_DISTANCE) return
-
-      clearSnapTimeout()
-      isSnapping = true
-      lenis.scrollTo(targetOffset, {
-        duration: 0.9,
-        easing: (t) => 1 - Math.pow(1 - t, 3),
-        lock: true,
-        userData: { initiator: 'stack-snap' },
-        onComplete: () => {
-          isSnapping = false
-        },
-      })
-    }
-
-    const scheduleSnap = () => {
-      if (isSnapping) return
-      clearSnapTimeout()
-      const inputId = ++lastInputId
-      snapTimeout = window.setTimeout(() => {
-        snapTimeout = null
-        if (isSnapping || inputId !== lastInputId) return
-        snapToClosestSection()
-      }, SNAP_DELAY)
-    }
-
-    const removeVirtualScrollListener = lenis.on('virtual-scroll', () => {
-      if (isSnapping) return
-      scheduleSnap()
+    const snap = new Snap(lenis, {
+      type: 'proximity',
+      duration: 0.9,
+      easing: (t) => 1 - Math.pow(1 - t, 3),
+      debounce: 400,
+      distanceThreshold: '100%',
     })
 
-    const removeScrollListener = lenis.on('scroll', (instance) => {
-      if (isSnapping) return
-      if (instance.userData?.initiator === 'stack-snap') return
-      if (instance.isScrolling === 'native') {
-        scheduleSnap()
-      }
-    })
+    const sections = Array.from(document.querySelectorAll<HTMLElement>('[data-stack-section]'))
+    const removeSnaps = sections.length
+      ? snap.addElements(sections, { align: 'start', ignoreSticky: true })
+      : null
 
     return () => {
-      clearSnapTimeout()
-      removeVirtualScrollListener()
-      removeScrollListener()
+      removeSnaps?.()
+      snap.destroy()
       lenis.destroy()
       ;(window as any).lenis = null
       document.documentElement.style.scrollBehavior = previousScrollBehavior
