@@ -47,21 +47,36 @@ export function SmoothScroll() {
     let snap: Snap | null = null
     let removeSnaps: (() => void) | null = null
     let removeScrollListener: (() => void) | null = null
-    let removeFooterScrollListener: (() => void) | null = null
+    let removeFooterGuardListener: (() => void) | null = null
     let snapTimeout: number | null = null
     let isSnapping = false
     let lastInputId = 0
     let onWindowScroll: (() => void) | null = null
-    let onFooterWindowScroll: (() => void) | null = null
-    let footerSnapTimeout: number | null = null
-    let isFooterSnapping = false
+    let isSnapStoppedByFooter = false
 
     const stackSections = Array.from(document.querySelectorAll<HTMLElement>('[data-stack-section]'))
     const footer = document.querySelector<HTMLElement>('[data-snap-footer]')
     const hasStackSections = stackSections.length >= 2
+    const FOOTER_STOP_THRESHOLD = 0.85
 
-    const FOOTER_SNAP_DELAY = 200
-    const FOOTER_SNAP_THRESHOLD = 0.9
+    const isFooterInZone = () => {
+      if (!footer || !footer.isConnected) return false
+      return footer.getBoundingClientRect().top <= window.innerHeight * FOOTER_STOP_THRESHOLD
+    }
+
+    const updateSnapForFooter = () => {
+      if (!snap) return
+      const shouldStop = isFooterInZone()
+      if (shouldStop && !isSnapStoppedByFooter) {
+        snap.stop()
+        isSnapStoppedByFooter = true
+        return
+      }
+      if (!shouldStop && isSnapStoppedByFooter) {
+        snap.start()
+        isSnapStoppedByFooter = false
+      }
+    }
 
     if (!isMobile) {
       if (hasStackSections) {
@@ -73,6 +88,7 @@ export function SmoothScroll() {
           distanceThreshold: '100%',
         })
         removeSnaps = snap.addElements(stackSections, { align: 'start', ignoreSticky: true })
+        removeFooterGuardListener = lenis.on('scroll', updateSnapForFooter)
       }
     } else {
       const SNAP_DELAY = 500
@@ -134,6 +150,10 @@ export function SmoothScroll() {
 
       const scheduleSnap = () => {
         if (isSnapping) return
+        if (isFooterInZone()) {
+          clearSnapTimeout()
+          return
+        }
         clearSnapTimeout()
         const inputId = ++lastInputId
         snapTimeout = window.setTimeout(() => {
@@ -158,71 +178,15 @@ export function SmoothScroll() {
       window.addEventListener('scroll', onWindowScroll, { passive: true })
     }
 
-    const clearFooterSnapTimeout = () => {
-      if (footerSnapTimeout) {
-        window.clearTimeout(footerSnapTimeout)
-        footerSnapTimeout = null
-      }
-    }
-
-    const snapToFooterIfNeeded = () => {
-      if (!footer || !hasStackSections) return
-      if (!footer.isConnected) return
-      if (isFooterSnapping) return
-
-      const rect = footer.getBoundingClientRect()
-      const threshold = window.innerHeight * FOOTER_SNAP_THRESHOLD
-
-      if (rect.top <= 0 || rect.top > threshold) return
-
-      isFooterSnapping = true
-      lenis.scrollTo(footer, {
-        duration: 0.9,
-        easing: (t) => 1 - Math.pow(1 - t, 3),
-        lock: true,
-        userData: { initiator: 'footer-snap' },
-        onComplete: () => {
-          isFooterSnapping = false
-        },
-      })
-    }
-
-    const scheduleFooterSnap = () => {
-      if (!footer || !hasStackSections) return
-      clearFooterSnapTimeout()
-      footerSnapTimeout = window.setTimeout(() => {
-        footerSnapTimeout = null
-        snapToFooterIfNeeded()
-      }, FOOTER_SNAP_DELAY)
-    }
-
-    const onFooterLenisScroll = (instance: Lenis) => {
-      if (isFooterSnapping) return
-      if (instance.userData?.initiator === 'footer-snap') return
-      scheduleFooterSnap()
-    }
-
-    onFooterWindowScroll = () => {
-      if (isFooterSnapping) return
-      scheduleFooterSnap()
-    }
-
-    removeFooterScrollListener = lenis.on('scroll', onFooterLenisScroll)
-    window.addEventListener('scroll', onFooterWindowScroll, { passive: true })
-
     return () => {
       if (snapTimeout) {
         window.clearTimeout(snapTimeout)
       }
-      clearFooterSnapTimeout()
       if (onWindowScroll) {
         window.removeEventListener('scroll', onWindowScroll)
       }
-      if (onFooterWindowScroll) {
-        window.removeEventListener('scroll', onFooterWindowScroll)
-      }
       removeScrollListener?.()
-      removeFooterScrollListener?.()
+      removeFooterGuardListener?.()
       removeSnaps?.()
       snap?.destroy()
       lenis.destroy()
