@@ -1,6 +1,7 @@
 'use client'
 
 import { useState } from 'react'
+import Link from 'next/link'
 import { Button } from '@/components/ui/button'
 import { Card } from '@/components/ui/card'
 import { Badge } from '@/components/ui/badge'
@@ -19,10 +20,10 @@ const steps = [
 ]
 
 const usageOptions = [
-  { id: 'cuisine', label: 'Cuisine', description: 'Couteaux de chef, Santoku, Nakiri'},
-  { id: 'outdoor', label: 'Outdoor', description: 'Bushcraft, survie, camping' },
-  { id: 'collection', label: 'Collection', description: 'Pièce d\'art, vitrine'},
-  { id: 'pliant', label: 'Pliant', description: 'Piémontais, cran forcé, EDC'},
+  { id: 'cuisine', label: 'Cuisine', description: 'Amateurs comme professionnels' },
+  { id: 'pliant', label: 'Pliant', description: 'Couteau de poche, EDC' },
+  { id: 'outdoor', label: 'Outdoor', description: 'Bushcraft, camping, survie' },
+  { id: 'chasse', label: 'Chasse (en cours)', description: 'Cuisine en extérieur, dépeçage', disabled: true },
 ]
 
 const formesByCuisine = [
@@ -85,6 +86,15 @@ const guillochages = [
   { id: 'pointes', label: 'Guillochage en pointes', price: 80 },
   { id: 'sabliers', label: 'Guillochage sabliers', price: 90 },
 ]
+
+const ContactHelp = () => (
+  <p className="text-xs text-muted-foreground">
+    Une question ?{' '}
+    <Link href="/contact" className="underline underline-offset-4 hover:text-primary">
+      Contactez-moi directement
+    </Link>
+  </p>
+)
 
 export function CustomOrderWizard() {
   const [currentStep, setCurrentStep] = useState(1)
@@ -229,10 +239,15 @@ Cordialement`)
               {usageOptions.map((option) => (
                 <Card
                   key={option.id}
-                  className={`p-6 cursor-pointer transition-all hover:border-primary ${
-                    config.usage === option.id ? 'border-primary bg-primary/5' : ''
-                  }`}
-                  onClick={() => setConfig({ ...config, usage: option.id, forme: '', acier: '', manche: '' })}
+                  className={`p-6 transition-all ${
+                    option.disabled
+                      ? 'cursor-not-allowed opacity-40'
+                      : 'cursor-pointer hover:border-primary'
+                  } ${config.usage === option.id ? 'border-primary bg-primary/5' : ''}`}
+                  onClick={() => {
+                    if (option.disabled) return
+                    setConfig({ ...config, usage: option.id, forme: '', acier: '', manche: '' })
+                  }}
                 >
                   <div className="flex items-start gap-4">
                     <div className="flex-1">
@@ -246,6 +261,7 @@ Cordialement`)
                 </Card>
               ))}
             </div>
+            <ContactHelp />
           </div>
         )}
 
@@ -281,6 +297,7 @@ Cordialement`)
                 </Card>
               ))}
             </div>
+            <ContactHelp />
           </div>
         )}
 
@@ -324,6 +341,7 @@ Cordialement`)
                 </Card>
               ))}
             </div>
+            <ContactHelp />
           </div>
         )}
 
@@ -383,6 +401,7 @@ Cordialement`)
                 </Card>
               ))}
             </div>
+            <ContactHelp />
           </div>
         )}
 
@@ -494,6 +513,7 @@ Cordialement`)
                 Demander un Devis Gratuit
               </Button>
             </Card>
+            <ContactHelp />
           </div>
         )}
       </Card>

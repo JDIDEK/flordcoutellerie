@@ -16,9 +16,6 @@ export default function SurMesurePage() {
             {/* Header */}
             <div className="text-center mb-16 space-y-4">
               <div className="space-y-2">
-                <p className="text-xs tracking-[0.4em] text-muted-foreground uppercase">
-                  Commander
-                </p>
                 <h1 className="text-4xl md:text-5xl font-serif font-light tracking-tight text-foreground">
                   Créer votre Lame
                 </h1>
