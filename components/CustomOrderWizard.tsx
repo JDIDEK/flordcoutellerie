@@ -34,6 +34,7 @@ type StepId =
   | 'sheath'
   | 'pliant-guillochage'
   | 'handle'
+  | 'handle-composition'
   | 'personalization'
   | 'summary'
 
@@ -47,9 +48,8 @@ type KitchenForm = {
   id: string
   label: string
   length: string
-  usageNote: string
+  usageNote: string[]
   patternScale: DamasteelScale
-  priceLevel: number
 }
 
 type PliantMechanism = {
@@ -158,58 +158,51 @@ const kitchenForms: KitchenForm[] = [
   {
     id: 'gyuto',
     label: 'Gyuto',
-    length: '210–270 mm',
-    usageNote: 'Grand chef polyvalent',
+    length: '200-240mm',
+    usageNote: ['Couteau de chef polyvalent', 'Tous les aliments sauf très durs'],
     patternScale: 'large',
-    priceLevel: 3,
   },
   {
     id: 'kiritsuke',
     label: 'Kiritsuke',
-    length: '240 mm',
-    usageNote: 'Ligne tendue, découpe précise',
+    length: '200-240mm',
+    usageNote: ['Couteau de chef polyvalent', 'Pointe agressive', 'Tous les aliments sauf très durs'],
     patternScale: 'large',
-    priceLevel: 3,
   },
   {
     id: 'yanagiba',
     label: 'Yanagiba',
-    length: '270–300 mm',
-    usageNote: 'Tranches longues (sashimi)',
+    length: '240-280mm',
+    usageNote: ['Couteau à trancher', 'Tranchant asymétrique', 'Spécialisé poisson et viande'],
     patternScale: 'large',
-    priceLevel: 4,
   },
   {
     id: 'santoku',
     label: 'Santoku',
-    length: '165–180 mm',
-    usageNote: 'Polyvalent, compact',
+    length: '180mm',
+    usageNote: ['Polyvalent, compact'],
     patternScale: 'large',
-    priceLevel: 2,
   },
   {
     id: 'nakiri',
     label: 'Nakiri',
-    length: '165 mm',
-    usageNote: 'Légumes, coupe à plat',
+    length: '170-180mm',
+    usageNote: ['Compact et polyvalent', 'Spécialité légumes'],
     patternScale: 'large',
-    priceLevel: 2,
   },
   {
     id: 'bunka',
     label: 'Bunka',
-    length: '165–180 mm',
-    usageNote: 'Pointe carrée pour précision',
+    length: '170-180mm',
+    usageNote: ['Compact et polyvalent', 'Pointe agressive', 'Tous les aliments sauf très durs'],
     patternScale: 'small',
-    priceLevel: 2,
   },
   {
     id: 'petty',
     label: 'Petty',
-    length: '120–150 mm',
-    usageNote: 'Petite lame, émincer & parer',
+    length: '140-160mm',
+    usageNote: ['Fin et maniable', 'Tous les aliments sauf très durs'],
     patternScale: 'small',
-    priceLevel: 1,
   },
 ]
 
@@ -217,38 +210,31 @@ const pliantMechanisms: PliantMechanism[] = [
   {
     id: 'cran-plat',
     label: 'Cran Plat',
-    description: 'Sûreté classique, fermeture nette',
+    description: 'Un ressort maintient la lame en position ouverte ou fermée',
   },
   {
     id: 'piemontais',
     label: 'Piémontais',
-    description: 'Ouverture douce, friction contrôlée',
+    description: 'Mécanisme à friction, sans vérouillage',
   },
 ]
 
 const pliantFormsByMechanism: Record<string, PliantForm[]> = {
   'cran-plat': [
     {
-      id: 'profil-classique',
-      label: 'Profil Classique',
-      description: 'Drop point équilibré',
+      id: 'forme-1',
+      label: 'Forme 1',
+      description: 'Déscription forme 1',
       profile: 'EDC polyvalent',
       priceLevel: 2,
     },
     {
-      id: 'urbain',
-      label: 'Urbain',
-      description: 'Ligne fine, port discret',
+      id: 'forme-2',
+      label: 'Forme 2',
+      description: 'Description forme 2',
       profile: 'Couteau de poche fin',
       priceLevel: 2,
-    },
-    {
-      id: 'heritage',
-      label: 'Héritage',
-      description: 'Courbes inspirées Laguiole',
-      profile: 'Signature atelier',
-      priceLevel: 3,
-    },
+    }
   ],
   piemontais: [
     {
@@ -420,16 +406,6 @@ const handleFamilies: HandleFamily[] = [
       { id: 'fossile', label: 'Matière fossile' },
     ],
   },
-  {
-    id: 'composition',
-    label: 'Composition',
-    description: 'Assemblage multi-matières',
-    priceLevel: 3,
-    variants: [
-      { id: 'simple', label: 'Simple' },
-      { id: 'compose', label: 'Composé (spacers, inserts)' },
-    ],
-  },
 ]
 
 const sheathOptions = [
@@ -499,6 +475,7 @@ type Action =
   | { type: 'setDamasteelPattern'; pattern: string }
   | { type: 'setSheath'; sheath: 'kydex' | 'cuir' }
   | { type: 'setHandle'; family: string; variant?: string }
+  | { type: 'setHandleComposition'; composition: 'simple' | 'compose' }
   | { type: 'setGuillochageMode'; mode: 'set' | 'custom' }
   | { type: 'setGuillochageSet'; setId: string }
   | { type: 'setGuillochageCentral'; motif: string }
@@ -556,11 +533,9 @@ function wizardReducer(state: WizardConfig, action: Action): WizardConfig {
         ...state,
         handleFamily: action.family,
         handleVariant: action.variant,
-        handleComposition:
-          action.family === 'composition' && action.variant
-            ? (action.variant as 'simple' | 'compose')
-            : undefined,
       }
+    case 'setHandleComposition':
+      return { ...state, handleComposition: action.composition }
     case 'setGuillochageMode':
       return {
         ...state,
@@ -623,14 +598,14 @@ const StepHeader = ({ title, description }: { title: string; description: string
 )
 
 const MetricLine = ({ label, value }: { label: string; value: number }) => (
-  <div className="flex items-center justify-between text-xs text-muted-foreground">
-    <span>{label}</span>
-    <div className="flex gap-1">
+  <div className="flex items-center justify-between text-[10px] md:text-xs text-muted-foreground gap-2">
+    <span className="shrink-0">{label}</span>
+    <div className="flex gap-0.5">
       {Array.from({ length: 5 }).map((_, index) => (
         <Star
           key={index}
-          className={`h-4 w-4 ${
-            index < Math.min(value, 5) ? 'text-primary fill-primary/30' : 'text-muted-foreground/50'
+          className={`h-2.5 w-2.5 md:h-3 md:w-3 ${
+            index < Math.min(value, 5) ? 'text-primary fill-primary/30' : 'text-muted-foreground/30'
           }`}
         />
       ))}
@@ -653,6 +628,12 @@ const PriceStars = ({ level }: { level?: number }) => {
     </div>
   )
 }
+
+const PlaceholderVisual = ({ label }: { label?: string }) => (
+  <div className="rounded-md border border-dashed border-border/60 bg-muted/30 h-28 w-full flex items-center justify-center text-[10px] uppercase tracking-wide text-muted-foreground">
+    {label ?? 'Visuel à venir'}
+  </div>
+)
 
 function getPatternScale(config: WizardConfig): DamasteelScale {
   if (config.usage === 'cuisine' && config.cuisineForm) {
@@ -694,7 +675,9 @@ function isStepComplete(step: StepId, config: WizardConfig) {
     case 'pliant-guillochage':
       return Boolean(config.guillochageCentral && config.guillochagePlatineLeft && config.guillochagePlatineRight)
     case 'handle':
-      return Boolean(config.handleFamily && config.handleVariant)
+      return Boolean(config.handleFamily)
+    case 'handle-composition':
+      return Boolean(config.handleComposition)
     case 'personalization':
       return !config.engraving || Boolean(config.engravingText)
     case 'summary':
@@ -745,6 +728,7 @@ function getSteps(config: WizardConfig): WizardStep[] {
 
   base.push(
     { id: 'handle', title: 'Manche', description: 'Bois, synthétique, exceptionnel' },
+    { id: 'handle-composition', title: 'Composition', description: 'Simple ou composé' },
     { id: 'personalization', title: 'Personnalisation', description: 'Gravure & rivet' },
     { id: 'summary', title: 'Récapitulatif', description: 'Coordonnées et envoi' },
   )
@@ -877,26 +861,31 @@ export function CustomOrderWizard() {
         title="Forme cuisine"
         description="Choisissez la silhouette adaptée à vos gestes"
       />
-      <div className="grid md:grid-cols-2 gap-4">
+      <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
         {kitchenForms.map((form) => {
           const isSelected = config.cuisineForm === form.id
           return (
             <Card
               key={form.id}
-              className={`p-6 cursor-pointer transition-all hover:border-primary ${isSelected ? 'border-primary bg-primary/5' : ''}`}
+              className={`cursor-pointer transition-all overflow-hidden border-2 ${isSelected ? 'border-primary bg-primary/5' : 'border-foreground/20 hover:border-foreground/40'}`}
               onClick={() => dispatch({ type: 'setCuisineForm', form: form.id })}
             >
-              <div className="flex items-start justify-between gap-3">
-                <div className="space-y-1">
-                  <div className="flex items-center gap-2">
-                    <h3 className="font-medium">{form.label}</h3>
-                    <PriceStars level={form.priceLevel} />
+              <div className="flex items-stretch min-h-28">
+                {/* Text content - left side */}
+                <div className="flex-1 p-3 md:p-4 flex flex-col justify-center">
+                  <h3 className="font-bold text-base md:text-lg leading-tight">{form.label}</h3>
+                  <p className="text-xs md:text-sm text-muted-foreground">{form.length}</p>
+                  <div className="mt-1.5 space-y-0">
+                    {form.usageNote.map((line, idx) => (
+                      <p key={idx} className="text-[11px] md:text-xs italic text-muted-foreground leading-tight">{line}</p>
+                    ))}
                   </div>
-                  <p className="text-sm text-muted-foreground">{form.usageNote}</p>
-                  <p className="text-xs text-muted-foreground/80">{form.length}</p>
-                  <Badge variant="secondary" className="mt-2">
-                    {form.patternScale === 'large' ? 'Grande lame' : 'Petite lame'}
-                  </Badge>
+                </div>
+                {/* Image placeholder - right side */}
+                <div className="w-28 md:w-40 flex items-center justify-center p-2 shrink-0 border-l border-foreground/10">
+                  <div className="w-full h-full flex items-center justify-center">
+                    <PlaceholderVisual label={form.label} />
+                  </div>
                 </div>
               </div>
             </Card>
@@ -926,6 +915,9 @@ export function CustomOrderWizard() {
                   <h3 className="font-medium">{mechanism.label}</h3>
                   <p className="text-sm text-muted-foreground">{mechanism.description}</p>
                 </div>
+                <div className="w-32">
+                  <PlaceholderVisual label="Croquis" />
+                </div>
               </div>
             </Card>
           )
@@ -947,28 +939,34 @@ export function CustomOrderWizard() {
             Choisissez d’abord un mécanisme pour voir les formes disponibles.
           </Card>
         ) : (
-          <div className="grid md:grid-cols-2 gap-4">
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
             {forms?.map((form) => {
               const isSelected = config.pliantForm === form.id
               return (
                 <Card
                   key={form.id}
-                  className={`p-6 cursor-pointer transition-all hover:border-primary ${isSelected ? 'border-primary bg-primary/5' : ''}`}
+                  className={`cursor-pointer transition-all overflow-hidden border-2 ${isSelected ? 'border-primary bg-primary/5' : 'border-foreground/20 hover:border-foreground/40'}`}
                   onClick={() => dispatch({ type: 'setPliantForm', form: form.id })}
                 >
-                  <div className="flex items-start justify-between gap-3">
-                    <div className="space-y-1">
-                    <div className="flex items-center gap-2">
-                      <h3 className="font-medium">{form.label}</h3>
-                      <PriceStars level={form.priceLevel} />
+                  <div className="flex items-stretch min-h-28">
+                    {/* Text content - left side */}
+                    <div className="flex-1 p-3 md:p-4 flex flex-col justify-center">
+                      <h3 className="font-bold text-base md:text-lg leading-tight">{form.label}</h3>
+                      <p className="text-xs md:text-sm text-muted-foreground">{form.profile}</p>
+                      <div className="mt-1.5 space-y-0">
+                        <p className="text-[11px] md:text-xs italic text-muted-foreground leading-tight">{form.description}</p>
+                      </div>
                     </div>
-                    <p className="text-sm text-muted-foreground">{form.description}</p>
-                    <p className="text-xs text-muted-foreground/80">{form.profile}</p>
+                    {/* Image placeholder - right side */}
+                    <div className="w-28 md:w-40 flex items-center justify-center p-2 shrink-0 border-l border-foreground/10">
+                      <div className="w-full h-full flex items-center justify-center">
+                        <PlaceholderVisual label={form.label} />
+                      </div>
+                    </div>
                   </div>
-                </div>
-              </Card>
-            )
-          })}
+                </Card>
+              )
+            })}
           </div>
         )}
       </div>
@@ -981,19 +979,28 @@ export function CustomOrderWizard() {
         title="Utilisation outdoor"
         description="Modérée ou intensive, cela impacte la forme"
       />
-      <div className="grid md:grid-cols-2 gap-4">
+      <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
         {outdoorUseCases.map((option) => {
           const isSelected = config.outdoorUse === option.id
           return (
             <Card
               key={option.id}
-              className={`p-6 cursor-pointer transition-all hover:border-primary ${isSelected ? 'border-primary bg-primary/5' : ''}`}
+              className={`cursor-pointer transition-all overflow-hidden border-2 ${isSelected ? 'border-primary bg-primary/5' : 'border-foreground/20 hover:border-foreground/40'}`}
               onClick={() => dispatch({ type: 'setOutdoorUse', usage: option.id })}
             >
-              <div className="flex items-start justify-between gap-3">
-                <div className="space-y-1">
-                  <h3 className="font-medium">{option.label}</h3>
-                  <p className="text-sm text-muted-foreground">{option.description}</p>
+              <div className="flex items-stretch min-h-28">
+                {/* Text content - left side */}
+                <div className="flex-1 p-3 md:p-4 flex flex-col justify-center">
+                  <h3 className="font-bold text-base md:text-lg leading-tight">{option.label}</h3>
+                  <div className="mt-1.5 space-y-0">
+                    <p className="text-[11px] md:text-xs italic text-muted-foreground leading-tight">{option.description}</p>
+                  </div>
+                </div>
+                {/* Image placeholder - right side */}
+                <div className="w-28 md:w-40 flex items-center justify-center p-2 shrink-0 border-l border-foreground/10">
+                  <div className="w-full h-full flex items-center justify-center">
+                    <PlaceholderVisual label={option.label} />
+                  </div>
                 </div>
               </div>
             </Card>
@@ -1015,26 +1022,29 @@ export function CustomOrderWizard() {
           title="Forme outdoor"
           description="Longueur et épaisseur selon le terrain"
         />
-        <div className="grid md:grid-cols-2 gap-4">
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
           {forms.map((form) => {
             const isSelected = config.outdoorForm === form.id
             return (
               <Card
                 key={form.id}
-                className={`p-6 cursor-pointer transition-all hover:border-primary ${isSelected ? 'border-primary bg-primary/5' : ''}`}
+                className={`cursor-pointer transition-all overflow-hidden border-2 ${isSelected ? 'border-primary bg-primary/5' : 'border-foreground/20 hover:border-foreground/40'}`}
                 onClick={() => dispatch({ type: 'setOutdoorForm', form: form.id })}
               >
-                <div className="flex items-start justify-between gap-3">
-                  <div className="space-y-1">
-                    <div className="flex items-center gap-2">
-                      <h3 className="font-medium">{form.label}</h3>
-                      <PriceStars level={form.priceLevel} />
+                <div className="flex items-stretch min-h-28">
+                  {/* Text content - left side */}
+                  <div className="flex-1 p-3 md:p-4 flex flex-col justify-center">
+                    <h3 className="font-bold text-base md:text-lg leading-tight">{form.label}</h3>
+                    <p className="text-xs md:text-sm text-muted-foreground">{form.length}</p>
+                    <div className="mt-1.5 space-y-0">
+                      <p className="text-[11px] md:text-xs italic text-muted-foreground leading-tight">{form.description}</p>
                     </div>
-                    <p className="text-sm text-muted-foreground">{form.description}</p>
-                    <p className="text-xs text-muted-foreground/80">{form.length}</p>
-                    <Badge variant="secondary" className="mt-2">
-                      {form.patternScale === 'large' ? 'Grande lame' : 'Petite lame'}
-                    </Badge>
+                  </div>
+                  {/* Image placeholder - right side */}
+                  <div className="w-28 md:w-40 flex items-center justify-center p-2 shrink-0 border-l border-foreground/10">
+                    <div className="w-full h-full flex items-center justify-center">
+                      <PlaceholderVisual label={form.label} />
+                    </div>
                   </div>
                 </div>
               </Card>
@@ -1057,36 +1067,34 @@ export function CustomOrderWizard() {
               : 'Performance, entretien et esthétique'
           }
         />
-        <div className="space-y-4">
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
           {steels.map((steel) => {
             const isSelected = config.steel === steel.id
             return (
               <Card
                 key={steel.id}
-                className={`p-6 cursor-pointer transition-all hover:border-primary ${isSelected ? 'border-primary bg-primary/5' : ''}`}
+                className={`cursor-pointer transition-all overflow-hidden border-2 ${isSelected ? 'border-primary bg-primary/5' : 'border-foreground/20 hover:border-foreground/40'}`}
                 onClick={() => dispatch({ type: 'setSteel', steel: steel.id })}
               >
-                <div className="flex items-start justify-between gap-4">
-                  <div className="space-y-2 flex-1">
-                    <div className="flex items-center gap-3">
-                      <h3 className="font-medium">{steel.label}</h3>
-                    </div>
-                    <p className="text-sm text-muted-foreground">{steel.description}</p>
-                    <div className="grid grid-cols-1 md:grid-cols-2 gap-2 pt-2">
+                <div className="flex items-stretch min-h-28">
+                  <div className="flex-1 p-3 md:p-4 flex flex-col justify-center">
+                    <h3 className="font-bold text-base md:text-lg leading-tight">{steel.label}</h3>
+                    <p className="text-[11px] md:text-xs italic text-muted-foreground leading-tight mt-1">{steel.description}</p>
+                    <div className="mt-2 space-y-0.5">
                       {config.usage !== 'pliant' && steel.tech && (
                         <>
-                          <MetricLine label="Tenue de coupe" value={steel.tech.retention} />
-                          <MetricLine label="Facilité d’affûtage" value={steel.tech.sharpening} />
+                          <MetricLine label="Tenue" value={steel.tech.retention} />
+                          <MetricLine label="Affûtage" value={steel.tech.sharpening} />
                           <MetricLine label="Flexibilité" value={steel.tech.flexibility} />
                         </>
                       )}
                       <MetricLine label="Prix" value={steel.tech.price} />
                     </div>
                   </div>
-                  <div className="flex items-center gap-3">
-                    {config.usage === 'pliant' && (
-                      <Badge variant="secondary">Photo sur demande</Badge>
-                    )}
+                  <div className="w-28 md:w-40 flex items-center justify-center p-2 shrink-0 border-l border-foreground/10">
+                    <div className="w-full h-full flex items-center justify-center">
+                      <PlaceholderVisual label={steel.label} />
+                    </div>
                   </div>
                 </div>
               </Card>
@@ -1123,6 +1131,9 @@ export function CustomOrderWizard() {
                         Motif {scale === 'large' ? 'aéré' : 'dense'} pour Damasteel
                       </p>
                     </div>
+                    <div className="w-20">
+                      <PlaceholderVisual label="Motif" />
+                    </div>
                   </div>
                 </Card>
               )
@@ -1155,6 +1166,9 @@ export function CustomOrderWizard() {
                     <Badge variant="secondary">{sheath.badge}</Badge>
                   </div>
                   <p className="text-sm text-muted-foreground">{sheath.description}</p>
+                  <div className="pt-3">
+                    <PlaceholderVisual label="Étui visuel" />
+                  </div>
                 </div>
               </div>
             </Card>
@@ -1168,56 +1182,86 @@ export function CustomOrderWizard() {
     <div className="space-y-6">
       <StepHeader
         title="Manche"
-        description="Bois, synthétique, animal, exceptionnel ou composé"
+        description="Choisissez le matériau de votre manche"
       />
-      <div className="grid md:grid-cols-2 gap-4">
+      <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
         {handleFamilies.map((family) => {
           const isSelected = config.handleFamily === family.id
           return (
             <Card
               key={family.id}
-              className={`p-6 transition-all cursor-pointer hover:border-primary ${isSelected ? 'border-primary bg-primary/5' : ''}`}
+              className={`cursor-pointer transition-all overflow-hidden border-2 ${isSelected ? 'border-primary bg-primary/5' : 'border-foreground/20 hover:border-foreground/40'}`}
               onClick={() => dispatch({ type: 'setHandle', family: family.id, variant: undefined })}
             >
-              <div className="flex items-start justify-between gap-3">
-                <div className="space-y-2 flex-1">
-                  <div className="flex items-center gap-2">
-                    <h3 className="font-medium">{family.label}</h3>
-                    <PriceStars level={family.priceLevel} />
+              <div className="flex items-stretch min-h-28">
+                {/* Text content - left side */}
+                <div className="flex-1 p-3 md:p-4 flex flex-col justify-center">
+                  <h3 className="font-bold text-base md:text-lg leading-tight">{family.label}</h3>
+                  <div className="mt-1.5 space-y-0">
+                    <p className="text-[11px] md:text-xs italic text-muted-foreground leading-tight">{family.description}</p>
                   </div>
-                  <p className="text-sm text-muted-foreground">{family.description}</p>
-                  {isSelected && (
-                    <div className="pt-4 border-t border-border/60 space-y-2">
-                      <Label className="text-xs text-muted-foreground">Variantes</Label>
-                      <div className="flex flex-wrap gap-2">
-                        {family.variants.map((variant) => {
-                          const active = config.handleVariant === variant.id
-                          return (
-                            <Button
-                              key={variant.id}
-                              variant={active ? 'default' : 'outline'}
-                              size="sm"
-                              onClick={(event) => {
-                                event.stopPropagation()
-                                dispatch({
-                                  type: 'setHandle',
-                                  family: family.id,
-                                  variant: variant.id,
-                                })
-                              }}
-                            >
-                              {variant.label}
-                            </Button>
-                          )
-                        })}
-                      </div>
-                    </div>
-                  )}
+                </div>
+                {/* Image placeholder - right side */}
+                <div className="w-28 md:w-40 flex items-center justify-center p-2 shrink-0 border-l border-foreground/10">
+                  <div className="w-full h-full flex items-center justify-center">
+                    <PlaceholderVisual label={family.label} />
+                  </div>
                 </div>
               </div>
             </Card>
           )
         })}
+      </div>
+    </div>
+  )
+
+  const renderHandleCompositionStep = () => (
+    <div className="space-y-6">
+      <StepHeader
+        title="Composition du manche"
+        description="Simple ou composé de plusieurs matériaux"
+      />
+      <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+        <Card
+          className={`cursor-pointer transition-all overflow-hidden border-2 ${config.handleComposition === 'simple' ? 'border-primary bg-primary/5' : 'border-foreground/20 hover:border-foreground/40'}`}
+          onClick={() => dispatch({ type: 'setHandleComposition', composition: 'simple' })}
+        >
+          <div className="flex items-stretch min-h-28">
+            {/* Text content - left side */}
+            <div className="flex-1 p-3 md:p-4 flex flex-col justify-center">
+              <h3 className="font-bold text-base md:text-lg leading-tight">Simple</h3>
+              <div className="mt-1.5 space-y-0">
+                <p className="text-[11px] md:text-xs italic text-muted-foreground leading-tight">Un seul matériau pour l'ensemble du manche</p>
+              </div>
+            </div>
+            {/* Image placeholder - right side */}
+            <div className="w-28 md:w-40 flex items-center justify-center p-2 shrink-0 border-l border-foreground/10">
+              <div className="w-full h-full flex items-center justify-center">
+                <PlaceholderVisual label="Manche simple" />
+              </div>
+            </div>
+          </div>
+        </Card>
+        <Card
+          className={`cursor-pointer transition-all overflow-hidden border-2 ${config.handleComposition === 'compose' ? 'border-primary bg-primary/5' : 'border-foreground/20 hover:border-foreground/40'}`}
+          onClick={() => dispatch({ type: 'setHandleComposition', composition: 'compose' })}
+        >
+          <div className="flex items-stretch min-h-28">
+            {/* Text content - left side */}
+            <div className="flex-1 p-3 md:p-4 flex flex-col justify-center">
+              <h3 className="font-bold text-base md:text-lg leading-tight">Composé</h3>
+              <div className="mt-1.5 space-y-0">
+                <p className="text-[11px] md:text-xs italic text-muted-foreground leading-tight">Association de plusieurs matériaux et textures</p>
+              </div>
+            </div>
+            {/* Image placeholder - right side */}
+            <div className="w-28 md:w-40 flex items-center justify-center p-2 shrink-0 border-l border-foreground/10">
+              <div className="w-full h-full flex items-center justify-center">
+                <PlaceholderVisual label="Manche composé" />
+              </div>
+            </div>
+          </div>
+        </Card>
       </div>
     </div>
   )
@@ -1251,6 +1295,7 @@ export function CustomOrderWizard() {
               <Sparkles className="h-4 w-4 text-primary" />
               <h4 className="font-medium text-sm">Dos de lame</h4>
             </div>
+            <PlaceholderVisual label="Guillochage" />
             <div className="flex flex-wrap gap-2">
               {guillochageMotifs.map((motif) => {
                 const active = config.guillochageCentral === motif.label
@@ -1272,6 +1317,7 @@ export function CustomOrderWizard() {
               <Sparkles className="h-4 w-4 text-primary" />
               <h4 className="font-medium text-sm">Platine gauche</h4>
             </div>
+            <PlaceholderVisual label="Guillochage" />
             <div className="flex flex-wrap gap-2">
               {guillochageMotifs.map((motif) => {
                 const active = config.guillochagePlatineLeft === motif.label
@@ -1293,6 +1339,7 @@ export function CustomOrderWizard() {
               <Sparkles className="h-4 w-4 text-primary" />
               <h4 className="font-medium text-sm">Platine droite</h4>
             </div>
+            <PlaceholderVisual label="Guillochage" />
             <div className="flex flex-wrap gap-2">
               {guillochageMotifs.map((motif) => {
                 const active = config.guillochagePlatineRight === motif.label
@@ -1344,6 +1391,7 @@ export function CustomOrderWizard() {
               </Button>
             </div>
           </div>
+          <PlaceholderVisual label="Zone gravure" />
           {config.engraving && (
             <Input
               placeholder="Texte à graver"
@@ -1375,6 +1423,7 @@ export function CustomOrderWizard() {
               </Button>
             </div>
           </div>
+          <PlaceholderVisual label="Rivet" />
         </Card>
       </div>
       <div className="space-y-2">
@@ -1457,6 +1506,7 @@ export function CustomOrderWizard() {
               <p>Motif : {config.damasteelPattern ?? '—'}</p>
             )}
             <p>Manche : {config.handleFamily ? `${handleFamilies.find((h) => h.id === config.handleFamily)?.label ?? config.handleFamily}${config.handleVariant ? ` - ${handleFamilies.find((h) => h.id === config.handleFamily)?.variants.find((v) => v.id === config.handleVariant)?.label ?? config.handleVariant}` : ''}` : '—'}</p>
+            <p>Composition : {config.handleComposition === 'simple' ? 'Simple' : config.handleComposition === 'compose' ? 'Composé' : '—'}</p>
             <p>Rivet mosaïque : {config.mosaicRivet ? 'Oui' : 'Non'}</p>
             <p>Gravure : {config.engraving ? config.engravingText || 'Oui' : 'Non'}</p>
             <p>Commentaires : {config.notes || 'Aucun'}</p>
@@ -1503,6 +1553,8 @@ export function CustomOrderWizard() {
         return renderGuillochageStep()
       case 'handle':
         return renderHandleStep()
+      case 'handle-composition':
+        return renderHandleCompositionStep()
       case 'personalization':
         return renderPersonalizationStep()
       case 'summary':
@@ -1516,39 +1568,24 @@ export function CustomOrderWizard() {
 
   return (
     <div className="space-y-8">
-      <div className="space-y-2">
-        <div className="flex items-center justify-between">
-          <p className="text-xs uppercase tracking-[0.2em] text-muted-foreground">Configurateur</p>
-          <p className="text-xs text-muted-foreground">
-            Étape {activeStepIndex + 1} / {steps.length}
-          </p>
-        </div>
-        <div className="h-2 rounded-full bg-muted overflow-hidden">
-          <div
-            className="h-full bg-primary transition-all"
-            style={{ width: `${progress}%` }}
-          />
-        </div>
-        <div className="grid md:grid-cols-4 gap-2 text-xs text-muted-foreground">
+      <div className="flex items-center gap-3">
+        <div className="flex items-center gap-1.5 flex-1">
           {steps.map((step, index) => (
             <div
               key={step.id}
-              className={`flex items-center gap-2 p-2 rounded border ${index === activeStepIndex ? 'border-primary/60 bg-primary/5 text-primary' : 'border-border/60 bg-card/40'}`}
-            >
-              <div
-                className={`h-6 w-6 rounded-full flex items-center justify-center text-[11px] ${
-                  index <= activeStepIndex ? 'bg-primary text-primary-foreground' : 'bg-muted text-muted-foreground'
-                }`}
-              >
-                {index < activeStepIndex ? <Check className="h-3 w-3" /> : index + 1}
-              </div>
-              <div className="truncate">
-                <p className="font-medium truncate">{step.title}</p>
-                <p className="text-[11px] truncate">{step.description}</p>
-              </div>
-            </div>
+              className={`h-1.5 flex-1 rounded-full transition-all ${
+                index < activeStepIndex
+                  ? 'bg-primary'
+                  : index === activeStepIndex
+                    ? 'bg-primary/60'
+                    : 'bg-muted'
+              }`}
+            />
           ))}
         </div>
+        <p className="text-xs text-muted-foreground whitespace-nowrap">
+          {activeStepIndex + 1}/{steps.length} · {currentStep?.title}
+        </p>
       </div>
 
       <Card className="p-6 md:p-10 space-y-6">{renderStepContent()}</Card>
