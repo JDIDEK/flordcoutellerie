@@ -63,22 +63,6 @@ export function CustomOrderSection() {
     >
       <div className="mx-auto h-full max-w-7xl px-6 py-12 md:px-12 md:py-24 lg:px-16 lg:py-32">
         <div className="grid h-full min-h-0 grid-rows-[auto,1fr] gap-8 md:gap-10 lg:grid-cols-2 lg:grid-rows-1 lg:gap-16 lg:items-center">
-          <div className="relative h-[clamp(160px,24svh,240px)] overflow-hidden rounded-sm bg-secondary/20 border border-border/60 sm:aspect-square sm:h-auto">
-            <div ref={imageInnerRef} className="absolute inset-0 will-change-transform" style={{ transform: 'translate3d(0,0,0)' }}>
-              <div className="relative w-full h-full scale-110">
-                <Image
-                  src="/assets/images/flo/flo.png"
-                  alt="Couteau damas sur mesure"
-                  fill
-                  sizes="(max-width: 1024px) 100vw, 50vw"
-                  className="object-cover"
-                  priority={false}
-                />
-              </div>
-            </div>
-            <div className="absolute inset-0 bg-gradient-to-t from-black/55 via-black/20 to-black/5 pointer-events-none" />
-          </div>
-
           <div className="flex min-h-0 flex-col gap-6 lg:gap-8">
             <div className="space-y-2">
               <p className="text-[0.65rem] uppercase tracking-[0.35em] text-muted-foreground">Création exclusive</p>
@@ -92,30 +76,30 @@ export function CustomOrderSection() {
             <div className="text-sm md:text-base leading-relaxed text-muted-foreground max-w-xl space-y-4">
               <div className="space-y-3 md:hidden">
                 <p>
-                  Votre couteau sur-mesure, pensé pour votre usage et votre style.
+                  Chaque lame est conçue sur mesure pour son propriétaire. Ensemble, nous définissons vos besoins, vos usages et vos choix esthétiques.
                 </p>
                 <p>
-                  Ensemble, nous définissons les besoins, l&apos;équilibre et l&apos;esthétique qui vous conviennent.
+                  Du choix de l&apos;acier à la géométrie de lame, du bois exotique à la gravure personnalisée, chaque détail est pensé et validé.
                 </p>
                 <p>
-                  Du choix de l&apos;acier au manche et aux finitions, chaque détail est ajusté avec vous.
+                  Le processus complet s&apos;étend généralement sur 8 à 12 semaines, de la première esquisse à la livraison de votre pièce.
                 </p>
-                <p>
-                  Le processus prend généralement 8 à 12 semaines, de la première esquisse à la livraison.
+                <p className="text-xs italic">
+                  La prise de contact, l&apos;échange et l&apos;élaboration du devis sont entièrement gratuits et sans engagement.
                 </p>
               </div>
               <div className="hidden space-y-4 md:block">
                 <p>
-                  Chaque projet sur-mesure est une collaboration unique. Ensemble, nous définissons vos besoins, vos
-                  préférences esthétiques et l&apos;usage que vous ferez de votre pièce.
+                  Chaque lame est conçue sur mesure pour son propriétaire. Ensemble, nous définissons vos besoins, vos usages et vos choix esthétiques.
                 </p>
                 <p>
-                  Du choix de l&apos;acier à la forme du manche, en passant par les dimensions et les finitions, chaque
-                  détail est pensé pour créer un couteau qui vous ressemble.
+                  Du choix de l&apos;acier à la géométrie de lame, du bois exotique à la gravure personnalisée, chaque détail est pensé et validé.
                 </p>
                 <p>
-                  Le processus complet prend généralement entre 8 et 12 semaines, de la première esquisse à la livraison
-                  de votre pièce unique.
+                  Le processus complet s&apos;étend généralement sur 8 à 12 semaines, de la première esquisse à la livraison de votre pièce.
+                </p>
+                <p className="text-xs italic">
+                  La prise de contact, l&apos;échange et l&apos;élaboration du devis sont entièrement gratuits et sans engagement.
                 </p>
               </div>
             </div>

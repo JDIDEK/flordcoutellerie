@@ -25,7 +25,6 @@ export default async function Home() {
         <main className="relative isolate min-h-screen overflow-visible">
           <HomeHeroSection />
           <CustomOrderSection />
-          <SignatureKnivesSection pieces={signaturePieces} />
         </main>
       </PageTransitionWrapper>
     </>
