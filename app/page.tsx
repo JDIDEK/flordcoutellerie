@@ -9,11 +9,6 @@ const HomeHeroSection = dynamic(
   { ssr: true }
 )
 
-const SignatureKnivesSection = dynamic(
-  () => import('@/components/sections/SignatureKnives').then(mod => ({ default: mod.SignatureKnivesSection })),
-  { ssr: true }
-)
-
 export default async function Home() {
   const signaturePieces = await getSignaturePieces()
 
