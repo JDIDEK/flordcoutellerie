@@ -18,7 +18,6 @@ export function Navigation({ alwaysVisible = false }: NavigationProps) {
   const navRef = useRef<HTMLElement>(null)
   const mobileMenuId = 'primary-mobile-menu'
 
-  // Lock body scroll when mobile menu is open
   useEffect(() => {
     if (isMobileMenuOpen) {
       document.body.style.overflow = 'hidden'
@@ -30,7 +29,7 @@ export function Navigation({ alwaysVisible = false }: NavigationProps) {
     }
   }, [isMobileMenuOpen])
 
-  // Close menu on escape key
+  // Close  on escape key
   useEffect(() => {
     const handleEscape = (e: KeyboardEvent) => {
       if (e.key === 'Escape' && isMobileMenuOpen) {
@@ -48,7 +47,6 @@ export function Navigation({ alwaysVisible = false }: NavigationProps) {
 
     const isMobile = window.innerWidth < 768
 
-    // Sur mobile, toujours visible
     if (isMobile) {
       setIsVisible(true)
       return
@@ -60,7 +58,6 @@ export function Navigation({ alwaysVisible = false }: NavigationProps) {
       const delta = currentScrollY - lastScrollY
       const DIRECTION_THRESHOLD = 12
 
-      // Toujours visible proche du sommet
       if (currentScrollY < 100) {
         setIsVisible(true)
       } else if (Math.abs(delta) > DIRECTION_THRESHOLD) {
@@ -70,7 +67,6 @@ export function Navigation({ alwaysVisible = false }: NavigationProps) {
       lastScrollYRef.current = currentScrollY
     }
     
-    // Throttle pour optimiser les performances
     let ticking = false
     const onScroll = () => {
       if (!ticking) {
@@ -113,10 +109,11 @@ export function Navigation({ alwaysVisible = false }: NavigationProps) {
   }, [])
 
   const navLinks = [
-    { href: '/pieces', label: 'Pièces' },
+    { href: '/pieces', label: 'Pièces disponibles' },
     { href: '/sur-mesure', label: 'Sur Mesure' },
     { href: '/galerie', label: 'Galerie' },
-    { href: '/atelier', label: 'Atelier' },
+    { href: '/formation', label: 'Formation' },
+    { href: '/atelier', label: "L'atelier" },
     { href: '/contact', label: 'Contact' },
   ]
 
@@ -128,7 +125,6 @@ export function Navigation({ alwaysVisible = false }: NavigationProps) {
     setIsMobileMenuOpen(false)
   }, [])
 
-  // Animation variants
   const menuVariants = {
     closed: {
       opacity: 0,
@@ -331,9 +327,6 @@ export function Navigation({ alwaysVisible = false }: NavigationProps) {
                     >
                       <span className="text-3xl sm:text-4xl font-serif font-light text-white tracking-wide transition-colors duration-200 group-hover:text-amber-400 group-active:text-amber-500">
                         {link.label}
-                      </span>
-                      <span className="text-sm text-white/30 font-mono transition-colors duration-200 group-hover:text-amber-400/50">
-                        0{index + 1}
                       </span>
                     </TransitionLink>
                     {index < navLinks.length - 1 && (
