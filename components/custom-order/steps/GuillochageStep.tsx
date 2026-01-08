@@ -28,7 +28,9 @@ export function GuillochageStep({ config, dispatch }: GuillochageStepProps) {
               }`}
               onClick={() => dispatch({ type: 'setGuillochageCentral', motif: motif.label })}
             >
-              <span className={`flex-1 flex items-center font-medium px-4 ${isSelected ? 'text-primary' : ''}`}>{motif.label}</span>
+              <div className="flex-1 flex flex-col justify-center px-4 py-3">
+                <span className={`font-medium ${isSelected ? 'text-primary' : ''}`}>{motif.label}</span>
+              </div>
               <div className="w-28 aspect-[2/1] bg-muted/30 flex-shrink-0">
                 <PlaceholderVisual label="Photo" />
               </div>
