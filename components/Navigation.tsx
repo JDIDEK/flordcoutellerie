@@ -200,20 +200,20 @@ export function Navigation({ alwaysVisible = false }: NavigationProps) {
         ref={navRef}
         className={`fixed left-0 right-0 z-40 transition-all duration-500 ease-in-out ${
           alwaysVisible || isVisible ? 'top-0' : '-top-32'
-        } ${hasBackground ? 'bg-neutral-900/85 backdrop-blur-md border-b border-white/10' : 'bg-transparent'}`}
+        } ${hasBackground ? 'bg-background/80 backdrop-blur-md border-b border-border' : 'bg-transparent'}`}
         aria-label="Navigation principale"
       >
         <div className="container mx-auto px-4 py-4 md:px-6 md:py-6">
           <div className="flex items-center justify-between">
             <TransitionLink href="/" className="group relative z-50">
               <div className="flex flex-col">
-                <span className={`text-lg md:text-xl font-serif font-light tracking-wider transition-colors ${
-                  isMobileMenuOpen ? 'text-white' : 'group-hover:text-primary'
+                <span className={`text-lg md:text-xl font-bold tracking-wider transition-colors ${
+                  isMobileMenuOpen ? 'text-background' : 'text-[#212120] group-hover:text-[#5A5A59]'
                 }`}>
                   FLO RD
                 </span>
-                <span className={`text-[9px] md:text-[10px] tracking-[0.3em] uppercase transition-colors ${
-                  isMobileMenuOpen ? 'text-white/60' : 'text-muted-foreground'
+                <span className={`text-[9px] md:text-[10px] tracking-[0.3em] uppercase font-medium transition-colors ${
+                  isMobileMenuOpen ? 'text-background/60' : 'text-[#5A5A59]'
                 }`}>
                   Coutellerie
                 </span>
@@ -226,10 +226,10 @@ export function Navigation({ alwaysVisible = false }: NavigationProps) {
                 <TransitionLink
                   key={link.href}
                   href={link.href}
-                  className="text-sm tracking-wide text-foreground/80 hover:text-primary transition-colors relative group"
+                  className="text-sm font-medium tracking-wide text-[#212120] hover:text-[#5A5A59] transition-colors relative group"
                 >
                   {link.label}
-                  <span className="absolute -bottom-1 left-0 w-0 h-[1px] bg-primary group-hover:w-full transition-all duration-300" />
+                  <span className="absolute -bottom-1 left-0 w-0 h-[1px] bg-[#212120] group-hover:w-full transition-all duration-300" />
                 </TransitionLink>
               ))}
               <CartSheet />
@@ -242,7 +242,7 @@ export function Navigation({ alwaysVisible = false }: NavigationProps) {
               </div>
               <button
                 onClick={toggleMenu}
-                className="relative flex h-12 w-12 items-center justify-center text-foreground hover:text-primary transition-colors"
+                className="relative flex h-12 w-12 items-center justify-center text-[#212120] hover:text-[#5A5A59] transition-colors"
                 aria-label={isMobileMenuOpen ? 'Fermer le menu' : 'Ouvrir le menu'}
                 aria-controls={mobileMenuId}
                 aria-expanded={isMobileMenuOpen}
@@ -253,7 +253,7 @@ export function Navigation({ alwaysVisible = false }: NavigationProps) {
                   <span
                     className={`absolute block h-[2px] w-6 bg-current transition-all duration-300 ease-out ${
                       isMobileMenuOpen 
-                        ? 'translate-y-0 rotate-45 bg-white' 
+                        ? 'translate-y-0 rotate-45 bg-background' 
                         : '-translate-y-[6px]'
                     }`}
                   />
@@ -267,7 +267,7 @@ export function Navigation({ alwaysVisible = false }: NavigationProps) {
                   <span
                     className={`absolute block h-[2px] w-6 bg-current transition-all duration-300 ease-out ${
                       isMobileMenuOpen 
-                        ? 'translate-y-0 -rotate-45 bg-white' 
+                        ? 'translate-y-0 -rotate-45 bg-background' 
                         : 'translate-y-[6px]'
                     }`}
                   />

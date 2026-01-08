@@ -14,7 +14,7 @@ export default async function Home() {
 
   return (
     <>
-      <Navigation />
+      <Navigation alwaysVisible />
 
       <PageTransitionWrapper>
         <main className="relative isolate min-h-screen overflow-visible">
