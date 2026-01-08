@@ -14,7 +14,8 @@ export function PliantMechanismStep({ config, dispatch }: PliantMechanismStepPro
     <div className="space-y-6">
       <StepHeader
         title="Mécanisme"
-        description="Sélectionnez le système d'ouverture"
+        description="Fonctionnement du pliant
+"
       />
       <div className="grid md:grid-cols-2 gap-4">
         {pliantMechanisms.map((mechanism) => {
