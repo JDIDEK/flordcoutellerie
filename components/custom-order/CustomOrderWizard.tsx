@@ -191,25 +191,28 @@ export function CustomOrderWizard() {
 
   return (
     <div className="space-y-8">
-      <div className="flex items-center gap-3">
-        <div className="flex items-center gap-1.5 flex-1">
-          {steps.map((step, index) => (
-            <div
-              key={step.id}
-              className={`h-1.5 flex-1 rounded-full transition-all ${
-                index < activeStepIndex
-                  ? 'bg-primary'
-                  : index === activeStepIndex
-                    ? 'bg-primary/60'
-                    : 'bg-muted'
-              }`}
-            />
-          ))}
+      {/* Barre de progression - cachée à l'étape usage */}
+      {currentStep?.id !== 'usage' && (
+        <div className="flex items-center gap-3">
+          <div className="flex items-center gap-1.5 flex-1">
+            {steps.map((step, index) => (
+              <div
+                key={step.id}
+                className={`h-1.5 flex-1 rounded-full transition-all ${
+                  index < activeStepIndex
+                    ? 'bg-primary'
+                    : index === activeStepIndex
+                      ? 'bg-primary/60'
+                      : 'bg-muted'
+                }`}
+              />
+            ))}
+          </div>
+          <p className="text-xs text-muted-foreground whitespace-nowrap">
+            {activeStepIndex + 1}/{steps.length} · {currentStep?.title}
+          </p>
         </div>
-        <p className="text-xs text-muted-foreground whitespace-nowrap">
-          {activeStepIndex + 1}/{steps.length} · {currentStep?.title}
-        </p>
-      </div>
+      )}
 
       <Card className="p-6 md:p-10 space-y-6">{renderStepContent()}</Card>
 

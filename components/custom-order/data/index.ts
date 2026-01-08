@@ -10,7 +10,7 @@ export {
   steelOptionsChasse,
   getSteelOptionsForUsage,
 } from './steel-options'
-export { damasteelPatterns } from './damasteel-patterns'
+export { damasteelPatterns, damasteelPatternsLarge, damasteelPatternsSmall } from './damasteel-patterns'
 export { handleFamilies } from './handle-options'
 export { sheathOptions } from './sheath-options'
 export { guillochageMotifs, guillochageMotifsPrincipale, guillochageMotifsPlatines, guillochageSets } from './guillochage-options'

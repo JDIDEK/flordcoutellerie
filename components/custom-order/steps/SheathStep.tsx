@@ -15,7 +15,7 @@ export function SheathStep({ config, dispatch }: SheathStepProps) {
     <div className="space-y-6">
       <StepHeader
         title="Étui"
-        description="Adapté à l'usage outdoor"
+        description="Pour emporter votre lame partout avec vous"
       />
       <div className="grid md:grid-cols-2 gap-4">
         {sheathOptions.map((sheath) => {
@@ -31,9 +31,11 @@ export function SheathStep({ config, dispatch }: SheathStepProps) {
               <div className="flex-1 flex flex-col justify-center px-4 py-3">
                 <div className="flex items-center gap-2">
                   <span className={`font-medium ${isSelected ? 'text-primary' : ''}`}>Étui {sheath.label}</span>
-                  <Badge variant="secondary" className="text-[10px]">{sheath.badge}</Badge>
                 </div>
                 <p className="text-xs text-muted-foreground mt-0.5">{sheath.description}</p>
+                {sheath.note && (
+                  <p className="text-xs text-muted-foreground italic mt-0.5">{sheath.note}</p>
+                )}
               </div>
               <div className="w-28 aspect-[2/1] bg-muted/30 flex-shrink-0">
                 <PlaceholderVisual label="Photo" />

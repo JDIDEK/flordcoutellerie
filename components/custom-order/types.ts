@@ -90,8 +90,8 @@ export interface HandleFamily {
 export interface SheathOption {
   id: 'kydex' | 'cuir'
   label: string
-  badge: string
   description: string
+  note?: string
 }
 
 export interface GuillochageMotif {

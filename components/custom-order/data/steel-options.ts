@@ -38,34 +38,28 @@ export const steelOptionsPliant: SteelOption[] = [
     id: 'damasteel',
     label: 'Damasteel DS93X',
     description: 'Damas Suédois',
-    tech: { retention: 4, sharpening: 4, flexibility: 1, price: 5 },
+    tech: { retention: 5, sharpening: 4, flexibility: 4, price: 5 },
   },
 ]
 
 export const steelOptionsOutdoor: SteelOption[] = [
   {
-    id: 'c130',
-    label: 'C130',
-    description: 'Carbone robuste, affûtage terrain',
-    tech: { retention: 4, sharpening: 5, flexibility: 3, price: 1 },
-  },
-  {
     id: '14c28n',
     label: '14C28N',
-    description: 'Inox anti-corrosion',
-    tech: { retention: 3, sharpening: 4, flexibility: 3, price: 2 },
+    description: 'Inox Suédois',
+    tech: { retention: 3, sharpening: 5, flexibility: 3, price: 2 },
   },
   {
-    id: 'xc75',
-    label: 'XC75',
-    description: 'Carbone performant',
-    tech: { retention: 4, sharpening: 5, flexibility: 4, price: 2 },
+    id: 'N690Co',
+    label: 'N690Co',
+    description: 'Inox Autrichien',
+    tech: { retention: 5, sharpening: 3, flexibility: 4, price: 3 },
   },
   {
     id: 'damasteel',
-    label: 'Damasteel',
-    description: 'Damas premium, résistant',
-    tech: { retention: 4, sharpening: 4, flexibility: 3, price: 5 },
+    label: 'Damasteel DS93X',
+    description: 'Damas Suédois',
+    tech: { retention: 5, sharpening: 4, flexibility: 4, price: 5 },
   },
 ]
 

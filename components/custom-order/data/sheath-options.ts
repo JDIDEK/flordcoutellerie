@@ -4,13 +4,13 @@ export const sheathOptions: SheathOption[] = [
   {
     id: 'kydex',
     label: 'Kydex',
-    badge: 'Technique',
-    description: 'Étui thermoformé, résistant à l\'eau, clip ceinture',
+    description: 'Etui rigide à mémoire de forme',
+    note: 'Etanche',
   },
   {
     id: 'cuir',
     label: 'Cuir',
-    badge: 'Traditionnel',
-    description: 'Cuir pleine fleur, cousu main, patine naturelle',
+    description: 'Etui souple en cuir pleine fleur',
+    note: 'Non étanche',
   },
 ]

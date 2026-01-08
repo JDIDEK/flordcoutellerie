@@ -19,7 +19,7 @@ export const usageOptions: UsageOption[] = [
   {
     id: 'chasse',
     label: 'Chasse',
-    description: 'En cours de développement',
+    description: 'Cuisine en extérieur, dépeçage',
     disabled: true,
   },
 ]
