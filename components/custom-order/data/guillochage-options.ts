@@ -9,8 +9,7 @@ export const guillochageMotifs: GuillochageMotif[] = [
   { id: 'aucun', label: 'Aucun' },
 ]
 
-// Motifs pour cuisine, outdoor, chasse (dos de lame uniquement)
-export const guillochageMotifsCouteaux: GuillochageMotif[] = [
+export const guillochageMotifsPrincipale: GuillochageMotif[] = [
   { id: 'fleuri', label: 'Fleuri' },
   { id: 'losanges', label: 'Losanges' },
   { id: 'sabliers', label: 'Sabliers' },
@@ -18,6 +17,12 @@ export const guillochageMotifsCouteaux: GuillochageMotif[] = [
   { id: 'ronce', label: 'Ronce' },
   { id: 'scandinave', label: 'Scandinave' },
   { id: 'normand', label: 'Normand' },
+]
+
+export const guillochageMotifsPlatines: GuillochageMotif[] = [
+  { id: 'sabliers', label: 'Sabliers' },
+  { id: 'scandinave', label: 'Scandinave' },
+  { id: 'ondule', label: 'Ondulé' },
 ]
 
 export const guillochageSets: GuillochageSet[] = [

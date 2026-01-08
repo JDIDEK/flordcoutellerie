@@ -1,7 +1,7 @@
 'use client'
 
 import { StepHeader, PlaceholderVisual } from '../ui'
-import { guillochageMotifsCouteaux } from '../data'
+import { guillochageMotifsPrincipale } from '../data'
 import type { WizardConfig, Action } from '../types'
 
 interface PliantGuillochageDosStepProps {
@@ -17,7 +17,7 @@ export function PliantGuillochageDosStep({ config, dispatch }: PliantGuillochage
         description="L'originalité à la Française"
       />
       <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-        {guillochageMotifsCouteaux.map((motif) => {
+        {guillochageMotifsPrincipale.map((motif) => {
           const isSelected = config.guillochageCentral === motif.label
           return (
             <div
