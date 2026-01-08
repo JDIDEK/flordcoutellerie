@@ -106,7 +106,7 @@ export function SummaryStep({ config, dispatch, mailtoSubject, mailtoBody }: Sum
             {config.steel === 'damasteel' && (
               <p>Motif : {damasteelPatterns.find((p) => p.id === config.damasteelPattern)?.label ?? '—'}</p>
             )}
-            <p>Manche : {config.handleFamily ? `${handleFamilies.find((h) => h.id === config.handleFamily)?.label ?? config.handleFamily}${config.handleVariant ? ` - ${handleFamilies.find((h) => h.id === config.handleFamily)?.variants.find((v) => v.id === config.handleVariant)?.label ?? config.handleVariant}` : ''}` : '—'}</p>
+            <p>Manche : {config.handleFamily ? `${handleFamilies.find((h) => h.id === config.handleFamily)?.label ?? config.handleFamily}${config.handleVariant ? ` - ${handleFamilies.find((h) => h.id === config.handleFamily)?.variants?.find((v) => v.id === config.handleVariant)?.label ?? config.handleVariant}` : ''}` : '—'}</p>
             <p>Composition : {config.handleComposition === 'simple' ? 'Simple' : config.handleComposition === 'compose' ? 'Composé' : '—'}</p>
             <p>Rivet mosaïque : {config.mosaicRivet ? 'Oui' : 'Non'}</p>
             <p>Gravure : {config.engraving ? config.engravingText || 'Oui' : 'Non'}</p>

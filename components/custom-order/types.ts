@@ -82,7 +82,8 @@ export interface HandleFamily {
   label: string
   description: string
   priceLevel: number
-  variants: { id: string; label: string }[]
+  note?: string
+  variants?: { id: string; label: string }[]
 }
 
 export interface SheathOption {

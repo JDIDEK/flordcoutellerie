@@ -36,11 +36,6 @@ export function GuillochageStep({ config, dispatch }: GuillochageStepProps) {
           )
         })}
       </div>
-
-      <p className="text-sm text-muted-foreground">
-        Une question ?{' '}
-        <a href="/contact" className="text-primary hover:underline">Contactez-moi directement</a>
-      </p>
     </div>
   )
 }

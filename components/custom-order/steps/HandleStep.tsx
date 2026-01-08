@@ -14,7 +14,7 @@ export function HandleStep({ config, dispatch }: HandleStepProps) {
     <div className="space-y-6">
       <StepHeader
         title="Manche"
-        description="Choisissez le matériau de votre manche"
+        description="Chaque matériau a son caractère et son histoire"
       />
       <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
         {handleFamilies.map((family) => {
@@ -30,6 +30,9 @@ export function HandleStep({ config, dispatch }: HandleStepProps) {
               <div className="flex-1 flex flex-col justify-center px-4 py-3">
                 <span className={`font-medium ${isSelected ? 'text-primary' : ''}`}>{family.label}</span>
                 <p className="text-xs text-muted-foreground mt-0.5">{family.description}</p>
+                {family.note && (
+                  <p className="text-xs text-muted-foreground italic mt-0.5">{family.note}</p>
+                )}
               </div>
               <div className="w-28 aspect-[2/1] bg-muted/30 flex-shrink-0">
                 <PlaceholderVisual label="Photo" />

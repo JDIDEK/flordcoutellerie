@@ -125,8 +125,8 @@ export function CustomOrderWizard() {
 
     if (config.handleFamily) {
       const handle = handleFamilies.find((h) => h.id === config.handleFamily)
-      const variant = handle?.variants.find((v) => v.id === config.handleVariant)
-      lines.push(`Manche : ${handle?.label ?? config.handleFamily} ${variant ? `- ${variant.label}` : ''}`)
+      const variant = handle?.variants?.find((v) => v.id === config.handleVariant)
+      lines.push(`Manche : ${handle?.label ?? config.handleFamily}${variant ? ` - ${variant.label}` : ''}`)
     }
 
     lines.push(`Rivet mosaïque : ${config.mosaicRivet ? 'Oui' : 'Non'}`)
