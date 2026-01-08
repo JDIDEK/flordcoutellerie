@@ -5,10 +5,16 @@ export type DamasteelScale = 'large' | 'small'
 export type StepId =
   | 'usage'
   | 'cuisine-form'
+  | 'cuisine-guillochage'
   | 'pliant-mechanism'
   | 'pliant-form'
+  | 'pliant-guillochage-dos'
+  | 'pliant-guillochage-platines'
   | 'outdoor-intensity'
   | 'outdoor-form'
+  | 'outdoor-guillochage'
+  | 'chasse-form'
+  | 'chasse-guillochage'
   | 'steel'
   | 'damasteel-pattern'
   | 'sheath'
@@ -113,6 +119,7 @@ export interface WizardConfig {
   pliantForm?: string
   outdoorUse?: OutdoorUse
   outdoorForm?: string
+  chasseForm?: string
   steel?: string
   damasteelPattern?: string
   sheath?: 'kydex' | 'cuir'
@@ -140,6 +147,7 @@ export type Action =
   | { type: 'setPliantForm'; form: string }
   | { type: 'setOutdoorUse'; usage: OutdoorUse }
   | { type: 'setOutdoorForm'; form: string }
+  | { type: 'setChasseForm'; form: string }
   | { type: 'setSteel'; steel: string }
   | { type: 'setDamasteelPattern'; pattern: string }
   | { type: 'setSheath'; sheath: 'kydex' | 'cuir' }

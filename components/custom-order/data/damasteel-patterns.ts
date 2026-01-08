@@ -1,6 +1,17 @@
-import type { DamasteelScale } from '../types'
-
-export const damasteelPatterns: Record<DamasteelScale, string[]> = {
-  large: ['Bifrost', 'Thor', 'Odin', 'Freya', 'Loki', 'Heimdall'],
-  small: ['Vinland', 'Aegir', 'Hakkapella', 'Draupner'],
+export interface DamasteelPattern {
+  id: string
+  label: string
+  largeBladesOnly?: boolean
 }
+
+export const damasteelPatterns: DamasteelPattern[] = [
+  { id: 'fafnir', label: 'Fafnir' },
+  { id: 'grabak', label: 'Grabak' },
+  { id: 'ladder', label: 'Ladder' },
+  { id: 'niddhog', label: 'Niddhog' },
+  { id: 'rose', label: 'Rose' },
+  { id: 'svavner', label: 'Svavner' },
+  { id: 'vinland', label: 'Vinland' },
+  { id: 'yggdrasil', label: 'Yggdrasil' },
+  { id: 'odin-heim', label: 'Odin Heim', largeBladesOnly: true },
+]

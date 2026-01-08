@@ -28,6 +28,8 @@ export function wizardReducer(state: WizardConfig, action: Action): WizardConfig
       return { ...state, outdoorUse: action.usage, outdoorForm: undefined }
     case 'setOutdoorForm':
       return { ...state, outdoorForm: action.form }
+    case 'setChasseForm':
+      return { ...state, chasseForm: action.form }
     case 'setSteel':
       return {
         ...state,

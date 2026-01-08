@@ -13,8 +13,10 @@ import {
   pliantFormsByMechanism,
   outdoorUseCases,
   outdoorForms,
+  chasseForms,
   handleFamilies,
   getSteelOptionsForUsage,
+  damasteelPatterns,
 } from '../data'
 import { isStepComplete } from '../helpers'
 import type { WizardConfig, Action } from '../types'
@@ -72,26 +74,37 @@ export function SummaryStep({ config, dispatch, mailtoSubject, mailtoBody }: Sum
           <div className="space-y-2 text-sm text-muted-foreground">
             <p>Usage : {usageOptions.find((u) => u.id === config.usage)?.label ?? '—'}</p>
             {config.usage === 'cuisine' && (
-              <p>Forme : {kitchenForms.find((f) => f.id === config.cuisineForm)?.label ?? '—'}</p>
+              <>
+                <p>Forme : {kitchenForms.find((f) => f.id === config.cuisineForm)?.label ?? '—'}</p>
+                <p>Guillochage dos de lame : {config.guillochageCentral ?? '—'}</p>
+              </>
             )}
             {config.usage === 'pliant' && (
               <>
                 <p>Mécanisme : {pliantMechanisms.find((m) => m.id === config.pliantMechanism)?.label ?? '—'}</p>
                 <p>Forme : {config.pliantMechanism ? pliantFormsByMechanism[config.pliantMechanism]?.find((f) => f.id === config.pliantForm)?.label ?? '—' : '—'}</p>
-                <p>Guillochage lame : {config.guillochageCentral ?? '—'}</p>
+                <p>Guillochage dos de lame : {config.guillochageCentral ?? '—'}</p>
                 <p>Guillochage platines : {config.guillochagePlatineLeft && config.guillochagePlatineRight ? `${config.guillochagePlatineLeft} / ${config.guillochagePlatineRight}` : '—'}</p>
               </>
             )}
             {config.usage === 'outdoor' && (
               <>
-                <p>Intensité : {outdoorUseCases.find((o) => o.id === config.outdoorUse)?.label ?? '—'}</p>
+                <p>Utilisation : {outdoorUseCases.find((o) => o.id === config.outdoorUse)?.label ?? '—'}</p>
                 <p>Forme : {outdoorForms.find((f) => f.id === config.outdoorForm)?.label ?? '—'}</p>
+                <p>Guillochage dos de lame : {config.guillochageCentral ?? '—'}</p>
+                <p>Étui : {config.sheath ? (config.sheath === 'kydex' ? 'Kydex' : 'Cuir') : '—'}</p>
+              </>
+            )}
+            {config.usage === 'chasse' && (
+              <>
+                <p>Forme : {chasseForms.find((f) => f.id === config.chasseForm)?.label ?? '—'}</p>
+                <p>Guillochage dos de lame : {config.guillochageCentral ?? '—'}</p>
                 <p>Étui : {config.sheath ? (config.sheath === 'kydex' ? 'Kydex' : 'Cuir') : '—'}</p>
               </>
             )}
             <p>Acier : {getSteelOptionsForUsage(config.usage).find((s) => s.id === config.steel)?.label ?? '—'}</p>
             {config.steel === 'damasteel' && (
-              <p>Motif : {config.damasteelPattern ?? '—'}</p>
+              <p>Motif : {damasteelPatterns.find((p) => p.id === config.damasteelPattern)?.label ?? '—'}</p>
             )}
             <p>Manche : {config.handleFamily ? `${handleFamilies.find((h) => h.id === config.handleFamily)?.label ?? config.handleFamily}${config.handleVariant ? ` - ${handleFamilies.find((h) => h.id === config.handleFamily)?.variants.find((v) => v.id === config.handleVariant)?.label ?? config.handleVariant}` : ''}` : '—'}</p>
             <p>Composition : {config.handleComposition === 'simple' ? 'Simple' : config.handleComposition === 'compose' ? 'Composé' : '—'}</p>

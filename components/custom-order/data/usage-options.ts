@@ -4,22 +4,22 @@ export const usageOptions: UsageOption[] = [
   {
     id: 'cuisine',
     label: 'Cuisine',
-    description: 'Couteaux de chef : Nakiri, Gyuto, Bunka, Kiritsuke…',
+    description: 'Amateur comme professionnels',
   },
   {
     id: 'pliant',
     label: 'Pliant',
-    description: 'Couteau de poche avec mécanisme cran plat ou piémontais',
+    description: 'Couteau de poche, EDC',
   },
   {
     id: 'outdoor',
     label: 'Outdoor',
-    description: 'Couteaux fixes pour le bushcraft, la survie, le camp',
+    description: 'Bushcraft, camping, survie',
   },
   {
     id: 'chasse',
     label: 'Chasse',
-    description: 'Couteaux de chasse et dépouille (Skinner, caper...)',
+    description: 'En cours de développement',
     disabled: true,
   },
 ]

@@ -2,28 +2,22 @@ import type { SteelOption, Usage } from '../types'
 
 export const steelOptionsCuisine: SteelOption[] = [
   {
-    id: 'c130',
-    label: 'C130',
-    description: 'Acier carbone classique',
-    tech: { retention: 4, sharpening: 5, flexibility: 3, price: 1 },
-  },
-  {
     id: '14c28n',
     label: '14C28N',
-    description: 'Inox suédois haut de gamme',
-    tech: { retention: 3, sharpening: 4, flexibility: 3, price: 2 },
+    description: 'Inox Suédois',
+    tech: { retention: 3, sharpening: 5, flexibility: 3, price: 2 },
   },
   {
-    id: 'xc75',
-    label: 'XC75',
-    description: 'Carbone fin, excellent tranchant',
-    tech: { retention: 4, sharpening: 5, flexibility: 4, price: 2 },
+    id: 'suminagashi-vg10',
+    label: 'Suminagashi VG10',
+    description: 'Damas Japonais',
+    tech: { retention: 4, sharpening: 4, flexibility: 1, price: 3 },
   },
   {
     id: 'damasteel',
-    label: 'Damasteel',
-    description: 'Acier de Damas haut de gamme',
-    tech: { retention: 4, sharpening: 4, flexibility: 3, price: 5 },
+    label: 'Damasteel DS93X',
+    description: 'Damas Suédois',
+    tech: { retention: 4, sharpening: 4, flexibility: 1, price: 3 },
   },
 ]
 

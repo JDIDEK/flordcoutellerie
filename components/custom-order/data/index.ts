@@ -2,6 +2,7 @@ export { usageOptions } from './usage-options'
 export { kitchenForms } from './kitchen-forms'
 export { pliantMechanisms, pliantFormsByMechanism } from './pliant-options'
 export { outdoorUseCases, outdoorForms } from './outdoor-options'
+export { chasseForms } from './chasse-forms'
 export {
   steelOptionsCuisine,
   steelOptionsPliant,
@@ -12,4 +13,4 @@ export {
 export { damasteelPatterns } from './damasteel-patterns'
 export { handleFamilies } from './handle-options'
 export { sheathOptions } from './sheath-options'
-export { guillochageMotifs, guillochageSets } from './guillochage-options'
+export { guillochageMotifs, guillochageMotifsCouteaux, guillochageSets } from './guillochage-options'

@@ -1,7 +1,5 @@
 'use client'
 
-import { Card } from '@/components/ui/card'
-import { ScrollArea } from '@/components/ui/scroll-area'
 import { StepHeader, PlaceholderVisual } from '../ui'
 import { damasteelPatterns } from '../data'
 import { getPatternScale } from '../helpers'
@@ -14,40 +12,66 @@ interface DamasteelStepProps {
 
 export function DamasteelStep({ config, dispatch }: DamasteelStepProps) {
   const scale = getPatternScale(config)
-  const patterns = damasteelPatterns[scale]
+  
+  // Filtrer les motifs : exclure "largeBladesOnly" pour les pliants (petites lames)
+  const availablePatterns = damasteelPatterns.filter((pattern) => {
+    if (pattern.largeBladesOnly && scale === 'small') return false
+    return true
+  })
   
   return (
     <div className="space-y-6">
       <StepHeader
-        title="Motif Damasteel"
-        description={`Liste adaptée aux ${scale === 'large' ? 'grandes' : 'petites'} lames`}
+        title="Motifs de Damasteel"
+        description="Purement esthétique, le motif n'impacte pas les performances."
       />
-      <ScrollArea className="h-80 rounded-md border border-border/50 p-2">
-        <div className="grid md:grid-cols-2 gap-3 pr-2">
-          {patterns.map((pattern) => {
-            const isSelected = config.damasteelPattern === pattern
-            return (
-              <Card
-                key={pattern}
-                className={`p-4 cursor-pointer transition-all hover:border-primary ${isSelected ? 'border-primary bg-primary/5' : ''}`}
-                onClick={() => dispatch({ type: 'setDamasteelPattern', pattern })}
-              >
-                <div className="flex items-center justify-between">
-                  <div className="space-y-1">
-                    <h3 className="font-medium">{pattern}</h3>
-                    <p className="text-xs text-muted-foreground">
-                      Motif {scale === 'large' ? 'aéré' : 'dense'} pour Damasteel
-                    </p>
+      
+      {/* Grille principale des motifs standards */}
+      <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
+        {availablePatterns.filter(p => !p.largeBladesOnly).map((pattern) => {
+          const isSelected = config.damasteelPattern === pattern.id
+          return (
+            <div
+              key={pattern.id}
+              className="cursor-pointer group"
+              onClick={() => dispatch({ type: 'setDamasteelPattern', pattern: pattern.id })}
+            >
+              {/* Image rectangulaire */}
+              <div className={`aspect-[2/1] w-full bg-muted/30 border-2 transition-all ${isSelected ? 'border-primary' : 'border-transparent group-hover:border-foreground/40'}`}>
+                <PlaceholderVisual label={pattern.label} />
+              </div>
+              {/* Nom sous l'image */}
+              <p className={`mt-1 text-sm ${isSelected ? 'font-bold' : 'font-normal'}`}>{pattern.label}</p>
+            </div>
+          )
+        })}
+      </div>
+
+      {/* Section motifs exclusifs grandes lames */}
+      {availablePatterns.some(p => p.largeBladesOnly) && (
+        <div className="space-y-3 pt-4">
+          <p className="text-sm font-medium text-muted-foreground">Exclu TRÈS grandes lames :</p>
+          <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
+            {availablePatterns.filter(p => p.largeBladesOnly).map((pattern) => {
+              const isSelected = config.damasteelPattern === pattern.id
+              return (
+                <div
+                  key={pattern.id}
+                  className="cursor-pointer group"
+                  onClick={() => dispatch({ type: 'setDamasteelPattern', pattern: pattern.id })}
+                >
+                  {/* Image rectangulaire */}
+                  <div className={`aspect-[2/1] w-full bg-muted/30 border-2 transition-all ${isSelected ? 'border-primary' : 'border-transparent group-hover:border-foreground/40'}`}>
+                    <PlaceholderVisual label={pattern.label} />
                   </div>
-                  <div className="w-20">
-                    <PlaceholderVisual label="Motif" />
-                  </div>
+                  {/* Nom sous l'image */}
+                  <p className={`mt-1 text-sm ${isSelected ? 'font-bold' : 'font-normal'}`}>{pattern.label}</p>
                 </div>
-              </Card>
-            )
-          })}
+              )
+            })}
+          </div>
         </div>
-      </ScrollArea>
+      )}
     </div>
   )
 }

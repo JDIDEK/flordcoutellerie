@@ -16,16 +16,24 @@ import {
   pliantFormsByMechanism,
   outdoorUseCases,
   outdoorForms,
+  chasseForms,
   handleFamilies,
   getSteelOptionsForUsage,
+  damasteelPatterns,
 } from './data'
 import {
   UsageStep,
   CuisineFormStep,
+  CuisineGuillochageStep,
   PliantMechanismStep,
   PliantFormStep,
+  PliantGuillochageDosStep,
+  PliantGuillochagePlatinesStep,
   OutdoorIntensityStep,
   OutdoorFormStep,
+  OutdoorGuillochageStep,
+  ChasseFormStep,
+  ChasseGuillochageStep,
   SteelStep,
   DamasteelStep,
   SheathStep,
@@ -72,6 +80,9 @@ export function CustomOrderWizard() {
     if (config.usage === 'cuisine') {
       const form = kitchenForms.find((f) => f.id === config.cuisineForm)
       if (form) lines.push(`Forme cuisine : ${form.label} (${form.length})`)
+      if (config.guillochageCentral) {
+        lines.push(`Guillochage dos de lame : ${config.guillochageCentral}`)
+      }
     }
     if (config.usage === 'pliant') {
       const mech = pliantMechanisms.find((m) => m.id === config.pliantMechanism)
@@ -80,18 +91,29 @@ export function CustomOrderWizard() {
         : undefined
       if (mech) lines.push(`Mécanisme : ${mech.label}`)
       if (form) lines.push(`Forme pliant : ${form.label}`)
-      if (config.guillochageCentral && config.guillochagePlatineLeft && config.guillochagePlatineRight) {
-        lines.push(
-          `Guillochage lame : ${config.guillochageCentral}`,
-          `Guillochage platines : ${config.guillochagePlatineLeft} / ${config.guillochagePlatineRight}`
-        )
+      if (config.guillochageCentral) {
+        lines.push(`Guillochage dos de lame : ${config.guillochageCentral}`)
+      }
+      if (config.guillochagePlatineLeft || config.guillochagePlatineRight) {
+        lines.push(`Guillochage platines : ${config.guillochagePlatineLeft ?? '-'} / ${config.guillochagePlatineRight ?? '-'}`)
       }
     }
     if (config.usage === 'outdoor') {
       const intensity = outdoorUseCases.find((o) => o.id === config.outdoorUse)
       const form = outdoorForms.find((f) => f.id === config.outdoorForm)
-      if (intensity) lines.push(`Intensité : ${intensity.label}`)
+      if (intensity) lines.push(`Utilisation : ${intensity.label}`)
       if (form) lines.push(`Forme outdoor : ${form.label} (${form.length})`)
+      if (config.guillochageCentral) {
+        lines.push(`Guillochage dos de lame : ${config.guillochageCentral}`)
+      }
+      if (config.sheath) lines.push(`Étui : ${config.sheath === 'kydex' ? 'Kydex' : 'Cuir'}`)
+    }
+    if (config.usage === 'chasse') {
+      const form = chasseForms.find((f) => f.id === config.chasseForm)
+      if (form) lines.push(`Forme chasse : ${form.label} (${form.length})`)
+      if (config.guillochageCentral) {
+        lines.push(`Guillochage dos de lame : ${config.guillochageCentral}`)
+      }
       if (config.sheath) lines.push(`Étui : ${config.sheath === 'kydex' ? 'Kydex' : 'Cuir'}`)
     }
 
@@ -100,7 +122,8 @@ export function CustomOrderWizard() {
       lines.push(`Acier : ${steel?.label ?? config.steel}`)
     }
     if (config.steel === 'damasteel' && config.damasteelPattern) {
-      lines.push(`Motif Damasteel : ${config.damasteelPattern}`)
+      const pattern = damasteelPatterns.find((p) => p.id === config.damasteelPattern)
+      lines.push(`Motif Damasteel : ${pattern?.label ?? config.damasteelPattern}`)
     }
 
     if (config.handleFamily) {
@@ -130,14 +153,26 @@ export function CustomOrderWizard() {
         return <UsageStep config={config} dispatch={dispatch} />
       case 'cuisine-form':
         return <CuisineFormStep config={config} dispatch={dispatch} />
+      case 'cuisine-guillochage':
+        return <CuisineGuillochageStep config={config} dispatch={dispatch} />
       case 'pliant-mechanism':
         return <PliantMechanismStep config={config} dispatch={dispatch} />
       case 'pliant-form':
         return <PliantFormStep config={config} dispatch={dispatch} />
+      case 'pliant-guillochage-dos':
+        return <PliantGuillochageDosStep config={config} dispatch={dispatch} />
+      case 'pliant-guillochage-platines':
+        return <PliantGuillochagePlatinesStep config={config} dispatch={dispatch} />
       case 'outdoor-intensity':
         return <OutdoorIntensityStep config={config} dispatch={dispatch} />
       case 'outdoor-form':
         return <OutdoorFormStep config={config} dispatch={dispatch} />
+      case 'outdoor-guillochage':
+        return <OutdoorGuillochageStep config={config} dispatch={dispatch} />
+      case 'chasse-form':
+        return <ChasseFormStep config={config} dispatch={dispatch} />
+      case 'chasse-guillochage':
+        return <ChasseGuillochageStep config={config} dispatch={dispatch} />
       case 'steel':
         return <SteelStep config={config} dispatch={dispatch} />
       case 'damasteel-pattern':
