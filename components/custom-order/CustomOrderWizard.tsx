@@ -15,7 +15,8 @@ import {
   pliantMechanisms,
   pliantFormsByMechanism,
   outdoorUseCases,
-  outdoorForms,
+  outdoorFormsModerate,
+  outdoorFormsIntensive,
   chasseForms,
   handleFamilies,
   getSteelOptionsForUsage,
@@ -97,9 +98,10 @@ export function CustomOrderWizard() {
     }
     if (config.usage === 'outdoor') {
       const intensity = outdoorUseCases.find((o) => o.id === config.outdoorUse)
-      const form = outdoorForms.find((f) => f.id === config.outdoorForm)
+      const allForms = [...outdoorFormsModerate, ...outdoorFormsIntensive]
+      const form = allForms.find((f) => f.id === config.outdoorForm)
       if (intensity) lines.push(`Utilisation : ${intensity.label}`)
-      if (form) lines.push(`Forme outdoor : ${form.label} (${form.length})`)
+      if (form) lines.push(`Forme outdoor : ${form.label}`)
       if (config.guillochageCentral) {
         lines.push(`Guillochage dos de lame : ${config.guillochageCentral}`)
       }

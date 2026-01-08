@@ -12,7 +12,8 @@ import {
   pliantMechanisms,
   pliantFormsByMechanism,
   outdoorUseCases,
-  outdoorForms,
+  outdoorFormsModerate,
+  outdoorFormsIntensive,
   chasseForms,
   handleFamilies,
   getSteelOptionsForUsage,
@@ -90,7 +91,7 @@ export function SummaryStep({ config, dispatch, mailtoSubject, mailtoBody }: Sum
             {config.usage === 'outdoor' && (
               <>
                 <p>Utilisation : {outdoorUseCases.find((o) => o.id === config.outdoorUse)?.label ?? '—'}</p>
-                <p>Forme : {outdoorForms.find((f) => f.id === config.outdoorForm)?.label ?? '—'}</p>
+                <p>Forme : {[...outdoorFormsModerate, ...outdoorFormsIntensive].find((f) => f.id === config.outdoorForm)?.label ?? '—'}</p>
                 <p>Guillochage dos de lame : {config.guillochageCentral ?? '—'}</p>
                 <p>Étui : {config.sheath ? (config.sheath === 'kydex' ? 'Kydex' : 'Cuir') : '—'}</p>
               </>

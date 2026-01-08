@@ -4,42 +4,46 @@ export const outdoorUseCases: OutdoorUseCase[] = [
   {
     id: 'moderee',
     label: 'Modérée',
-    description: 'Bivouac, camp léger, préparation de repas',
+    description: 'Cuisine en extérieur, tailler, trancher des matériaux souples',
+    note: 'Plus tranchant, mais plus fragile',
   },
   {
     id: 'intensive',
     label: 'Intensive',
-    description: 'Survie, bushcraft engagé, batonnage',
+    description: 'Fendre du bois, trancher des matériaux durs, briser de la glace',
   },
 ]
 
-export const outdoorForms: OutdoorForm[] = [
+export const outdoorFormsModerate: OutdoorForm[] = [
   {
-    id: 'campcraft',
-    label: 'Campcraft',
-    length: '100 – 120 mm',
-    description: 'Compact, travaux légers',
+    id: 'moderee-forme1',
+    label: 'Forme 1',
+    length: '',
+    description: '',
     patternScale: 'small',
   },
   {
-    id: 'companion',
-    label: 'Companion',
-    length: '120 – 140 mm',
-    description: 'Polyvalent camp',
+    id: 'moderee-forme2',
+    label: 'Forme 2',
+    length: '',
+    description: '',
     patternScale: 'small',
   },
+]
+
+export const outdoorFormsIntensive: OutdoorForm[] = [
   {
-    id: 'bush',
-    label: 'Bush',
-    length: '140 – 160 mm',
-    description: 'Polyvalent robuste',
+    id: 'intensive-forme1',
+    label: 'Forme 1',
+    length: '',
+    description: '',
     patternScale: 'large',
   },
   {
-    id: 'survie',
-    label: 'Survie',
-    length: '160 – 200 mm',
-    description: 'Grande lame, batonnage',
+    id: 'intensive-forme2',
+    label: 'Forme 2',
+    length: '',
+    description: '',
     patternScale: 'large',
   },
 ]

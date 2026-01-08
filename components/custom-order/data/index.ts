@@ -1,7 +1,7 @@
 export { usageOptions } from './usage-options'
 export { kitchenForms } from './kitchen-forms'
 export { pliantMechanisms, pliantFormsByMechanism } from './pliant-options'
-export { outdoorUseCases, outdoorForms } from './outdoor-options'
+export { outdoorUseCases, outdoorFormsModerate, outdoorFormsIntensive } from './outdoor-options'
 export { chasseForms } from './chasse-forms'
 export {
   steelOptionsCuisine,

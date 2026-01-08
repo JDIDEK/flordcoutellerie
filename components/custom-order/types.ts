@@ -63,6 +63,7 @@ export interface OutdoorUseCase {
   id: OutdoorUse
   label: string
   description: string
+  note?: string
 }
 
 export interface SteelOption {

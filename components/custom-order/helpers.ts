@@ -1,5 +1,5 @@
 import type { StepId, WizardConfig, WizardStep, DamasteelScale } from './types'
-import { kitchenForms, outdoorForms } from './data'
+import { kitchenForms, outdoorFormsModerate, outdoorFormsIntensive } from './data'
 
 export function isStepComplete(step: StepId, config: WizardConfig): boolean {
   switch (step) {
@@ -139,7 +139,8 @@ export function getPatternScale(config: WizardConfig): DamasteelScale {
     if (form) return form.patternScale
   }
   if (config.usage === 'outdoor' && config.outdoorForm) {
-    const form = outdoorForms.find((item) => item.id === config.outdoorForm)
+    const allForms = [...outdoorFormsModerate, ...outdoorFormsIntensive]
+    const form = allForms.find((item) => item.id === config.outdoorForm)
     if (form) return form.patternScale
   }
   return 'small'
