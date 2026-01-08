@@ -1,6 +1,5 @@
 'use client'
 
-import { Card } from '@/components/ui/card'
 import { StepHeader, PlaceholderVisual } from '../ui'
 import { pliantMechanisms } from '../data'
 import type { WizardConfig, Action } from '../types'
@@ -21,21 +20,21 @@ export function PliantMechanismStep({ config, dispatch }: PliantMechanismStepPro
         {pliantMechanisms.map((mechanism) => {
           const isSelected = config.pliantMechanism === mechanism.id
           return (
-            <Card
+            <div
               key={mechanism.id}
-              className={`p-6 cursor-pointer transition-all hover:border-primary ${isSelected ? 'border-primary bg-primary/5' : ''}`}
+              className={`flex items-stretch border-2 cursor-pointer transition-all ${
+                isSelected ? 'border-primary bg-primary/5' : 'border-foreground/20 hover:border-foreground/40'
+              }`}
               onClick={() => dispatch({ type: 'setPliantMechanism', mechanism: mechanism.id })}
             >
-              <div className="flex items-start justify-between gap-3">
-                <div className="space-y-1">
-                  <h3 className="font-medium">{mechanism.label}</h3>
-                  <p className="text-sm text-muted-foreground">{mechanism.description}</p>
-                </div>
-                <div className="w-32">
-                  <PlaceholderVisual label="Croquis" />
-                </div>
+              <div className="flex-1 flex flex-col justify-center px-4 py-3">
+                <span className={`font-medium ${isSelected ? 'text-primary' : ''}`}>{mechanism.label}</span>
+                <p className="text-xs text-muted-foreground mt-0.5">{mechanism.description}</p>
               </div>
-            </Card>
+              <div className="w-28 aspect-[2/1] bg-muted/30 flex-shrink-0">
+                <PlaceholderVisual label="Photo" />
+              </div>
+            </div>
           )
         })}
       </div>

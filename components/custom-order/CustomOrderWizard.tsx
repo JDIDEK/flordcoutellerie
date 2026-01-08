@@ -24,22 +24,19 @@ import {
 import {
   UsageStep,
   CuisineFormStep,
-  CuisineGuillochageStep,
   PliantMechanismStep,
   PliantFormStep,
   PliantGuillochageDosStep,
   PliantGuillochagePlatinesStep,
   OutdoorIntensityStep,
   OutdoorFormStep,
-  OutdoorGuillochageStep,
   ChasseFormStep,
-  ChasseGuillochageStep,
+  GuillochageStep,
   SteelStep,
   DamasteelStep,
   SheathStep,
   HandleStep,
   HandleCompositionStep,
-  GuillochageStep,
   PersonalizationStep,
   SummaryStep,
 } from './steps'
@@ -154,7 +151,9 @@ export function CustomOrderWizard() {
       case 'cuisine-form':
         return <CuisineFormStep config={config} dispatch={dispatch} />
       case 'cuisine-guillochage':
-        return <CuisineGuillochageStep config={config} dispatch={dispatch} />
+      case 'outdoor-guillochage':
+      case 'chasse-guillochage':
+        return <GuillochageStep config={config} dispatch={dispatch} />
       case 'pliant-mechanism':
         return <PliantMechanismStep config={config} dispatch={dispatch} />
       case 'pliant-form':
@@ -167,20 +166,14 @@ export function CustomOrderWizard() {
         return <OutdoorIntensityStep config={config} dispatch={dispatch} />
       case 'outdoor-form':
         return <OutdoorFormStep config={config} dispatch={dispatch} />
-      case 'outdoor-guillochage':
-        return <OutdoorGuillochageStep config={config} dispatch={dispatch} />
       case 'chasse-form':
         return <ChasseFormStep config={config} dispatch={dispatch} />
-      case 'chasse-guillochage':
-        return <ChasseGuillochageStep config={config} dispatch={dispatch} />
       case 'steel':
         return <SteelStep config={config} dispatch={dispatch} />
       case 'damasteel-pattern':
         return <DamasteelStep config={config} dispatch={dispatch} />
       case 'sheath':
         return <SheathStep config={config} dispatch={dispatch} />
-      case 'pliant-guillochage':
-        return <GuillochageStep config={config} dispatch={dispatch} />
       case 'handle':
         return <HandleStep config={config} dispatch={dispatch} />
       case 'handle-composition':
