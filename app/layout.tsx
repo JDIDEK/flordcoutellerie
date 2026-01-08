@@ -1,20 +1,27 @@
 import type { Metadata } from 'next'
-import { Cormorant_Garamond, Inter } from 'next/font/google'
+import { Arsenal_SC, Josefin_Sans, Poppins } from 'next/font/google'
 import { Analytics } from '@vercel/analytics/next'
 import { ClientProviders } from '@/components/ClientProviders'
 import { SiteLoader } from '@/components/Loader'
 import { ViewportHeight } from '@/components/ViewportHeight'
 import '@/styles/globals.css'
 
-const cormorant = Cormorant_Garamond({
+const arsenalSC = Arsenal_SC({
   subsets: ['latin'],
-  weight: ['300', '400', '500', '600', '700'],
-  variable: '--font-serif',
+  weight: ['400'],
+  variable: '--font-title',
 })
 
-const inter = Inter({
+const josefinSans = Josefin_Sans({
   subsets: ['latin'],
-  variable: '--font-sans',
+  weight: ['300'],
+  variable: '--font-subtitle',
+})
+
+const poppins = Poppins({
+  subsets: ['latin'],
+  weight: ['200', '300', '400'],
+  variable: '--font-body',
 })
 
 export const metadata: Metadata = {
@@ -42,7 +49,7 @@ export const viewport = {
 export default function RootLayout({ children }: { children: React.ReactNode }) {
   return (
     <html lang="fr">
-      <body className={`${inter.variable} ${cormorant.variable} font-sans antialiased`}>
+      <body className={`${arsenalSC.variable} ${josefinSans.variable} ${poppins.variable} font-body antialiased`}>
         <ViewportHeight />
         <SiteLoader />
         <ClientProviders>{children}</ClientProviders>
