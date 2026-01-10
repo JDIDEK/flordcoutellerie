@@ -1,10 +1,11 @@
 'use client'
 
-import Link from 'next/link'
+import Image from 'next/image'
 import { useState, useEffect, useRef, useCallback } from 'react'
 import { motion, AnimatePresence } from 'framer-motion'
 import { CartSheet } from '@/components/CartSheet'
 import { TransitionLink } from '@/components/TransitionLink'
+import { ThemeToggle } from '@/components/ThemeToggle'
 
 interface NavigationProps {
   alwaysVisible?: boolean
@@ -206,17 +207,42 @@ export function Navigation({ alwaysVisible = false }: NavigationProps) {
         <div className="container mx-auto px-4 py-4 md:px-6 md:py-6">
           <div className="flex items-center justify-between">
             <TransitionLink href="/" className="group relative z-50">
-              <div className="flex flex-col">
-                <span className={`text-lg md:text-xl font-bold tracking-wider transition-colors ${
-                  isMobileMenuOpen ? 'text-background' : 'text-[#212120] group-hover:text-[#5A5A59]'
-                }`}>
-                  FLO RD
-                </span>
-                <span className={`text-[9px] md:text-[10px] tracking-[0.3em] uppercase font-medium transition-colors ${
-                  isMobileMenuOpen ? 'text-background/60' : 'text-[#5A5A59]'
-                }`}>
-                  Coutellerie
-                </span>
+              <div className="flex items-center gap-3">
+                <div className="md:hidden flex items-center">
+                  <Image
+                    src="/assets/images/Logo-Noir-Petit.svg"
+                    alt="Flo RD Coutellerie"
+                    width={120}
+                    height={50}
+                    className={`block h-10 w-auto transition-opacity dark:hidden ${
+                      isMobileMenuOpen ? 'opacity-70' : 'opacity-100 group-hover:opacity-90'
+                    }`}
+                    priority
+                  />
+                  <Image
+                    src="/assets/images/Logo-Clair-Petit.svg"
+                    alt="Flo RD Coutellerie"
+                    width={120}
+                    height={50}
+                    className={`hidden h-10 w-auto transition-opacity dark:block ${
+                      isMobileMenuOpen ? 'opacity-90' : 'opacity-100 group-hover:opacity-90'
+                    }`}
+                    priority
+                  />
+                </div>
+
+                <div className="hidden flex-col md:flex">
+                  <span className={`text-lg md:text-xl font-bold tracking-wider transition-colors ${
+                    isMobileMenuOpen ? 'text-background' : 'text-foreground group-hover:text-orange-500 dark:group-hover:text-gray-400'
+                  }`}>
+                    FLO RD
+                  </span>
+                  <span className={`text-[9px] md:text-[10px] tracking-[0.3em] uppercase font-medium transition-colors ${
+                    isMobileMenuOpen ? 'text-background/60' : 'text-muted-foreground'
+                  }`}>
+                    Coutellerie
+                  </span>
+                </div>
               </div>
             </TransitionLink>
 
@@ -226,23 +252,25 @@ export function Navigation({ alwaysVisible = false }: NavigationProps) {
                 <TransitionLink
                   key={link.href}
                   href={link.href}
-                  className="text-sm font-medium tracking-wide text-[#212120] hover:text-[#5A5A59] transition-colors relative group"
+                  className="text-sm font-medium tracking-wide text-foreground hover:text-orange-500 dark:hover:text-gray-400 transition-colors relative group"
                 >
                   {link.label}
-                  <span className="absolute -bottom-1 left-0 w-0 h-[1px] bg-[#212120] group-hover:w-full transition-all duration-300" />
+                  <span className="absolute -bottom-1 left-0 w-0 h-[1px] bg-orange-500 dark:bg-gray-400 group-hover:w-full transition-all duration-300" />
                 </TransitionLink>
               ))}
               <CartSheet />
+              <ThemeToggle />
             </div>
 
             {/* Mobile Controls - Shown by default, hidden on md+ */}
-            <div className="flex items-center gap-2 md:hidden relative z-50">
+            <div className="flex items-center gap-3 md:hidden relative z-50">
+              <ThemeToggle />
               <div className={isMobileMenuOpen ? 'opacity-0 pointer-events-none' : 'opacity-100'}>
                 <CartSheet />
               </div>
               <button
                 onClick={toggleMenu}
-                className="relative flex h-12 w-12 items-center justify-center text-[#212120] hover:text-[#5A5A59] transition-colors"
+                className="relative flex h-12 w-12 items-center justify-center text-foreground hover:text-orange-500 dark:hover:text-gray-400 transition-colors"
                 aria-label={isMobileMenuOpen ? 'Fermer le menu' : 'Ouvrir le menu'}
                 aria-controls={mobileMenuId}
                 aria-expanded={isMobileMenuOpen}
@@ -294,7 +322,7 @@ export function Navigation({ alwaysVisible = false }: NavigationProps) {
           >
             {/* Backdrop with blur */}
             <motion.div 
-              className="absolute inset-0 bg-neutral-950/98 backdrop-blur-xl"
+              className="absolute inset-0 bg-background/98 backdrop-blur-xl"
               initial={{ opacity: 0 }}
               animate={{ opacity: 1 }}
               exit={{ opacity: 0 }}
@@ -302,7 +330,7 @@ export function Navigation({ alwaysVisible = false }: NavigationProps) {
             />
 
             {/* Decorative gradient */}
-            <div className="absolute inset-0 bg-gradient-to-b from-amber-500/5 via-transparent to-transparent pointer-events-none" />
+            <div className="absolute inset-0 bg-gradient-to-b from-primary/5 via-transparent to-transparent pointer-events-none" />
 
             {/* Menu Content */}
             <div className="relative flex h-full flex-col justify-between px-6 pt-24 pb-10 overflow-y-auto">
@@ -325,14 +353,14 @@ export function Navigation({ alwaysVisible = false }: NavigationProps) {
                       onClick={closeMenu}
                       className="group flex items-center justify-between py-4 w-full"
                     >
-                      <span className="text-3xl sm:text-4xl font-serif font-light text-white tracking-wide transition-colors duration-200 group-hover:text-amber-400 group-active:text-amber-500">
+                      <span className="text-3xl sm:text-4xl font-serif font-light text-foreground tracking-wide transition-colors duration-200 group-hover:text-orange-500 dark:group-hover:text-gray-400">
                         {link.label}
                       </span>
                     </TransitionLink>
                     {index < navLinks.length - 1 && (
                       <motion.div
                         variants={lineVariants}
-                        className="h-[1px] w-full bg-white/10 origin-left"
+                        className="h-[1px] w-full bg-foreground/10 origin-left"
                       />
                     )}
                   </motion.div>
@@ -348,13 +376,13 @@ export function Navigation({ alwaysVisible = false }: NavigationProps) {
                 className="space-y-6"
               >
                 {/* Separator */}
-                <div className="h-[1px] w-full bg-gradient-to-r from-transparent via-white/20 to-transparent" />
+                <div className="h-[1px] w-full bg-gradient-to-r from-transparent via-foreground/20 to-transparent" />
                 
                 {/* Contact Info */}
-                <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4 text-white/50">
+                <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4 text-muted-foreground">
                   <a 
                     href="mailto:floribadeaudumas@gmail.com" 
-                    className="text-sm hover:text-white transition-colors"
+                    className="text-sm hover:text-foreground transition-colors"
                   >
                     floribadeaudumas@gmail.com
                   </a>
@@ -365,10 +393,10 @@ export function Navigation({ alwaysVisible = false }: NavigationProps) {
 
                 {/* Branding */}
                 <div className="flex items-center justify-between">
-                  <span className="text-xs uppercase tracking-[0.4em] text-white/30">
+                  <span className="text-xs uppercase tracking-[0.4em] text-muted-foreground/50">
                     Flo RD Coutellerie
                   </span>
-                  <span className="text-xs text-white/30">
+                  <span className="text-xs text-muted-foreground/50">
                     © {new Date().getFullYear()}
                   </span>
                 </div>

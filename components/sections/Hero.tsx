@@ -1,5 +1,6 @@
 'use client'
 
+import Image from 'next/image'
 import { useEffect, useMemo, useRef, useState } from 'react'
 import BackgroundVideo from 'next-video/background-video'
 import mainVideo from '@/videos/main-video.mp4'
@@ -72,6 +73,17 @@ export function HomeHeroSection() {
       <div className="absolute inset-0 bg-black/45" />
       <div className="absolute inset-0 bg-gradient-to-b from-black/5 via-black/40 to-black/85" />
 
+      <div className="pointer-events-none absolute inset-0 flex items-start md:items-center justify-center px-6 pt-24 md:pt-0">
+        <Image
+          src="/assets/images/Logo-Clair-Grand.svg"
+          alt="Flo RD Coutellerie"
+          width={320}
+          height={140}
+          className="h-auto w-[min(55vw,240px)] sm:w-[min(50vw,320px)] opacity-70 drop-shadow-[0_15px_35px_rgba(0,0,0,0.45)]"
+          priority
+        />
+      </div>
+
       <div className="relative z-10 flex h-full flex-col px-6 pb-10 pt-24 md:px-12 lg:px-16">
         <div className="flex flex-1 items-end">
           <div className="ml-auto w-full max-w-3xl space-y-5 text-left md:text-right">
@@ -83,13 +95,13 @@ export function HomeHeroSection() {
               Lames sur-mesure
             </p>
 
-            <h1 className="font-serif text-[clamp(2.6rem,10vw,8rem)] font-light leading-[0.82] tracking-tight">
+            <h1 className="font-serif text-[clamp(2.2rem,8vw,6rem)] font-light leading-[0.9] tracking-tight overflow-visible">
               <span
                 className={`block ${
                   isRevealed ? 'animate-fade-in-up animation-delay-200' : 'opacity-0 translate-y-4'
                 }`}
               >
-                FLORD
+                FLO RD
               </span>
               <span
                 className={`block ${

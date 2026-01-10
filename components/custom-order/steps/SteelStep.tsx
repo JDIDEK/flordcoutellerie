@@ -33,7 +33,13 @@ export function SteelStep({ config, dispatch }: SteelStepProps) {
             >
               <div className="flex-1 p-3 md:p-4 flex flex-col justify-center">
                 <h3 className="font-bold text-base md:text-lg leading-tight">{steel.label}</h3>
-                <p className="text-[11px] md:text-xs italic text-muted-foreground leading-tight mt-1 whitespace-pre-line">{steel.description}</p>
+                <p className="text-muted-foreground leading-tight mt-1">
+                  {steel.description.split('\n').map((line, i) => (
+                    <span key={i} className={i === 0 ? 'text-[11px] md:text-xs block' : 'text-[9px] md:text-[10px] italic block'}>
+                      {line}
+                    </span>
+                  ))}
+                </p>
                 <div className="mt-2 space-y-0.5">
                   {config.usage !== 'pliant' && steel.tech && (
                     <>

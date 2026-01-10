@@ -217,10 +217,14 @@ export function CustomOrderWizard() {
       <Card className="p-6 md:p-10 space-y-6">{renderStepContent()}</Card>
 
       <div className="flex items-center justify-between">
-        <Button variant="outline" onClick={goBack} disabled={activeStepIndex === 0}>
-          <ChevronLeft className="h-4 w-4 mr-2" />
-          Retour
-        </Button>
+        {activeStepIndex > 0 ? (
+          <Button variant="outline" onClick={goBack}>
+            <ChevronLeft className="h-4 w-4 mr-2" />
+            Retour
+          </Button>
+        ) : (
+          <div />
+        )}
         {currentStep?.id !== 'summary' && (
           <Button onClick={goNext} disabled={!canGoNext}>
             Continuer
