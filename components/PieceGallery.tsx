@@ -85,14 +85,14 @@ export function PieceGallery({ images, status }: PieceGalleryProps) {
       </Carousel>
 
       {hasMultiple && (
-        <div className="flex flex-wrap justify-center gap-3">
+        <div className="flex flex-nowrap sm:flex-wrap justify-center gap-1.5 sm:gap-3 overflow-x-auto pb-1">
           {images.map((image, idx) => (
             <button
               key={idx}
               type="button"
               onClick={() => scrollTo(idx)}
               className={cn(
-                'relative h-20 w-20 overflow-hidden rounded-md border transition-all duration-200',
+                'relative h-12 w-12 sm:h-16 sm:w-16 overflow-hidden rounded-md border transition-all duration-200',
                 currentIndex === idx
                   ? 'border-primary ring-2 ring-primary/30'
                   : 'border-transparent opacity-80 hover:opacity-100',
@@ -103,7 +103,7 @@ export function PieceGallery({ images, status }: PieceGalleryProps) {
                 src={image.src}
                 alt={image.alt}
                 fill
-                sizes="80px"
+                sizes="(min-width: 640px) 64px, 48px"
                 className="object-cover"
               />
             </button>
