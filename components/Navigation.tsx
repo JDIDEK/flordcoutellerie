@@ -205,16 +205,16 @@ export function Navigation({ alwaysVisible = false }: NavigationProps) {
         aria-label="Navigation principale"
       >
         <div className="container mx-auto px-4 py-4 md:px-6 md:py-6">
-          <div className="flex items-center justify-between">
+          <div className="flex items-center justify-between gap-4">
             <TransitionLink href="/" className="group relative z-50">
               <div className="flex items-center gap-3">
                 <div className="md:hidden flex items-center">
                   <Image
                     src="/assets/images/Logo-Noir-Petit.svg"
                     alt="Flo RD Coutellerie"
-                    width={120}
-                    height={50}
-                    className={`block h-10 w-auto transition-opacity dark:hidden ${
+                    width={140}
+                    height={60}
+                    className={`block h-12 w-auto transition-opacity dark:hidden ${
                       isMobileMenuOpen ? 'opacity-70' : 'opacity-100 group-hover:opacity-90'
                     }`}
                     priority
@@ -222,42 +222,56 @@ export function Navigation({ alwaysVisible = false }: NavigationProps) {
                   <Image
                     src="/assets/images/Logo-Clair-Petit.svg"
                     alt="Flo RD Coutellerie"
-                    width={120}
-                    height={50}
-                    className={`hidden h-10 w-auto transition-opacity dark:block ${
+                    width={140}
+                    height={60}
+                    className={`hidden h-12 w-auto transition-opacity dark:block ${
                       isMobileMenuOpen ? 'opacity-90' : 'opacity-100 group-hover:opacity-90'
                     }`}
                     priority
                   />
                 </div>
 
-                <div className="hidden flex-col md:flex">
-                  <span className={`text-lg md:text-xl font-bold tracking-wider transition-colors ${
-                    isMobileMenuOpen ? 'text-background' : 'text-foreground group-hover:text-orange-500 dark:group-hover:text-gray-400'
-                  }`}>
-                    FLO RD
-                  </span>
-                  <span className={`text-[9px] md:text-[10px] tracking-[0.3em] uppercase font-medium transition-colors ${
-                    isMobileMenuOpen ? 'text-background/60' : 'text-muted-foreground'
-                  }`}>
-                    Coutellerie
-                  </span>
+                <div className="hidden md:flex items-center">
+                  <Image
+                    src="/assets/images/Logo-Noir-Petit.svg"
+                    alt="Flo RD Coutellerie"
+                    width={160}
+                    height={70}
+                    className={`block h-12 w-auto transition-opacity dark:hidden ${
+                      isMobileMenuOpen ? 'opacity-70' : 'opacity-100 group-hover:opacity-90'
+                    }`}
+                    priority
+                  />
+                  <Image
+                    src="/assets/images/Logo-Clair-Petit.svg"
+                    alt="Flo RD Coutellerie"
+                    width={160}
+                    height={70}
+                    className={`hidden h-12 w-auto transition-opacity dark:block ${
+                      isMobileMenuOpen ? 'opacity-90' : 'opacity-100 group-hover:opacity-90'
+                    }`}
+                    priority
+                  />
                 </div>
               </div>
             </TransitionLink>
 
             {/* Desktop Navigation - Hidden by default, shown on md+ */}
-            <div className="hidden md:flex items-center gap-6">
+            <div className="hidden md:flex flex-1 items-center justify-center gap-6">
               {navLinks.map((link) => (
                 <TransitionLink
                   key={link.href}
                   href={link.href}
-                  className="text-sm font-medium tracking-wide text-foreground hover:text-orange-500 dark:hover:text-gray-400 transition-colors relative group"
+                  className="text-sm font-medium tracking-wide text-foreground hover:text-neutral-600 dark:hover:text-neutral-300 transition-colors relative group"
                 >
                   {link.label}
-                  <span className="absolute -bottom-1 left-0 w-0 h-[1px] bg-orange-500 dark:bg-gray-400 group-hover:w-full transition-all duration-300" />
+                  <span className="absolute -bottom-1 left-0 w-0 h-[1px] bg-neutral-600 dark:bg-neutral-400 group-hover:w-full transition-all duration-300" />
                 </TransitionLink>
               ))}
+            </div>
+
+            {/* Desktop Actions */}
+            <div className="hidden md:flex items-center gap-3">
               <CartSheet />
               <ThemeToggle />
             </div>
@@ -270,7 +284,7 @@ export function Navigation({ alwaysVisible = false }: NavigationProps) {
               </div>
               <button
                 onClick={toggleMenu}
-                className="relative flex h-12 w-12 items-center justify-center text-foreground hover:text-orange-500 dark:hover:text-gray-400 transition-colors"
+                className="relative flex h-12 w-12 items-center justify-center text-foreground hover:text-neutral-600 dark:hover:text-neutral-300 transition-colors"
                 aria-label={isMobileMenuOpen ? 'Fermer le menu' : 'Ouvrir le menu'}
                 aria-controls={mobileMenuId}
                 aria-expanded={isMobileMenuOpen}
@@ -353,7 +367,7 @@ export function Navigation({ alwaysVisible = false }: NavigationProps) {
                       onClick={closeMenu}
                       className="group flex items-center justify-between py-4 w-full"
                     >
-                      <span className="text-3xl sm:text-4xl font-serif font-light text-foreground tracking-wide transition-colors duration-200 group-hover:text-orange-500 dark:group-hover:text-gray-400">
+                      <span className="text-3xl sm:text-4xl font-serif font-light text-foreground tracking-wide transition-colors duration-200 group-hover:text-neutral-500 dark:group-hover:text-neutral-300">
                         {link.label}
                       </span>
                     </TransitionLink>
