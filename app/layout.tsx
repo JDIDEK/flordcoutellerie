@@ -3,6 +3,7 @@ import { Arsenal_SC, Josefin_Sans, Poppins } from 'next/font/google'
 import { Analytics } from '@vercel/analytics/next'
 import { ClientProviders } from '@/components/ClientProviders'
 import { SiteLoader } from '@/components/Loader'
+import { ThemeToggle } from '@/components/ThemeToggle'
 import { ViewportHeight } from '@/components/ViewportHeight'
 import '@/styles/globals.css'
 
@@ -48,10 +49,11 @@ export const viewport = {
 
 export default function RootLayout({ children }: { children: React.ReactNode }) {
   return (
-    <html lang="fr">
+    <html lang="fr" suppressHydrationWarning>
       <body className={`${arsenalSC.variable} ${josefinSans.variable} ${poppins.variable} font-body antialiased`}>
         <ViewportHeight />
         <SiteLoader />
+        <ThemeToggle />
         <ClientProviders>{children}</ClientProviders>
         <Analytics />
       </body>
