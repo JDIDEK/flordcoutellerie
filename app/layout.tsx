@@ -1,5 +1,5 @@
 import type { Metadata } from 'next'
-import { Cormorant_Garamond, Inter } from 'next/font/google'
+import { Cormorant_Garamond, Inter } from 'next/font/google' 
 import { Analytics } from '@vercel/analytics/next'
 import { ClientProviders } from '@/components/ClientProviders'
 import { SiteLoader } from '@/components/Loader'
@@ -8,7 +8,7 @@ import '@/styles/globals.css'
 
 const cormorant = Cormorant_Garamond({
   subsets: ['latin'],
-  weight: ['300', '400', '500', '600', '700'],
+  weight: ['400', '500', '600', '700'],
   variable: '--font-serif',
 })
 
@@ -41,8 +41,8 @@ export const viewport = {
 
 export default function RootLayout({ children }: { children: React.ReactNode }) {
   return (
-    <html lang="fr">
-      <body className={`${inter.variable} ${cormorant.variable} font-sans antialiased`}>
+    <html lang="fr" suppressHydrationWarning>
+      <body className={`${cormorant.variable} ${inter.variable} font-body antialiased`}>
         <ViewportHeight />
         <SiteLoader />
         <ClientProviders>{children}</ClientProviders>

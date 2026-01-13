@@ -9,23 +9,17 @@ const HomeHeroSection = dynamic(
   { ssr: true }
 )
 
-const SignatureKnivesSection = dynamic(
-  () => import('@/components/sections/SignatureKnives').then(mod => ({ default: mod.SignatureKnivesSection })),
-  { ssr: true }
-)
-
 export default async function Home() {
   const signaturePieces = await getSignaturePieces()
 
   return (
     <>
-      <Navigation />
+      <Navigation alwaysVisible />
 
       <PageTransitionWrapper>
         <main className="relative isolate min-h-screen overflow-visible">
           <HomeHeroSection />
           <CustomOrderSection />
-          <SignatureKnivesSection pieces={signaturePieces} />
         </main>
       </PageTransitionWrapper>
     </>

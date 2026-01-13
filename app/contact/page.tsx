@@ -84,7 +84,7 @@ export default function ContactPage() {
             {/* Colonne gauche : texte */}
             <div className="space-y-8 animate-fade-in-up">
               <h1 className="text-4xl md:text-5xl font-black uppercase leading-tight tracking-tight">
-                N&apos;attends pas le moment parfait
+                Chaque projet commence par un échange
               </h1>
 
               <div className="space-y-4 text-sm md:text-base max-w-md">
@@ -92,7 +92,12 @@ export default function ContactPage() {
                   Les meilleures conversations commencent par un simple bonjour.
                 </p>
                 <p className="text-muted-foreground leading-relaxed">
-                  Une question, une collaboration, une commande sur mesure ou juste un salut ? Écris-moi, je réponds à chaque message.
+                  Une question, un projet, une commande sur mesure ou simplement un échange ?
+                  <br />Ecris-moi, je réponds personnellement à chaque message
+                </p>
+                <p className="text-xs text-muted-foreground italic">
+                  La prise de contact, l'échange et l'élaboration du devis
+                  sont entièrement gratuits et sans engagement.
                 </p>
               </div>
             </div>
@@ -150,7 +155,7 @@ export default function ContactPage() {
                     className="text-xs uppercase tracking-[0.18em] text-muted-foreground"
                     htmlFor="phone"
                   >
-                    Phone number
+                    Téléphone
                   </label>
                   <input
                     id="phone"

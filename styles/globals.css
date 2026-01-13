@@ -4,36 +4,68 @@
 @custom-variant dark (&:is(.dark *));
 
 :root {
+  /* Palette de couleurs du site - Thème clair */
+  --background: #F2EAE4;
+  --foreground: #212120;
+  --card: #BFBEBC;
+  --card-foreground: #212120;
+  --popover: #F2EAE4;
+  --popover-foreground: #212120;
+  --primary: #5A5A59;
+  --primary-foreground: #F2EAE4;
+  --secondary: #BFBEBC;
+  --secondary-foreground: #212120;
+  --muted: #BFBEBC;
+  --muted-foreground: #5A5A59;
+  --accent: #8B8C8B;
+  --accent-foreground: #F2EAE4;
+  --destructive: #B54545;
+  --destructive-foreground: #F2EAE4;
+  --border: #BFBEBC;
+  --input: #BFBEBC;
+  --ring: #8B8C8B;
+  --chart-1: #8B8C8B;
+  --chart-2: #5A5A59;
+  --chart-3: #BFBEBC;
+  --chart-4: #212120;
+  --chart-5: #F2EAE4;
+  --radius: 0.25rem;
+  --app-height: 100svh;
+}
+
+/* Thème sombre */
+.dark {
   --background: oklch(0.12 0.01 30);
   --foreground: oklch(0.95 0.01 60);
   --card: oklch(0.15 0.015 30);
   --card-foreground: oklch(0.95 0.01 60);
   --popover: oklch(0.10 0.01 30);
   --popover-foreground: oklch(0.95 0.01 60);
-  --primary: oklch(0.58 0.12 35);
+  --primary: oklch(0.65 0.01 60);
   --primary-foreground: oklch(0.12 0.01 30);
   --secondary: oklch(0.25 0.02 30);
   --secondary-foreground: oklch(0.95 0.01 60);
   --muted: oklch(0.22 0.015 30);
   --muted-foreground: oklch(0.65 0.01 40);
-  --accent: oklch(0.58 0.12 35);
+  --accent: oklch(0.65 0.01 60);
   --accent-foreground: oklch(0.12 0.01 30);
   --destructive: oklch(0.55 0.20 25);
   --destructive-foreground: oklch(0.95 0.01 60);
   --border: oklch(0.25 0.02 30);
   --input: oklch(0.25 0.02 30);
-  --ring: oklch(0.58 0.12 35);
-  --chart-1: oklch(0.58 0.12 35);
+  --ring: oklch(0.65 0.01 60);
+  --chart-1: oklch(0.65 0.01 60);
   --chart-2: oklch(0.45 0.08 200);
   --chart-3: oklch(0.70 0.15 80);
   --chart-4: oklch(0.40 0.10 280);
   --chart-5: oklch(0.65 0.18 50);
-  --radius: 0.25rem;
-  --app-height: 100svh;
 }
 
 @theme inline {
-  --font-sans: 'Geist', 'Geist Fallback';
+  --font-title: var(--font-title), sans-serif;
+  --font-subtitle: var(--font-subtitle), sans-serif;
+  --font-body: var(--font-body), sans-serif;
+  --font-sans: var(--font-body), sans-serif;
   --font-mono: 'Geist Mono', 'Geist Mono Fallback';
   --color-background: var(--background);
   --color-foreground: var(--foreground);
@@ -71,6 +103,24 @@
   }
   body {
     @apply bg-background text-foreground;
+    font-family: var(--font-body);
+    font-weight: 200;
+  }
+  
+  /* Typography classes for Google Fonts */
+  h1, h2, .font-title {
+    font-family: var(--font-title);
+    font-weight: 400;
+  }
+  
+  h3, h4, h5, h6, .font-subtitle {
+    font-family: var(--font-subtitle);
+    font-weight: 300;
+  }
+  
+  .font-body {
+    font-family: var(--font-body);
+    font-weight: 200;
   }
 }
 

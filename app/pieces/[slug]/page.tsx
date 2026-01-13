@@ -113,19 +113,8 @@ export default async function PieceDetailPage({
                       </span>
                     )}
                   </div>
-                  <div className="flex items-center gap-2 text-sm text-muted-foreground">
-                    <span
-                      className={`inline-block h-2 w-2 rounded-full ${
-                        isAvailable ? 'bg-emerald-500' : 'bg-destructive'
-                      }`}
-                    />
-                    <span>
-                      {isAvailable
-                        ? 'Pièce en stock'
-                        : piece.status === 'reserved'
-                        ? 'Pièce réservée'
-                        : 'Pièce vendue'}
-                    </span>
+                  <div className="flex items-center gap-2 text-sm text-foreground">
+                    <span className="font-medium">Exemplaire unique</span>
                   </div>
                 </div>
 

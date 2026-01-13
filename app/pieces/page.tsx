@@ -17,7 +17,7 @@ export default async function PiecesPage() {
 
           {/* ---------- TITRE CENTRÉ ---------- */}
           <h1 className="text-3xl md:text-6xl font-light text-center tracking-tight mb-12 md:mb-24 md:animate-fade-in-up">
-            Pièces
+            Pièces disponibles
           </h1>
 
           {/* ---------- GRILLE PRODUITS ---------- */}

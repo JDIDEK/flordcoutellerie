@@ -35,15 +35,17 @@ export function ProductCard({ piece }: { piece: PieceListItem }) {
             width={900}
             height={1200}
             sizes="(max-width: 640px) 100vw, (max-width: 1024px) 50vw, 33vw"
-            className="object-cover w-full h-full md:transition-transform md:duration-500 md:ease-out md:group-hover:scale-[1.03]"
+            className={`object-cover w-full h-full md:transition-transform md:duration-500 md:ease-out md:group-hover:scale-[1.03] ${!isAvailable ? 'brightness-75 saturate-35' : ''}`}
           />
         </TransitionLink>
 
-        {/* Badge Vendu / Réservé */}
+        {/* Texte Vendu/Réservé */}
         {statusLabel && (
-          <Badge className="absolute top-3 left-3 bg-destructive/90 text-destructive-foreground">
-            {statusLabel}
-          </Badge>
+          <div className="absolute bottom-0 left-0 right-0 flex items-center justify-center py-3 pointer-events-none">
+            <span className="text-white text-sm md:text-base font-light tracking-widest">
+              - {statusLabel} -
+            </span>
+          </div>
         )}
 
         {/* Bouton panier : apparaît au hover sur desktop, toujours visible sur mobile */}
@@ -63,7 +65,7 @@ export function ProductCard({ piece }: { piece: PieceListItem }) {
                 "absolute bottom-3 right-3 group/cart overflow-hidden",
                 "bg-white text-foreground rounded-full shadow-lg border border-black/5",
                 "h-11 px-3 flex items-center gap-0",
-                "opacity-100 md:opacity-0 translate-y-0 md:translate-y-2 pointer-events-auto md:pointer-events-none",
+                "opacity-0 translate-y-2 pointer-events-none",
                 "transition-all duration-300 ease-out",
                 "md:group-hover:opacity-100 md:group-hover:translate-y-0 md:group-hover:pointer-events-auto",
                 "group-hover/cart:gap-2 hover:shadow-xl",
@@ -90,18 +92,31 @@ export function ProductCard({ piece }: { piece: PieceListItem }) {
       </div>
 
       {/* --------- TITRE + PRIX EN DESSOUS --------- */}
-      <div className="flex items-center gap-2 text-sm mt-3 px-1">
-        <TransitionLink
-          href={`/pieces/${piece.slug}`}
-          className="font-medium leading-tight hover:opacity-80 transition-opacity"
-        >
-          {title}
-        </TransitionLink>
+      <div className="flex items-center gap-2 text-sm mt-3 px-1 flex-nowrap">
+        <div className="relative min-w-0 flex-1">
+          <TransitionLink
+            href={`/pieces/${piece.slug}`}
+            className="font-medium leading-tight hover:opacity-80 transition-opacity block overflow-hidden whitespace-nowrap"
+            style={{
+              maskImage: 'linear-gradient(to right, black 0%, black calc(100% - 2.5em), transparent 100%)',
+              WebkitMaskImage: 'linear-gradient(to right, black 0%, black calc(100% - 2.5em), transparent 100%)'
+            }}
+          >
+            {title}
+          </TransitionLink>
+          <span 
+            className="absolute right-0 top-0 pointer-events-none text-muted-foreground/60"
+            style={{ 
+              textShadow: '-0.5em 0 0.3em var(--background), -1em 0 0.5em var(--background)'
+            }}
+          >
+          </span>
+        </div>
 
-        <span>—</span>
+        <span className="shrink-0">—</span>
 
         {formattedPrice && (
-          <span className="text-muted-foreground whitespace-nowrap">
+          <span className="text-muted-foreground whitespace-nowrap shrink-0">
             {formattedPrice} EUR
           </span>
         )}
