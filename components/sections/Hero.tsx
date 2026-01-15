@@ -72,7 +72,7 @@ export function HomeHeroSection() {
       <div className="absolute inset-0 bg-black/45" />
       <div className="absolute inset-0 bg-gradient-to-b from-black/5 via-black/40 to-black/85" />
 
-      <div className="pointer-events-none absolute inset-0 flex items-start md:items-center justify-center px-6 pt-24 md:pt-0">
+      <div className="pointer-events-none absolute inset-0 flex items-start md:items-center justify-center px-6 pt-63 md:pt-0">
         <Image
           src="/assets/images/Logo-Clair-Grand.svg"
           alt="Flo RD Coutellerie"
