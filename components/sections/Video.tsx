@@ -20,7 +20,10 @@ export function VideoScrollSection() {
 
   const [scale, setScale] = useState(1)
   const [borderRadius, setBorderRadius] = useState(0)
-  const [isDesktop, setIsDesktop] = useState(false)
+  const [isDesktop, setIsDesktop] = useState(() => {
+    if (typeof window === 'undefined') return false
+    return window.matchMedia('(min-width: 1024px)').matches
+  })
 
   useEffect(() => {
     if (!videoRef.current) return
@@ -36,7 +39,6 @@ export function VideoScrollSection() {
     const mediaQuery = window.matchMedia('(min-width: 1024px)')
     const handleChange = (event: MediaQueryListEvent) => setIsDesktop(event.matches)
 
-    setIsDesktop(mediaQuery.matches)
     mediaQuery.addEventListener('change', handleChange)
 
     return () => mediaQuery.removeEventListener('change', handleChange)
@@ -47,11 +49,7 @@ export function VideoScrollSection() {
   }, [])
 
   useEffect(() => {
-    if (!isDesktop) {
-      setScale(1)
-      setBorderRadius(0)
-      return
-    }
+    if (!isDesktop) return
 
     const handleScroll = () => {
       if (!sectionRef.current) return

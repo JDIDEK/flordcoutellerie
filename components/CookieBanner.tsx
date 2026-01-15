@@ -10,20 +10,18 @@ const COOKIE_CONSENT_KEY = 'cookie-consent'
 type ConsentState = 'pending' | 'accepted' | 'rejected'
 
 export function CookieBanner() {
-  const [consent, setConsent] = useState<ConsentState>('pending')
+  const [consent, setConsent] = useState<ConsentState>(() => {
+    if (typeof window === 'undefined') return 'pending'
+    const saved = localStorage.getItem(COOKIE_CONSENT_KEY)
+    return saved === 'accepted' || saved === 'rejected' ? (saved as ConsentState) : 'pending'
+  })
   const [isVisible, setIsVisible] = useState(false)
 
   useEffect(() => {
-    // Check if user has already made a choice
-    const savedConsent = localStorage.getItem(COOKIE_CONSENT_KEY)
-    if (savedConsent === 'accepted' || savedConsent === 'rejected') {
-      setConsent(savedConsent as ConsentState)
-    } else {
-      // Show banner after a short delay for better UX
-      const timer = setTimeout(() => setIsVisible(true), 1000)
-      return () => clearTimeout(timer)
-    }
-  }, [])
+    if (consent !== 'pending') return
+    const timer = setTimeout(() => setIsVisible(true), 1000)
+    return () => clearTimeout(timer)
+  }, [consent])
 
   const handleAccept = () => {
     localStorage.setItem(COOKIE_CONSENT_KEY, 'accepted')
@@ -117,16 +115,11 @@ export function CookieBanner() {
 
 // Hook to check consent status (useful for conditionally loading analytics)
 export function useCookieConsent() {
-  const [consent, setConsent] = useState<ConsentState>('pending')
-
-  useEffect(() => {
+  return useState<ConsentState>(() => {
+    if (typeof window === 'undefined') return 'pending'
     const savedConsent = localStorage.getItem(COOKIE_CONSENT_KEY)
-    if (savedConsent === 'accepted') {
-      setConsent('accepted')
-    } else if (savedConsent === 'rejected') {
-      setConsent('rejected')
-    }
-  }, [])
-
-  return consent
+    if (savedConsent === 'accepted') return 'accepted'
+    if (savedConsent === 'rejected') return 'rejected'
+    return 'pending'
+  })[0]
 }

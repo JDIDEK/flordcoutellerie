@@ -1,5 +1,3 @@
-'use client'
-
 import { Navigation } from '@/components/Navigation'
 import { Button } from '@/components/ui/button'
 import { TransitionLink } from '@/components/TransitionLink'

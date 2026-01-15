@@ -1,6 +1,6 @@
 'use client'
 
-import { useReducer, useState, useEffect, useMemo } from 'react'
+import { useReducer, useState, useMemo } from 'react'
 import { ChevronLeft, ChevronRight } from 'lucide-react'
 
 import { Card } from '@/components/ui/card'
@@ -47,24 +47,19 @@ export function CustomOrderWizard() {
   const [activeStepIndex, setActiveStepIndex] = useState(0)
 
   const steps = useMemo(() => getSteps(config), [config])
-  const currentStep = steps[activeStepIndex]
-
-  useEffect(() => {
-    if (activeStepIndex > steps.length - 1) {
-      setActiveStepIndex(steps.length - 1)
-    }
-  }, [steps.length, activeStepIndex])
+  const safeActiveStepIndex = Math.min(activeStepIndex, Math.max(steps.length - 1, 0))
+  const currentStep = steps[safeActiveStepIndex]
 
   const canGoNext = currentStep ? isStepComplete(currentStep.id, config) : false
 
   const goNext = () => {
-    if (activeStepIndex < steps.length - 1 && canGoNext) {
-      setActiveStepIndex((prev) => prev + 1)
+    if (safeActiveStepIndex < steps.length - 1 && canGoNext) {
+      setActiveStepIndex((prev) => Math.min(prev + 1, steps.length - 1))
     }
   }
 
   const goBack = () => {
-    if (activeStepIndex > 0) {
+    if (safeActiveStepIndex > 0) {
       setActiveStepIndex((prev) => prev - 1)
     }
   }
@@ -199,9 +194,9 @@ export function CustomOrderWizard() {
               <div
                 key={step.id}
                 className={`h-1.5 flex-1 rounded-full transition-all ${
-                  index < activeStepIndex
+                  index < safeActiveStepIndex
                     ? 'bg-primary'
-                    : index === activeStepIndex
+                    : index === safeActiveStepIndex
                       ? 'bg-primary/60'
                       : 'bg-muted'
                 }`}
@@ -209,7 +204,7 @@ export function CustomOrderWizard() {
             ))}
           </div>
           <p className="text-xs text-muted-foreground whitespace-nowrap">
-            {activeStepIndex + 1}/{steps.length} · {currentStep?.title}
+            {safeActiveStepIndex + 1}/{steps.length} · {currentStep?.title}
           </p>
         </div>
       )}
@@ -217,7 +212,7 @@ export function CustomOrderWizard() {
       <Card className="p-6 md:p-10 space-y-6">{renderStepContent()}</Card>
 
       <div className="flex items-center justify-between">
-        {activeStepIndex > 0 ? (
+        {safeActiveStepIndex > 0 ? (
           <Button variant="outline" onClick={goBack}>
             <ChevronLeft className="h-4 w-4 mr-2" />
             Retour

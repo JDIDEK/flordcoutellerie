@@ -3,28 +3,22 @@
 import { useEffect, useState } from 'react'
 
 export function ThemeToggle({ className = '' }: { className?: string }) {
-  const [isDark, setIsDark] = useState(false)
-  const [mounted, setMounted] = useState(false)
+  const [{ isDark, mounted }, setThemeState] = useState({ isDark: false, mounted: false })
 
   useEffect(() => {
-    setMounted(true)
-    // Check for saved preference or system preference
+    if (typeof window === 'undefined') return
     const saved = localStorage.getItem('theme')
-    if (saved === 'dark') {
-      setIsDark(true)
-      document.documentElement.classList.add('dark')
-    } else if (saved === 'light') {
-      setIsDark(false)
-      document.documentElement.classList.remove('dark')
-    } else if (window.matchMedia('(prefers-color-scheme: dark)').matches) {
-      setIsDark(true)
-      document.documentElement.classList.add('dark')
-    }
+    const prefersDark = window.matchMedia('(prefers-color-scheme: dark)').matches
+    const resolvedDark = saved ? saved === 'dark' : prefersDark
+    document.documentElement.classList.toggle('dark', resolvedDark)
+    // Accepté : on synchronise l'état avec la préférence client après le rendu initial
+    // eslint-disable-next-line react-hooks/set-state-in-effect
+    setThemeState({ isDark: resolvedDark, mounted: true })
   }, [])
 
   const toggleTheme = () => {
     const newIsDark = !isDark
-    setIsDark(newIsDark)
+    setThemeState({ isDark: newIsDark, mounted: true })
     
     if (newIsDark) {
       document.documentElement.classList.add('dark')
@@ -35,7 +29,6 @@ export function ThemeToggle({ className = '' }: { className?: string }) {
     }
   }
 
-  // Don't render until mounted to avoid hydration mismatch
   if (!mounted) return null
 
   return (

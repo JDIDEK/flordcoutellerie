@@ -14,7 +14,10 @@ function emitHeroVideo(status: HeroVideoStatus) {
 
 export function HomeHeroSection() {
   const videoRef = useRef<HTMLVideoElement>(null)
-  const [isRevealed, setIsRevealed] = useState(false)
+  const [isRevealed, setIsRevealed] = useState(() => {
+    if (typeof document === 'undefined') return false
+    return document.documentElement.dataset.siteLoaderComplete === 'true'
+  })
 
   const isMobile = useMemo(() => {
     if (typeof window === 'undefined') return false
@@ -26,15 +29,11 @@ export function HomeHeroSection() {
   const videoParallaxRef = useParallax<HTMLDivElement>({ strength: 10, scale: 1.03, disabled: isMobile })
 
   useEffect(() => {
-    if (document.documentElement.dataset.siteLoaderComplete === 'true') {
-      setIsRevealed(true)
-      return
-    }
-
+    if (isRevealed) return
     const handleReveal = () => setIsRevealed(true)
     window.addEventListener('site-loader-finished', handleReveal)
     return () => window.removeEventListener('site-loader-finished', handleReveal)
-  }, [])
+  }, [isRevealed])
 
   useEffect(() => {
     if (!videoRef.current) return

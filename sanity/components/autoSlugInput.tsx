@@ -24,7 +24,7 @@ export function AutoSlugInput(props: SlugInputProps) {
         current: newSlug,
       }),
     )
-  }, [title, value?.current, schemaType.options, onChange])
+  }, [title, value, schemaType.options, onChange])
 
   return props.renderDefault(props)
 }

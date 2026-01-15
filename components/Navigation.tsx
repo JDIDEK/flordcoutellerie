@@ -49,7 +49,6 @@ export function Navigation({ alwaysVisible = false }: NavigationProps) {
     const isMobile = window.innerWidth < 768
 
     if (isMobile) {
-      setIsVisible(true)
       return
     }
 
@@ -217,7 +216,6 @@ export function Navigation({ alwaysVisible = false }: NavigationProps) {
                     className={`block h-12 w-auto transition-opacity dark:hidden ${
                       isMobileMenuOpen ? 'opacity-70' : 'opacity-100 group-hover:opacity-90'
                     }`}
-                    priority
                   />
                   <Image
                     src="/assets/images/Logo-Clair-Petit.svg"
@@ -227,7 +225,6 @@ export function Navigation({ alwaysVisible = false }: NavigationProps) {
                     className={`hidden h-12 w-auto transition-opacity dark:block ${
                       isMobileMenuOpen ? 'opacity-90' : 'opacity-100 group-hover:opacity-90'
                     }`}
-                    priority
                   />
                 </div>
 
@@ -240,7 +237,6 @@ export function Navigation({ alwaysVisible = false }: NavigationProps) {
                     className={`block h-12 w-auto transition-opacity dark:hidden ${
                       isMobileMenuOpen ? 'opacity-70' : 'opacity-100 group-hover:opacity-90'
                     }`}
-                    priority
                   />
                   <Image
                     src="/assets/images/Logo-Clair-Petit.svg"
@@ -250,7 +246,6 @@ export function Navigation({ alwaysVisible = false }: NavigationProps) {
                     className={`hidden h-12 w-auto transition-opacity dark:block ${
                       isMobileMenuOpen ? 'opacity-90' : 'opacity-100 group-hover:opacity-90'
                     }`}
-                    priority
                   />
                 </div>
               </div>

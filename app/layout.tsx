@@ -1,9 +1,9 @@
 import type { Metadata } from 'next'
 import { Cormorant_Garamond, Inter } from 'next/font/google' 
-import { Analytics } from '@vercel/analytics/next'
 import { ClientProviders } from '@/components/ClientProviders'
 import { SiteLoader } from '@/components/Loader'
 import { ViewportHeight } from '@/components/ViewportHeight'
+import { AnalyticsGate } from '@/components/AnalyticsGate'
 import '@/styles/globals.css'
 
 const cormorant = Cormorant_Garamond({
@@ -46,7 +46,7 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
         <ViewportHeight />
         <SiteLoader />
         <ClientProviders>{children}</ClientProviders>
-        <Analytics />
+        <AnalyticsGate />
       </body>
     </html>
   )
