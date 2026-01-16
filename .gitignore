@@ -70,3 +70,4 @@ public/_next-video
 
 # Codex
 .codex/
+.agent/

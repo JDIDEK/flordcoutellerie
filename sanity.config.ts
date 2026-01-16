@@ -19,7 +19,7 @@ function defaultDocumentNode(S: any, { schemaType }: any) {
         .component(Iframe)
         .options({
           url: (doc: any) => {
-             const domain = 'http://localhost:3000' // Changez si en prod
+             const domain = 'https://flordcoutellerie.vercel.app' // Changez si en prod
              const slug = doc?.slug?.current
              
              if (schemaType === 'piece' && slug) return `${domain}/pieces/${slug}`
