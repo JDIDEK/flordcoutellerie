@@ -40,10 +40,10 @@ export const useCart = create<CartStore>()(
       isInCart: (id: string) => get().items.some((item) => item.id === id),
       removeItem: (id) =>
         set((state) => ({ items: state.items.filter((item) => item.id !== id) })),
-      setQuantity: (id, quantity) =>
+      setQuantity: (id, _quantity) =>
         set((state) => ({
           items: state.items.map((item) =>
-            item.id === id ? { ...item, quantity: Math.max(1, quantity) } : item
+            item.id === id ? { ...item, quantity: 1 } : item
           ),
         })),
       clear: () => set({ items: [] }),

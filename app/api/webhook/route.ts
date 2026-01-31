@@ -69,11 +69,8 @@ export async function POST(req: Request) {
 
   const rawBody = await req.text()
 
-  let stripe: Stripe
-  try {
-    stripe = getStripeClient()
-  } catch (error) {
-    console.error('Stripe client creation failed', error)
+  const stripe = getStripeClient()
+  if (!stripe) {
     return NextResponse.json(
       { error: 'Configuration Stripe manquante.' },
       { status: 500 }

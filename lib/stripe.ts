@@ -8,7 +8,8 @@ export function getStripeClient() {
   const secretKey = process.env.STRIPE_SECRET_KEY
 
   if (!secretKey) {
-    throw new Error('Missing environment variable: STRIPE_SECRET_KEY')
+    console.error('Missing environment variable: STRIPE_SECRET_KEY')
+    return null
   }
 
   stripeClient = new Stripe(secretKey)

@@ -1,13 +1,16 @@
 import { NextResponse } from 'next/server'
 import { groq } from 'next-sanity'
 import type Stripe from 'stripe'
+import { z } from 'zod'
 
 import { getStripeClient } from '@/lib/stripe'
 import { client } from '@/sanity/lib/client'
 
-type CheckoutRequest = {
-  productIds?: string[]
-}
+const checkoutRequestSchema = z
+  .object({
+    productIds: z.array(z.string()),
+  })
+  .strict()
 
 type PieceForCheckout = {
   _id: string
@@ -31,7 +34,7 @@ export const runtime = 'nodejs'
 export const dynamic = 'force-dynamic'
 
 export async function POST(req: Request) {
-  let body: CheckoutRequest
+  let body: unknown
 
   try {
     body = await req.json()
@@ -39,23 +42,21 @@ export async function POST(req: Request) {
     return NextResponse.json({ error: 'Payload JSON invalide.' }, { status: 400 })
   }
 
-  const productIds = Array.isArray(body.productIds)
-    ? body.productIds
-        .filter((id): id is string => typeof id === 'string')
-        .map((id) => id.trim())
-        .filter(Boolean)
-    : []
+  const parsedBody = checkoutRequestSchema.safeParse(body)
+
+  if (!parsedBody.success) {
+    return NextResponse.json({ error: 'Payload invalide.' }, { status: 400 })
+  }
+
+  const productIds = parsedBody.data.productIds
+    .map((id) => id.trim())
+    .filter(Boolean)
 
   if (productIds.length === 0) {
     return NextResponse.json({ error: 'Aucun produit fourni.' }, { status: 400 })
   }
 
-  const quantityById = productIds.reduce<Record<string, number>>((acc, id) => {
-    acc[id] = (acc[id] ?? 0) + 1
-    return acc
-  }, {})
-
-  const uniqueIds = Object.keys(quantityById)
+  const uniqueIds = Array.from(new Set(productIds))
 
   try {
     const pieces = await client.fetch<PieceForCheckout[]>(
@@ -90,7 +91,7 @@ export async function POST(req: Request) {
 
     const lineItems: Stripe.Checkout.SessionCreateParams.LineItem[] = pieces.map(
       (piece) => ({
-        quantity: quantityById[piece._id],
+        quantity: 1,
         price_data: {
           currency: 'eur',
           unit_amount: Math.round(piece.price! * 100),
@@ -105,12 +106,8 @@ export async function POST(req: Request) {
       })
     )
 
-    let stripe: Stripe
-
-    try {
-      stripe = getStripeClient()
-    } catch (error) {
-      console.error('Stripe client creation failed', error)
+    const stripe = getStripeClient()
+    if (!stripe) {
       return NextResponse.json(
         { error: 'Configuration Stripe manquante.' },
         { status: 500 }
