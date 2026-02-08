@@ -1,8 +1,7 @@
 import dynamic from 'next/dynamic'
 import { Navigation } from '@/components/Navigation'
 import { PageTransitionWrapper } from '@/components/PageTransitionWrapper'
-import { getSignaturePieces } from '@/lib/sanity/queries'
-import { CustomOrderSection } from '@/components/sections/CustomOrder'
+import { HomeQuickAccessSection } from '@/components/sections/QuickAccess'
 
 const HomeHeroSection = dynamic(
   () => import('@/components/sections/Hero').then(mod => ({ default: mod.HomeHeroSection })),
@@ -10,8 +9,6 @@ const HomeHeroSection = dynamic(
 )
 
 export default async function Home() {
-  const signaturePieces = await getSignaturePieces()
-
   return (
     <>
       <Navigation alwaysVisible />
@@ -19,7 +16,7 @@ export default async function Home() {
       <PageTransitionWrapper>
         <main className="relative isolate min-h-screen overflow-visible">
           <HomeHeroSection />
-          <CustomOrderSection />
+          <HomeQuickAccessSection />
         </main>
       </PageTransitionWrapper>
     </>

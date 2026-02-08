@@ -33,7 +33,6 @@ export function HomeFooter() {
           </div>
 
           <div className="flex flex-col items-center md:items-end gap-1 text-xs text-muted-foreground">
-            <span className="tracking-[0.2em] uppercase">Atelier sur-mesure</span>
             <p className="text-right leading-tight">SIRET: 914 141 684 00011</p>
           </div>
         </div>

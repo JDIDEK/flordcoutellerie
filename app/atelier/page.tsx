@@ -1,6 +1,5 @@
 import { Navigation } from '@/components/Navigation'
 import { PageTransitionWrapper } from '@/components/PageTransitionWrapper'
-import Image from 'next/image'
 
 export default function AboutPage() {
   return (
@@ -9,15 +8,15 @@ export default function AboutPage() {
       
       <PageTransitionWrapper>
         <main className="min-h-screen pt-32 pb-20 bg-background">
-          <div className="container mx-auto px-6">
+          <div className="container mx-auto px-6 text-justify">
             {/* Hero */}
-            <h1 className="text-3xl md:text-6xl font-light text-center tracking-tight mb-24 animate-fade-in-up">
+            <h1 className="text-3xl md:text-6xl font-light tracking-tight text-center mb-24 animate-fade-in-up">
               L'Atelier
             </h1>
 
             {/* L'atelier */}
             <section className="max-w-2xl mx-auto mb-20">
-              <p className="text-muted-foreground leading-relaxed text-center">
+              <p className="text-muted-foreground leading-relaxed">
                 Pas de production de masse, pas de compromis sur la qualité. Chaque pièce est
                 fabriquée individuellement à la main et sera unique à son propriétaire.
               </p>
@@ -25,7 +24,7 @@ export default function AboutPage() {
 
             {/* Les matériaux */}
             <section className="max-w-2xl mx-auto mb-20">
-              <h2 className="text-2xl md:text-3xl font-serif font-light mb-10 text-center text-foreground">
+              <h2 className="text-2xl md:text-3xl font-serif font-light mb-10 text-foreground">
                 Les matériaux
               </h2>
               <div className="space-y-6">
@@ -44,7 +43,7 @@ export default function AboutPage() {
 
             {/* L'artisan */}
             <section className="max-w-2xl mx-auto">
-              <h2 className="text-2xl md:text-3xl font-serif font-light mb-10 text-center text-foreground">
+              <h2 className="text-2xl md:text-3xl font-serif font-light mb-10 text-foreground">
                 L'artisan
               </h2>
               <p className="text-muted-foreground leading-relaxed">

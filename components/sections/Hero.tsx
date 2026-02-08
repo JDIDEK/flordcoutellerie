@@ -48,10 +48,7 @@ export function HomeHeroSection() {
   }, [])
 
   return (
-    <section
-      className="sticky top-0 z-10 h-[var(--app-height)] w-full overflow-hidden bg-black text-white"
-      data-stack-section
-    >
+    <section className="relative h-[var(--app-height)] w-full overflow-hidden bg-black text-white">
       <div ref={videoParallaxRef} className="absolute inset-0 will-change-transform">
         <BackgroundVideo
           ref={videoRef}
@@ -71,17 +68,6 @@ export function HomeHeroSection() {
 
       <div className="absolute inset-0 bg-black/45" />
       <div className="absolute inset-0 bg-gradient-to-b from-black/5 via-black/40 to-black/85" />
-
-      <div className="pointer-events-none absolute inset-0 flex items-start md:items-center justify-center px-6 pt-63 md:pt-0">
-        <Image
-          src="/assets/images/Logo-Clair-Grand.svg"
-          alt="Flo RD Coutellerie"
-          width={320}
-          height={140}
-          className="h-auto w-[min(55vw,240px)] sm:w-[min(50vw,320px)] opacity-70 drop-shadow-[0_15px_35px_rgba(0,0,0,0.45)]"
-          priority
-        />
-      </div>
 
       <div className="relative z-10 flex h-full flex-col px-6 pb-10 pt-24 md:px-12 lg:px-16">
         <div className="flex flex-1 items-end">
@@ -103,7 +89,7 @@ export function HomeHeroSection() {
                 FLO RD
               </span>
               <span
-                className={`block ${
+                className={`block text-[0.75em] ${
                   isRevealed ? 'animate-fade-in-up animation-delay-400' : 'opacity-0 translate-y-4'
                 }`}
               >
@@ -116,8 +102,9 @@ export function HomeHeroSection() {
                 isRevealed ? 'animate-fade-in-up animation-delay-600' : 'opacity-0 translate-y-4'
               }`}
             >
-              Des pièces uniques forgées en France, pensées pour les chefs et collectionneurs qui recherchent une
-              lame équilibrée, élégante et durable.
+              Quand la coutellerie devient personnelle.
+              <br />
+              Pièces uniques, faites sur mesure à la main, en France.
             </p>
           </div>
         </div>
