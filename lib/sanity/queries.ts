@@ -75,6 +75,7 @@ const galleryImagesQuery = groq`
     _id,
     "createdAt": _createdAt,
     label,
+    category,
     image
   }
 `

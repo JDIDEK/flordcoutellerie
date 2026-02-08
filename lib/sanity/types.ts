@@ -28,10 +28,13 @@ export type PieceDetail = PieceListItem & {
   gallery?: SanityImageSource[]
 }
 
+export type GalleryCategory = 'cuisine' | 'pliants' | 'outdoors' | 'chasse'
+
 export type GalleryImage = {
   _id: string
   image: SanityImageSource
   label?: string
+  category?: GalleryCategory
   createdAt: string
 }
 

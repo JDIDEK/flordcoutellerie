@@ -10,7 +10,7 @@ interface Collection {
   id: number
   title: string
   subtitle: string
-  year: string
+  meta: string
   pieces: number
   category?: string
   image: string
@@ -22,18 +22,25 @@ interface HorizontalScrollGalleryProps {
 }
 
 const lerp = (start: number, end: number, factor: number) => start + (end - start) * factor
+const clampProgress = (value: number) => Math.max(0, Math.min(1, value))
 
 export function HorizontalScrollGallery({ collections }: HorizontalScrollGalleryProps) {
   const isMobile = useIsMobile()
   
   // All hooks must be called before any conditional returns
   const containerRef = useRef<HTMLDivElement>(null)
+  const viewportRef = useRef<HTMLDivElement>(null)
   const scrollRef = useRef<HTMLDivElement>(null)
   const [hoveredId, setHoveredId] = useState<number | null>(null)
   const stateRef = useRef({ 
     current: 0, 
     target: 0,
     lastRendered: -1 
+  })
+  const touchStateRef = useRef({
+    startX: 0,
+    startTarget: 0,
+    isDragging: false,
   })
   const requestRef = useRef<number>(0)
   const boundsRef = useRef({ top: 0, height: 0, scrollRange: 1 })
@@ -61,8 +68,7 @@ export function HorizontalScrollGallery({ collections }: HorizontalScrollGallery
       const scrollY = window.scrollY
       const { top, scrollRange } = boundsRef.current
       const relativeScroll = scrollY - top
-      const rawProgress = Math.max(0, Math.min(1, relativeScroll / scrollRange))
-      stateRef.current.target = rawProgress
+      stateRef.current.target = clampProgress(relativeScroll / scrollRange)
     }
 
     // Cache des positions des cartes pour éviter les recalculs
@@ -154,14 +160,56 @@ export function HorizontalScrollGallery({ collections }: HorizontalScrollGallery
     }
 
     const lenis = (window as any).lenis as Lenis | undefined
-    if (lenis) lenis.on('scroll', handleScroll)
-    window.addEventListener('scroll', handleScroll, { passive: true })
+    let removeTouchListeners: (() => void) | null = null
+
+    if (!isMobile) {
+      if (lenis) lenis.on('scroll', handleScroll)
+      window.addEventListener('scroll', handleScroll, { passive: true })
+      handleScroll()
+    } else {
+      const viewport = viewportRef.current
+      const swipeDistance = Math.max(window.innerWidth * 0.85, 260)
+
+      if (viewport) {
+        const handleTouchStart = (event: TouchEvent) => {
+          if (event.touches.length !== 1) return
+          touchStateRef.current.startX = event.touches[0].clientX
+          touchStateRef.current.startTarget = stateRef.current.target
+          touchStateRef.current.isDragging = true
+        }
+
+        const handleTouchMove = (event: TouchEvent) => {
+          if (!touchStateRef.current.isDragging || event.touches.length !== 1) return
+          const deltaX = touchStateRef.current.startX - event.touches[0].clientX
+          stateRef.current.target = clampProgress(touchStateRef.current.startTarget + deltaX / swipeDistance)
+        }
+
+        const handleTouchEnd = () => {
+          touchStateRef.current.isDragging = false
+        }
+
+        viewport.addEventListener('touchstart', handleTouchStart, { passive: true })
+        viewport.addEventListener('touchmove', handleTouchMove, { passive: true })
+        viewport.addEventListener('touchend', handleTouchEnd)
+        viewport.addEventListener('touchcancel', handleTouchEnd)
+
+        removeTouchListeners = () => {
+          viewport.removeEventListener('touchstart', handleTouchStart)
+          viewport.removeEventListener('touchmove', handleTouchMove)
+          viewport.removeEventListener('touchend', handleTouchEnd)
+          viewport.removeEventListener('touchcancel', handleTouchEnd)
+        }
+      }
+    }
     
     requestRef.current = requestAnimationFrame(animate)
 
     return () => {
-      if (lenis) lenis.off('scroll', handleScroll)
-      window.removeEventListener('scroll', handleScroll)
+      if (!isMobile) {
+        if (lenis) lenis.off('scroll', handleScroll)
+        window.removeEventListener('scroll', handleScroll)
+      }
+      removeTouchListeners?.()
       window.removeEventListener('resize', measure)
       window.removeEventListener('resize', cacheCardPositions)
       cancelAnimationFrame(requestRef.current)
@@ -174,11 +222,12 @@ export function HorizontalScrollGallery({ collections }: HorizontalScrollGallery
       ref={containerRef}
       className="relative"
       style={{ 
-        height: isMobile ? '300svh' : '400vh'
+        height: isMobile ? '100svh' : '400vh'
       }}
     >
       <div 
-        className="sticky top-0 flex items-center overflow-hidden bg-background"
+        ref={viewportRef}
+        className={`sticky top-0 flex items-center overflow-hidden bg-background ${isMobile ? 'touch-pan-x select-none' : ''}`}
         style={{
           height: isMobile ? '100svh' : '100vh'
         }}
@@ -195,6 +244,7 @@ export function HorizontalScrollGallery({ collections }: HorizontalScrollGallery
           {collections.map((collection, index) => {
             const isHovered = hoveredId === collection.id
             const showWaveLayer = !isHovered && !isMobile
+            const collectionMeta = [collection.category, collection.meta].filter(Boolean).join(' • ')
 
             return (
               <article
@@ -267,7 +317,7 @@ export function HorizontalScrollGallery({ collections }: HorizontalScrollGallery
                     <p className={`tracking-[0.3em] uppercase text-neutral-200 drop-shadow-lg ${
                       isMobile ? 'text-[0.6rem] mb-2' : 'text-xs mb-4'
                     }`}>
-                      {collection.category} • {collection.year}
+                      {collectionMeta}
                     </p>
                     
                     <h2 className={`font-serif font-light tracking-[0.05em] text-white drop-shadow-xl ${

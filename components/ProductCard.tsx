@@ -11,7 +11,7 @@ export function ProductCard({ piece }: { piece: PieceListItem }) {
   const formattedPrice = piece.price ? formatCurrency(piece.price) : null
 
   const imageUrl = piece.mainImage
-    ? urlFor(piece.mainImage).width(1200).height(1500).fit("crop").url()
+    ? urlFor(piece.mainImage).width(1200).height(1500).fit("max").url()
     : "/placeholder.svg"
 
   const title =
@@ -35,7 +35,7 @@ export function ProductCard({ piece }: { piece: PieceListItem }) {
             width={900}
             height={1200}
             sizes="(max-width: 640px) 100vw, (max-width: 1024px) 50vw, 33vw"
-            className={`object-cover w-full h-full md:transition-transform md:duration-500 md:ease-out md:group-hover:scale-[1.03] ${!isAvailable ? 'brightness-75 saturate-35' : ''}`}
+            className={`object-contain w-full h-full md:transition-transform md:duration-500 md:ease-out md:group-hover:scale-[1.03] ${!isAvailable ? 'brightness-75 saturate-35' : ''}`}
           />
         </TransitionLink>
 

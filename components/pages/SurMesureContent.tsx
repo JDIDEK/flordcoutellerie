@@ -33,8 +33,13 @@ export function SurMesureContent() {
               </h1>
             </div>
             <p className="text-muted-foreground leading-relaxed max-w-xl mx-auto">
-              Concevons ensemble votre couteau idéal. Choisissez les aciers,
-              formes, manches et finitions selon vos besoins et préférences.
+              <strong className="inline-block whitespace-nowrap font-black text-foreground text-[clamp(0.72rem,3.4vw,1rem)]">
+                Concevons ensemble une lame qui vous ressemble.
+              </strong>
+              <br />
+              Forme, usage, matières.
+              <br />
+              Si un point vous échappe, nous en discutons simplement.
             </p>
           </div>
 

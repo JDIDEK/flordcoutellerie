@@ -23,6 +23,21 @@ export const galleryImage = defineType({
       validation: (rule) => rule.required(),
     }),
     defineField({
+      name: 'category',
+      title: 'Collection',
+      type: 'string',
+      options: {
+        list: [
+          { title: 'Cuisine', value: 'cuisine' },
+          { title: 'Pliants', value: 'pliants' },
+          { title: 'Outdoors', value: 'outdoors' },
+          { title: 'Chasse', value: 'chasse' },
+        ],
+        layout: 'radio',
+      },
+      description: 'Catégorie de collection utilisée sur la page Galerie.',
+    }),
+    defineField({
       name: 'image',
       title: 'Image',
       type: 'image',
@@ -35,11 +50,20 @@ export const galleryImage = defineType({
       media: 'image',
       title: 'title',
       label: 'label',
+      category: 'category',
     },
-    prepare({ media, title, label }) {
+    prepare({ media, title, label, category }) {
+      const categoryLabels: Record<string, string> = {
+        cuisine: 'Cuisine',
+        pliants: 'Pliants',
+        outdoors: 'Outdoors',
+        chasse: 'Chasse',
+      }
+      const categoryText = category ? categoryLabels[category] ?? category : null
+
       return {
         title: title || 'Sans titre',
-        subtitle: label || '',
+        subtitle: [categoryText, label].filter(Boolean).join(' - '),
         media: media,
       }
     },
