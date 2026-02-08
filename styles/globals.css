@@ -62,10 +62,10 @@
 }
 
 @theme inline {
-  --font-title: var(--font-title), sans-serif;
-  --font-subtitle: var(--font-subtitle), sans-serif;
-  --font-body: var(--font-body), sans-serif;
-  --font-sans: var(--font-body), sans-serif;
+  --font-title: var(--font-serif), serif;
+  --font-subtitle: var(--font-serif), serif;
+  --font-body: var(--font-serif), serif;
+  --font-sans: var(--font-serif), serif;
   --font-mono: 'Geist Mono', 'Geist Mono Fallback';
   --color-background: var(--background);
   --color-foreground: var(--foreground);
@@ -104,7 +104,7 @@
   body {
     @apply bg-background text-foreground;
     font-family: var(--font-body);
-    font-weight: 200;
+    font-weight: 400;
   }
   
   /* Typography classes for Google Fonts */
@@ -115,12 +115,12 @@
   
   h3, h4, h5, h6, .font-subtitle {
     font-family: var(--font-subtitle);
-    font-weight: 300;
+    font-weight: 400;
   }
   
   .font-body {
     font-family: var(--font-body);
-    font-weight: 200;
+    font-weight: 400;
   }
 }
 

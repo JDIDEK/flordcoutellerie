@@ -67,7 +67,7 @@ export function ContactContent() {
   }
 
   return (
-    <main className="min-h-screen pt-32 pb-20 bg-background text-foreground">
+    <main className="min-h-screen pt-32 pb-20 bg-background text-foreground font-body">
       {/* Hero */}
       <div className="container mx-auto px-6">
         <h1 className="text-3xl md:text-6xl font-light text-center tracking-tight mb-24 animate-fade-in-up">
@@ -77,9 +77,9 @@ export function ContactContent() {
       <div className="container mx-auto px-6 max-w-6xl grid md:grid-cols-2 gap-16 items-start">
         {/* Colonne gauche : texte */}
         <div className="space-y-8 animate-fade-in-up">
-          <h1 className="text-4xl md:text-5xl font-black uppercase leading-tight tracking-tight">
+          <h2 className="text-4xl md:text-5xl font-serif font-light leading-tight tracking-tight">
             Chaque projet commence par un échange
-          </h1>
+          </h2>
 
           <div className="space-y-4 text-sm md:text-base max-w-md">
             <p className="font-medium italic">

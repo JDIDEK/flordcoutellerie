@@ -1,5 +1,5 @@
 import type { Metadata } from 'next'
-import { Cormorant_Garamond, Inter } from 'next/font/google' 
+import { Cormorant_Garamond } from 'next/font/google'
 import { ClientProviders } from '@/components/ClientProviders'
 import { SiteLoader } from '@/components/Loader'
 import { ViewportHeight } from '@/components/ViewportHeight'
@@ -8,13 +8,8 @@ import '@/styles/globals.css'
 
 const cormorant = Cormorant_Garamond({
   subsets: ['latin'],
-  weight: ['400', '500', '600', '700'],
+  weight: ['300', '400', '500', '600', '700'],
   variable: '--font-serif',
-})
-
-const inter = Inter({
-  subsets: ['latin'],
-  variable: '--font-sans',
 })
 
 export const metadata: Metadata = {
@@ -42,7 +37,7 @@ export const viewport = {
 export default function RootLayout({ children }: { children: React.ReactNode }) {
   return (
     <html lang="fr" suppressHydrationWarning>
-      <body className={`${cormorant.variable} ${inter.variable} font-body antialiased`}>
+      <body className={`${cormorant.variable} font-body antialiased`}>
         <ViewportHeight />
         <SiteLoader />
         <ClientProviders>{children}</ClientProviders>
