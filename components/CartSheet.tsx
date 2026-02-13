@@ -83,7 +83,7 @@ export function CartSheet({ className, triggerClassName }: CartSheetProps) {
           type="button"
           aria-label="Ouvrir le panier"
         >
-          <ShoppingBag className="h-5 w-5" />
+          <ShoppingBag className="h-7 w-15" />
           {totalItems > 0 && (
             <span className="absolute -right-1 -top-1 flex h-5 min-w-5 items-center justify-center rounded-full bg-primary px-1 text-[10px] font-semibold leading-none text-primary-foreground">
               {totalItems}

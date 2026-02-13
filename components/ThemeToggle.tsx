@@ -11,8 +11,6 @@ export function ThemeToggle({ className = '' }: { className?: string }) {
     const prefersDark = window.matchMedia('(prefers-color-scheme: dark)').matches
     const resolvedDark = saved ? saved === 'dark' : prefersDark
     document.documentElement.classList.toggle('dark', resolvedDark)
-    // Accepté : on synchronise l'état avec la préférence client après le rendu initial
-    // eslint-disable-next-line react-hooks/set-state-in-effect
     setThemeState({ isDark: resolvedDark, mounted: true })
   }, [])
 
@@ -34,7 +32,7 @@ export function ThemeToggle({ className = '' }: { className?: string }) {
   return (
     <button
       onClick={toggleTheme}
-      className={`w-4 h-4 rounded-full transition-all duration-300 hover:scale-125 active:scale-95 ${className}`}
+      className={`w-5 h-5 rounded-full transition-all duration-300 hover:scale-125 active:scale-95 ${className}`}
       style={{
         backgroundColor: isDark ? '#F2EAE4' : '#212120',
         aspectRatio: '1 / 1',

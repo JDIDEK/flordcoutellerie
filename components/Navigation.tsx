@@ -214,7 +214,7 @@ export function Navigation({ alwaysVisible = false }: NavigationProps) {
                     width={140}
                     height={60}
                     className={`block h-12 w-auto transition-opacity dark:hidden ${
-                      isMobileMenuOpen ? 'opacity-70' : 'opacity-100 group-hover:opacity-90'
+                      isMobileMenuOpen ? 'opacity-70' : 'opacity-100 group-hover:opacity-50'
                     }`}
                   />
                   <Image
@@ -223,7 +223,7 @@ export function Navigation({ alwaysVisible = false }: NavigationProps) {
                     width={140}
                     height={60}
                     className={`hidden h-12 w-auto transition-opacity dark:block ${
-                      isMobileMenuOpen ? 'opacity-90' : 'opacity-100 group-hover:opacity-90'
+                      isMobileMenuOpen ? 'opacity-90' : 'opacity-100 group-hover:opacity-50'
                     }`}
                   />
                 </div>
@@ -232,19 +232,19 @@ export function Navigation({ alwaysVisible = false }: NavigationProps) {
                   <Image
                     src="/assets/images/Logo-Noir-Petit.svg"
                     alt="Flo RD Coutellerie"
-                    width={160}
-                    height={70}
-                    className={`block h-12 w-auto transition-opacity dark:hidden ${
-                      isMobileMenuOpen ? 'opacity-70' : 'opacity-100 group-hover:opacity-90'
+                    width={550}
+                    height={236}
+                    className={`block h-20 w-auto transition-opacity dark:hidden ${
+                      isMobileMenuOpen ? 'opacity-70' : 'opacity-100 group-hover:opacity-50'
                     }`}
                   />
                   <Image
                     src="/assets/images/Logo-Clair-Petit.svg"
                     alt="Flo RD Coutellerie"
-                    width={160}
-                    height={70}
-                    className={`hidden h-12 w-auto transition-opacity dark:block ${
-                      isMobileMenuOpen ? 'opacity-90' : 'opacity-100 group-hover:opacity-90'
+                    width={550}
+                    height={236}
+                    className={`hidden h-20 w-auto transition-opacity dark:block ${
+                      isMobileMenuOpen ? 'opacity-90' : 'opacity-100 group-hover:opacity-50'
                     }`}
                   />
                 </div>
@@ -257,7 +257,7 @@ export function Navigation({ alwaysVisible = false }: NavigationProps) {
                 <TransitionLink
                   key={link.href}
                   href={link.href}
-                  className="text-sm font-medium tracking-wide text-foreground hover:text-neutral-600 dark:hover:text-neutral-300 transition-colors relative group"
+                  className="text-lg font-medium tracking-wide text-foreground hover:text-neutral-600 dark:hover:text-neutral-300 transition-colors relative group"
                 >
                   {link.label}
                   <span className="absolute -bottom-1 left-0 w-0 h-[1px] bg-neutral-600 dark:bg-neutral-400 group-hover:w-full transition-all duration-300" />
