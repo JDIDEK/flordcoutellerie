@@ -266,20 +266,25 @@ export function Navigation({ alwaysVisible = false }: NavigationProps) {
             </div>
 
             {/* Desktop Actions */}
-            <div className="hidden md:flex items-center gap-3">
+            <div className="hidden md:flex items-center gap-6">
               <CartSheet />
               <ThemeToggle />
             </div>
 
             {/* Mobile Controls - Shown by default, hidden on md+ */}
             <div className="flex items-center gap-3 md:hidden relative z-50">
-              <ThemeToggle />
-              <div className={isMobileMenuOpen ? 'opacity-0 pointer-events-none' : 'opacity-100'}>
-                <CartSheet />
+              <div className={`flex shrink-0 items-center justify-center w-8 h-8 transition-opacity duration-300 ${isMobileMenuOpen ? 'opacity-0 pointer-events-none hidden' : 'opacity-100'}`}>
+                <ThemeToggle />
+              </div>
+              <div className={`flex shrink-0 items-center justify-center w-8 h-8 transition-opacity duration-300 ${isMobileMenuOpen ? 'opacity-0 pointer-events-none hidden' : 'opacity-100'}`}>
+                <CartSheet triggerClassName="!h-8 !w-8" />
+              </div>
+              <div className={`flex shrink-0 items-center justify-center w-8 h-8 transition-opacity duration-300 ${isMobileMenuOpen ? 'opacity-100' : 'opacity-0 pointer-events-none hidden'}`}>
+                <ThemeToggle />
               </div>
               <button
                 onClick={toggleMenu}
-                className="relative flex h-12 w-12 items-center justify-center text-foreground hover:text-neutral-600 dark:hover:text-neutral-300 transition-colors"
+                className="relative flex shrink-0 h-8 w-8 items-center justify-center text-foreground hover:text-neutral-600 dark:hover:text-neutral-300 transition-colors"
                 aria-label={isMobileMenuOpen ? 'Fermer le menu' : 'Ouvrir le menu'}
                 aria-controls={mobileMenuId}
                 aria-expanded={isMobileMenuOpen}
