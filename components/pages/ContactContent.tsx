@@ -67,7 +67,7 @@ export function ContactContent() {
   }
 
   return (
-    <main className="min-h-screen pt-32 pb-20 bg-background text-foreground font-body">
+    <main className="min-h-screen flex flex-col justify-center pt-32 pb-20 bg-background text-foreground font-body">
       {/* Hero */}
       <div className="container mx-auto px-6">
         <h1 className="text-3xl md:text-6xl font-light text-center tracking-tight mb-24 animate-fade-in-up">

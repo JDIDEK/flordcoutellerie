@@ -22,7 +22,7 @@ export function SurMesureContent() {
   }, [])
 
   return (
-    <main className="min-h-screen pt-32 pb-20 bg-background">
+    <main className="min-h-screen flex flex-col justify-center pt-32 pb-20 bg-background">
       <div ref={contentRef} className="container mx-auto px-6">
         <div className="max-w-3xl mx-auto">
           {/* Header */}

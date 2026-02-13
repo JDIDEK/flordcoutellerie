@@ -7,7 +7,7 @@ export default function AboutPage() {
       <Navigation />
       
       <PageTransitionWrapper>
-        <main className="min-h-screen pt-32 pb-20 bg-background">
+        <main className="min-h-screen flex flex-col justify-center pt-32 pb-20 bg-background">
           <div className="container mx-auto px-6 text-justify">
             {/* Hero */}
             <h1 className="text-3xl md:text-6xl font-light tracking-tight text-center mb-24 animate-fade-in-up">
