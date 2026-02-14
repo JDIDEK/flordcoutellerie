@@ -7,6 +7,7 @@ import { BackLink } from '@/components/BackLink'
 import { BuyNowButton } from '@/components/BuyNowButton'
 import { Navigation } from '@/components/Navigation'
 import { PageTransitionWrapper } from '@/components/PageTransitionWrapper'
+import { TransitionLink } from '@/components/TransitionLink'
 import { Button } from '@/components/ui/button'
 import { PieceGallery } from '@/components/PieceGallery'
 import { getPieceBySlug, getAllPieceSlugs } from '@/lib/sanity/queries'
@@ -169,6 +170,14 @@ export default async function PieceDetailPage({
                       </p>
                     </>
                   )}
+                  <p className="text-xs text-muted-foreground leading-relaxed">
+                    Vente réservée aux personnes majeures. Le port et le transport hors du domicile
+                    sont interdits sans motif légitime.{' '}
+                    <TransitionLink href="/cgv" className="underline underline-offset-4 hover:text-foreground">
+                      Voir les CGV
+                    </TransitionLink>
+                    .
+                  </p>
                 </div>
 
                 {piece.description && (

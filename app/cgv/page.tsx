@@ -80,7 +80,24 @@ export default function CGVPage() {
               </section>
 
               <section>
-                <h2 className="text-lg font-medium mb-3 text-foreground">8. Litiges</h2>
+                <h2 className="text-lg font-medium mb-3 text-foreground">8. Législation sur la vente de couteaux</h2>
+                <div className="text-muted-foreground leading-relaxed space-y-3">
+                  <p>
+                    En France, certains couteaux et objets assimilés peuvent relever de la réglementation des armes de catégorie D.
+                  </p>
+                  <p>
+                    La vente est réservée aux personnes majeures. Le vendeur peut demander un justificatif d'identité
+                    et refuser ou annuler une commande en cas de doute légitime sur l'âge de l'acheteur.
+                  </p>
+                  <p>
+                    Le port et le transport hors du domicile sont interdits sans motif légitime. L'acheteur est seul
+                    responsable du respect des lois applicables à son lieu de résidence, de port, de transport et d'usage.
+                  </p>
+                </div>
+              </section>
+
+              <section>
+                <h2 className="text-lg font-medium mb-3 text-foreground">9. Litiges</h2>
                 <p className="text-muted-foreground leading-relaxed">
                   En cas de litige, une solution amiable sera recherchée avant toute action judiciaire. 
                   À défaut, les tribunaux français seront seuls compétents.
@@ -88,7 +105,7 @@ export default function CGVPage() {
               </section>
 
               <p className="text-sm text-muted-foreground text-center pt-10 border-t border-border">
-                Dernière mise à jour : Novembre 2024
+                Dernière mise à jour : 14 février 2026
               </p>
             </div>
           </div>
