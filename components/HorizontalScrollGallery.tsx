@@ -23,6 +23,9 @@ interface HorizontalScrollGalleryProps {
 
 const lerp = (start: number, end: number, factor: number) => start + (end - start) * factor
 const clampProgress = (value: number) => Math.max(0, Math.min(1, value))
+const metaTextShadow = { textShadow: '0 2px 10px rgba(0, 0, 0, 0.92)' } as const
+const titleTextShadow = { textShadow: '0 8px 22px rgba(0, 0, 0, 0.95)' } as const
+const subtitleTextShadow = { textShadow: '0 4px 14px rgba(0, 0, 0, 0.92)' } as const
 
 export function HorizontalScrollGallery({ collections }: HorizontalScrollGalleryProps) {
   const isMobile = useIsMobile()
@@ -32,16 +35,19 @@ export function HorizontalScrollGallery({ collections }: HorizontalScrollGallery
   const viewportRef = useRef<HTMLDivElement>(null)
   const scrollRef = useRef<HTMLDivElement>(null)
   const [hoveredId, setHoveredId] = useState<number | null>(null)
+  const [isDragging, setIsDragging] = useState(false)
   const stateRef = useRef({ 
     current: 0, 
     target: 0,
     lastRendered: -1 
   })
-  const touchStateRef = useRef({
+  const dragStateRef = useRef({
     startX: 0,
     startTarget: 0,
     isDragging: false,
+    hasMoved: false,
   })
+  const clickGuardRef = useRef(0)
   const requestRef = useRef<number>(0)
   const boundsRef = useRef({ top: 0, height: 0, scrollRange: 1 })
 
@@ -56,6 +62,17 @@ export function HorizontalScrollGallery({ collections }: HorizontalScrollGallery
       height: rect.height,
       scrollRange: Math.max(rect.height - window.innerHeight, 1)
     }
+  }, [])
+
+  const handleCardClickCapture = useCallback((event: React.MouseEvent<HTMLAnchorElement>) => {
+    if (performance.now() <= clickGuardRef.current) {
+      event.preventDefault()
+      event.stopPropagation()
+    }
+  }, [])
+
+  const handleNativeDragStart = useCallback((event: React.DragEvent<HTMLElement>) => {
+    event.preventDefault()
   }, [])
 
   useEffect(() => {
@@ -160,45 +177,71 @@ export function HorizontalScrollGallery({ collections }: HorizontalScrollGallery
     }
 
     const lenis = (window as any).lenis as Lenis | undefined
-    let removeTouchListeners: (() => void) | null = null
+    let removePointerListeners: (() => void) | null = null
 
     if (!isMobile) {
       if (lenis) lenis.on('scroll', handleScroll)
       window.addEventListener('scroll', handleScroll, { passive: true })
       handleScroll()
-    } else {
-      const viewport = viewportRef.current
-      const swipeDistance = Math.max(window.innerWidth * 0.85, 260)
+    }
 
-      if (viewport) {
-        const handleTouchStart = (event: TouchEvent) => {
-          if (event.touches.length !== 1) return
-          touchStateRef.current.startX = event.touches[0].clientX
-          touchStateRef.current.startTarget = stateRef.current.target
-          touchStateRef.current.isDragging = true
+    const viewport = viewportRef.current
+    const swipeDistance = Math.max(window.innerWidth * (isMobile ? 0.85 : 1.1), 260)
+
+    if (viewport) {
+      const resetDragState = () => {
+        dragStateRef.current.isDragging = false
+        dragStateRef.current.hasMoved = false
+        setIsDragging(false)
+      }
+
+      const handlePointerDown = (event: PointerEvent) => {
+        if (event.pointerType === 'mouse' && event.button !== 0) return
+
+        dragStateRef.current.startX = event.clientX
+        dragStateRef.current.startTarget = stateRef.current.target
+        dragStateRef.current.isDragging = true
+        dragStateRef.current.hasMoved = false
+        setIsDragging(true)
+        viewport.setPointerCapture?.(event.pointerId)
+      }
+
+      const handlePointerMove = (event: PointerEvent) => {
+        if (!dragStateRef.current.isDragging) return
+
+        const deltaX = dragStateRef.current.startX - event.clientX
+        if (Math.abs(deltaX) > 5) dragStateRef.current.hasMoved = true
+
+        stateRef.current.target = clampProgress(
+          dragStateRef.current.startTarget + deltaX / swipeDistance
+        )
+      }
+
+      const handlePointerEnd = (event: PointerEvent) => {
+        if (!dragStateRef.current.isDragging) return
+
+        if (dragStateRef.current.hasMoved) {
+          clickGuardRef.current = performance.now() + 180
         }
 
-        const handleTouchMove = (event: TouchEvent) => {
-          if (!touchStateRef.current.isDragging || event.touches.length !== 1) return
-          const deltaX = touchStateRef.current.startX - event.touches[0].clientX
-          stateRef.current.target = clampProgress(touchStateRef.current.startTarget + deltaX / swipeDistance)
+        if (viewport.hasPointerCapture?.(event.pointerId)) {
+          viewport.releasePointerCapture(event.pointerId)
         }
+        resetDragState()
+      }
 
-        const handleTouchEnd = () => {
-          touchStateRef.current.isDragging = false
-        }
+      viewport.addEventListener('pointerdown', handlePointerDown)
+      viewport.addEventListener('pointermove', handlePointerMove)
+      viewport.addEventListener('pointerup', handlePointerEnd)
+      viewport.addEventListener('pointercancel', handlePointerEnd)
+      viewport.addEventListener('lostpointercapture', resetDragState)
 
-        viewport.addEventListener('touchstart', handleTouchStart, { passive: true })
-        viewport.addEventListener('touchmove', handleTouchMove, { passive: true })
-        viewport.addEventListener('touchend', handleTouchEnd)
-        viewport.addEventListener('touchcancel', handleTouchEnd)
-
-        removeTouchListeners = () => {
-          viewport.removeEventListener('touchstart', handleTouchStart)
-          viewport.removeEventListener('touchmove', handleTouchMove)
-          viewport.removeEventListener('touchend', handleTouchEnd)
-          viewport.removeEventListener('touchcancel', handleTouchEnd)
-        }
+      removePointerListeners = () => {
+        viewport.removeEventListener('pointerdown', handlePointerDown)
+        viewport.removeEventListener('pointermove', handlePointerMove)
+        viewport.removeEventListener('pointerup', handlePointerEnd)
+        viewport.removeEventListener('pointercancel', handlePointerEnd)
+        viewport.removeEventListener('lostpointercapture', resetDragState)
       }
     }
     
@@ -209,7 +252,7 @@ export function HorizontalScrollGallery({ collections }: HorizontalScrollGallery
         if (lenis) lenis.off('scroll', handleScroll)
         window.removeEventListener('scroll', handleScroll)
       }
-      removeTouchListeners?.()
+      removePointerListeners?.()
       window.removeEventListener('resize', measure)
       window.removeEventListener('resize', cacheCardPositions)
       cancelAnimationFrame(requestRef.current)
@@ -227,7 +270,10 @@ export function HorizontalScrollGallery({ collections }: HorizontalScrollGallery
     >
       <div 
         ref={viewportRef}
-        className={`sticky top-0 flex items-center overflow-hidden bg-background ${isMobile ? 'touch-pan-x select-none' : ''}`}
+        className={`sticky top-0 flex items-center overflow-hidden bg-background select-none ${
+          isMobile ? 'touch-pan-x' : ''
+        } ${isDragging ? 'cursor-grabbing' : 'cursor-grab'}`}
+        onDragStartCapture={handleNativeDragStart}
         style={{
           height: isMobile ? '100svh' : '100vh'
         }}
@@ -266,8 +312,10 @@ export function HorizontalScrollGallery({ collections }: HorizontalScrollGallery
                   href="/galerie"
                   className="block w-full h-full group focus-visible:outline-none"
                   style={{ transformStyle: 'preserve-3d' }}
+                  onClickCapture={handleCardClickCapture}
                   onFocus={() => setHoveredId(collection.id)}
                   onBlur={() => setHoveredId(null)}
+                  draggable={false}
                 >
                   <div 
                     className="absolute inset-0 w-full h-full overflow-hidden rounded-sm bg-black shadow-2xl"
@@ -278,30 +326,31 @@ export function HorizontalScrollGallery({ collections }: HorizontalScrollGallery
                         src={collection.image || '/placeholder.svg'}
                         alt={collection.title}
                         fill
+                        draggable={false}
                         sizes={isMobile ? '80vw' : '(max-width: 1200px) 60vw, 1200px'}
                         priority={index === 0}
-                        className="object-cover"
+                        className="object-cover pointer-events-none"
                       />
-                      <div className="pointer-events-none absolute inset-0 bg-black/20" />
                     </div>
 
                     {/* Wave layer */}
-                    <div 
+                    <div
                       className="absolute inset-0 w-full h-full pointer-events-none transition-opacity duration-700 ease-out"
                       style={{
-                        opacity: showWaveLayer ? 1 : 0, 
-                        filter: isMobile 
+                        opacity: showWaveLayer ? 1 : 0,
+                        filter: isMobile
                           ? 'url(#wave-distortion-filter-mobile) grayscale(0.5) brightness(0.75)'
                           : 'url(#wave-distortion-filter) grayscale(0.6) brightness(0.7)',
-                        transform: 'scale(1.05)'
+                        transform: 'scale(1.05)',
                       }}
                     >
                       <Image
                         src={collection.image || '/placeholder.svg'}
                         alt=""
                         fill
+                        draggable={false}
                         sizes={isMobile ? '80vw' : '(max-width: 1200px) 60vw, 1200px'}
-                        className="object-cover"
+                        className="object-cover pointer-events-none"
                       />
                     </div>
                   </div>
@@ -314,34 +363,23 @@ export function HorizontalScrollGallery({ collections }: HorizontalScrollGallery
                       transform: isMobile ? 'translateZ(40px)' : 'translateZ(80px)',
                     }}
                   >
-                    <p className={`tracking-[0.3em] uppercase text-neutral-200 drop-shadow-lg ${
+                    <p className={`tracking-[0.3em] uppercase text-white/90 ${
                       isMobile ? 'text-[0.6rem] mb-2' : 'text-xs mb-4'
-                    }`}>
+                    }`} style={metaTextShadow}>
                       {collectionMeta}
                     </p>
                     
-                    <h2 className={`font-serif font-light tracking-[0.05em] text-white drop-shadow-xl ${
+                    <h2 className={`font-serif font-light tracking-[0.05em] text-white ${
                       isMobile ? 'text-3xl mb-2' : 'text-6xl lg:text-7xl mb-3'
-                    }`}>
+                    }`} style={titleTextShadow}>
                       {collection.title}
                     </h2>
                     
-                    <p className={`text-neutral-100/90 leading-relaxed drop-shadow-md ${
-                      isMobile ? 'text-xs max-w-[80%] mb-4' : 'text-sm max-w-md mb-8'
-                    }`}>
+                    <p className={`text-white/95 leading-relaxed ${
+                      isMobile ? 'text-xs max-w-[80%]' : 'text-sm max-w-md'
+                    }`} style={subtitleTextShadow}>
                       {collection.subtitle}
                     </p>
-
-                    <div className="pointer-events-auto">
-                      <span className={`inline-flex items-center gap-3 rounded-full border border-white/30 bg-black/20 backdrop-blur-sm text-white uppercase tracking-[0.2em] transition-all ${
-                        isMobile 
-                          ? 'px-4 py-2 text-[0.6rem] gap-2' 
-                          : 'px-6 py-3 text-xs hover:bg-white hover:text-black'
-                      }`}>
-                        Découvrir
-                        <span className={isMobile ? 'text-[0.5rem]' : 'text-[0.6rem]'}>→</span>
-                      </span>
-                    </div>
                   </div>
                 </TransitionLink>
               </article>
@@ -356,24 +394,24 @@ export function HorizontalScrollGallery({ collections }: HorizontalScrollGallery
           {/* Desktop filter - stronger effect */}
           <filter id="wave-distortion-filter" x="-20%" y="-20%" width="140%" height="140%">
             <feTurbulence type="fractalNoise" baseFrequency="0.01 0.005" numOctaves="1" result="warp">
-              <animate 
-                attributeName="baseFrequency" 
-                values="0.01 0.005; 0.02 0.009; 0.01 0.005" 
-                dur="60s" 
+              <animate
+                attributeName="baseFrequency"
+                values="0.01 0.005; 0.02 0.009; 0.01 0.005"
+                dur="60s"
                 repeatCount="indefinite"
                 keyTimes="0; 0.5; 1"
               />
             </feTurbulence>
             <feDisplacementMap xChannelSelector="R" yChannelSelector="G" scale="60" in="SourceGraphic" in2="warp" />
           </filter>
-          
+
           {/* Mobile filter - lighter effect for better performance */}
           <filter id="wave-distortion-filter-mobile" x="-10%" y="-10%" width="120%" height="120%">
             <feTurbulence type="fractalNoise" baseFrequency="0.008 0.004" numOctaves="1" result="warp">
-              <animate 
-                attributeName="baseFrequency" 
-                values="0.008 0.004; 0.012 0.006; 0.008 0.004" 
-                dur="90s" 
+              <animate
+                attributeName="baseFrequency"
+                values="0.008 0.004; 0.012 0.006; 0.008 0.004"
+                dur="90s"
                 repeatCount="indefinite"
                 keyTimes="0; 0.5; 1"
               />

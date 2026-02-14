@@ -22,8 +22,8 @@ const categoryContent: Record<GalleryCategory, { title: string; subtitle: string
   },
   chasse: {
     title: 'Chasse',
-    subtitle: 'Sélection dédiée à la chasse.',
-    emptySubtitle: 'Collection en préparation.',
+    subtitle: 'Catégorie à venir.',
+    emptySubtitle: 'À venir.',
   },
 }
 
@@ -74,7 +74,12 @@ function createCollections(galleryImages: GalleryImage[]) {
     const cover = items[0]
     const content = categoryContent[category]
     const piecesCount = items.length
-    const piecesLabel = piecesCount > 0 ? `${piecesCount} pièce${piecesCount > 1 ? 's' : ''}` : 'Bientôt'
+    const piecesLabel =
+      category === 'chasse'
+        ? 'À venir'
+        : piecesCount > 0
+          ? `${piecesCount} pièce${piecesCount > 1 ? 's' : ''}`
+          : 'Bientôt'
     const imageUrl =
       cover?.image ? urlFor(cover.image).width(2000).height(1200).fit('crop').url() ?? '/placeholder.svg' : '/placeholder.svg'
 
