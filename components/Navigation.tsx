@@ -392,26 +392,10 @@ export function Navigation({ alwaysVisible = false }: NavigationProps) {
                 {/* Separator */}
                 <div className="h-[1px] w-full bg-gradient-to-r from-transparent via-foreground/20 to-transparent" />
                 
-                {/* Contact Info */}
-                <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4 text-muted-foreground">
-                  <a 
-                    href="mailto:floribadeaudumas@gmail.com" 
-                    className="text-sm hover:text-foreground transition-colors"
-                  >
-                    floribadeaudumas@gmail.com
-                  </a>
-                  <span className="text-xs uppercase tracking-[0.3em]">
-                    Atelier sur-mesure
-                  </span>
-                </div>
-
                 {/* Branding */}
                 <div className="flex items-center justify-between">
                   <span className="text-xs uppercase tracking-[0.4em] text-muted-foreground/50">
-                    Flo RD Coutellerie
-                  </span>
-                  <span className="text-xs text-muted-foreground/50">
-                    © {new Date().getFullYear()}
+                    © Flo RD Coutellerie
                   </span>
                 </div>
               </motion.div>

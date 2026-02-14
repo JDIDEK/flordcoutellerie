@@ -16,7 +16,7 @@ export default async function PiecesPage() {
         <div className="container mx-auto px-4 md:px-6 max-w-6xl">
 
           {/* ---------- TITRE CENTRÉ ---------- */}
-          <h1 className="text-3xl md:text-6xl font-light text-center tracking-tight mb-12 md:mb-24 md:animate-fade-in-up">
+          <h1 className="text-3xl md:text-6xl font-serif font-light text-center tracking-tight text-foreground mb-12 md:mb-24 md:animate-fade-in-up">
             Pièces disponibles
           </h1>
 

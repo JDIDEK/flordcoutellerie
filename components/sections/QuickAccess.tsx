@@ -5,7 +5,6 @@ import type { ComponentType } from 'react'
 type QuickAccessLink = {
   href: string
   label: string
-  description: string
   cta: string
   featured?: boolean
   icon: ComponentType<{ className?: string }>
@@ -15,7 +14,6 @@ const quickAccessLinks: QuickAccessLink[] = [
   {
     href: '/pieces',
     label: 'Pièces disponibles',
-    description: 'Voir les couteaux prêts à expédier immédiatement.',
     cta: 'Ouvrir la boutique',
     featured: true,
     icon: ShoppingBag,
@@ -23,7 +21,6 @@ const quickAccessLinks: QuickAccessLink[] = [
   {
     href: '/sur-mesure',
     label: 'Créer une lame sur mesure',
-    description: 'Construire un projet personnalisé selon vos besoins.',
     cta: 'Démarrer mon projet',
     featured: true,
     icon: Hammer,
@@ -31,21 +28,18 @@ const quickAccessLinks: QuickAccessLink[] = [
   {
     href: '/galerie',
     label: 'Galerie',
-    description: "Parcourir les realisations et finitions de l'atelier.",
     cta: 'Voir la galerie',
     icon: GalleryVerticalEnd,
   },
   {
     href: '/atelier',
     label: "L'atelier",
-    description: "Comprendre la démarche et l'approche artisanale.",
     cta: "Découvrir l'atelier",
     icon: Hammer,
   },
   {
     href: '/contact',
     label: 'Contact',
-    description: 'Poser une question ou demander un échange rapide.',
     cta: 'Prendre contact',
     icon: Mail,
   },
@@ -89,7 +83,6 @@ export function HomeQuickAccessSection() {
                   </div>
 
                   <h3 className="font-serif text-2xl font-light leading-tight">{link.label}</h3>
-                  <p className="text-sm leading-relaxed text-muted-foreground">{link.description}</p>
                 </div>
 
                 <span className="inline-flex items-center gap-2 text-[0.7rem] uppercase tracking-[0.24em] text-foreground">
