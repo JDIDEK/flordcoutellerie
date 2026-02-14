@@ -25,14 +25,13 @@ export default function CGVPage() {
                 <h2 className="text-lg font-medium mb-3 text-foreground">1. Commandes</h2>
                 <p className="text-muted-foreground leading-relaxed">
                   Toute commande implique l'acceptation sans réserve des présentes conditions générales de vente. 
-                  Les commandes sont fermes et définitives après versement de l'acompte de 20%.
                 </p>
               </section>
 
               <section>
                 <h2 className="text-lg font-medium mb-3 text-foreground">2. Prix et Paiement</h2>
                 <p className="text-muted-foreground leading-relaxed">
-                  Les prix sont indiqués en euros TTC. Un acompte de 20% est demandé à la commande, 
+                  Les prix sont indiqués en euros TTC. 
                   le solde étant dû avant expédition. Les paiements s'effectuent par virement bancaire ou PayPal.
                 </p>
               </section>

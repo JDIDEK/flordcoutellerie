@@ -8,12 +8,6 @@ export const handleFamilies: HandleFamily[] = [
     priceLevel: 2,
   },
   {
-    id: 'exceptionnel',
-    label: 'Exceptionnel',
-    description: 'Ivoire, Fossile, Pièces Uniques',
-    priceLevel: 5,
-  },
-  {
     id: 'synthetique',
     label: 'Synthétique',
     description: 'Résine, Carbone, Composite...',
@@ -25,5 +19,11 @@ export const handleFamilies: HandleFamily[] = [
     label: 'Animal',
     description: 'Cerf, Corne, Os...',
     priceLevel: 3,
+  },
+  {
+    id: 'exceptionnel',
+    label: 'Exceptionnel',
+    description: 'Ivoire, Fossile, Pièces Uniques',
+    priceLevel: 5,
   },
 ]

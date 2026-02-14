@@ -156,9 +156,6 @@ export default async function PieceDetailPage({
 
                         <BuyNowButton pieceId={piece._id} />
                       </div>
-                      <p className="text-xs text-muted-foreground leading-relaxed">
-                        Acompte de 20% à la commande — Livraison estimée sous 2 à 4 semaines.
-                      </p>
                     </>
                   ) : (
                     <>
