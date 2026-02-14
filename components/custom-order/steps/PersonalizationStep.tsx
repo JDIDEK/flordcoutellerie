@@ -83,7 +83,7 @@ export function PersonalizationStep({ config, dispatch }: PersonalizationStepPro
         <Label htmlFor="notes">Commentaires additionnels</Label>
         <Textarea
           id="notes"
-          placeholder="Détails de dimensions, préférences esthétiques..."
+          placeholder="Détails de dimensions, préférences esthétiques, logo..."
           value={config.notes}
           onChange={(e) => dispatch({ type: 'setNotes', text: e.target.value })}
           rows={4}
