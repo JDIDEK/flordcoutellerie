@@ -5,7 +5,7 @@ import { Card } from '@/components/ui/card'
 import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
 import { Label } from '@/components/ui/label'
-import { StepHeader, PriceStars } from '../ui'
+import { StepHeader } from '../ui'
 import {
   usageOptions,
   kitchenForms,
@@ -68,10 +68,7 @@ export function SummaryStep({ config, dispatch, mailtoSubject, mailtoBody }: Sum
           </div>
         </Card>
         <Card className="p-5 space-y-3">
-          <div className="flex items-center justify-between">
-            <h4 className="font-medium">Synthèse</h4>
-            <PriceStars level={getSteelOptionsForUsage(config.usage).find((s) => s.id === config.steel)?.tech?.price} />
-          </div>
+          <h4 className="font-medium">Synthèse</h4>
           <div className="space-y-2 text-sm text-muted-foreground">
             <p>Usage : {usageOptions.find((u) => u.id === config.usage)?.label ?? '—'}</p>
             {config.usage === 'cuisine' && (

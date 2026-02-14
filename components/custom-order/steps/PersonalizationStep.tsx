@@ -57,7 +57,7 @@ export function PersonalizationStep({ config, dispatch }: PersonalizationStepPro
           <div className="flex items-center justify-between">
             <div>
               <h4 className="font-medium">Rivet mosaïque</h4>
-              <p className="text-sm text-muted-foreground">Finition décorative sur la soie</p>
+              <p className="text-sm text-muted-foreground">Finition décorative sur le manche</p>
             </div>
             <div className="flex gap-2">
               <Button
