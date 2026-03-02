@@ -111,6 +111,8 @@ export interface UsageOption {
   id: string
   label: string
   description: string
+  imageSrc?: string
+  imageAlt?: string
   disabled?: boolean
 }
 

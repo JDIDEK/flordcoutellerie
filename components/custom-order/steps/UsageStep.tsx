@@ -1,5 +1,6 @@
 'use client'
 
+import Image from 'next/image'
 import { Badge } from '@/components/ui/badge'
 import { StepHeader, PlaceholderVisual } from '../ui'
 import { usageOptions } from '../data'
@@ -37,8 +38,19 @@ export function UsageStep({ config, dispatch }: UsageStepProps) {
                 </div>
                 <p className="text-xs text-muted-foreground mt-0.5">{option.description}</p>
               </div>
-              <div className="bg-muted/30 flex items-center justify-center">
-                <PlaceholderVisual label="Photo" />
+              <div className="flex items-center justify-center">
+                {option.imageSrc ? (
+                  <Image
+                    src={option.imageSrc}
+                    alt={option.imageAlt ?? `Illustration ${option.label}`}
+                    width={80}
+                    height={112}
+                    sizes="80px"
+                    className="h-28 w-full object-contain object-left scale-125 -translate-x-1 transform-gpu"
+                  />
+                ) : (
+                  <PlaceholderVisual label="Photo" />
+                )}
               </div>
             </div>
           )
