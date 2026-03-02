@@ -1,4 +1,5 @@
 import { NextResponse } from 'next/server'
+import { revalidateTag } from 'next/cache'
 import { createClient } from 'next-sanity'
 import Stripe from 'stripe'
 import { Resend } from 'resend'
@@ -124,6 +125,7 @@ export async function POST(req: Request) {
     const tx = sanity.transaction()
     pieceIds.forEach((id) => tx.patch(id, { set: { status: 'sold' } }))
     await tx.commit()
+    revalidateTag('piece', 'default')
   } catch (error) {
     console.error('Failed to update Sanity pieces to sold', error)
     return NextResponse.json(

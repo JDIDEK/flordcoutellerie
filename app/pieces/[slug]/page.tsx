@@ -1,3 +1,4 @@
+import type { Metadata } from 'next'
 import Image from 'next/image'
 import { notFound } from 'next/navigation'
 import { Check } from 'lucide-react'
@@ -19,6 +20,50 @@ export async function generateStaticParams() {
   return slugs.map((slug) => ({
     slug,
   }))
+}
+
+export async function generateMetadata({
+  params,
+}: {
+  params: Promise<{ slug: string }>
+}): Promise<Metadata> {
+  const { slug } = await params
+  const piece = await getPieceBySlug(slug)
+
+  if (!piece) return {}
+
+  const baseUrl = process.env.NEXT_PUBLIC_APP_URL ?? 'https://flordcoutellerie.fr'
+  const heroImage = piece.mainImage ?? piece.gallery?.[0]
+  const ogImageUrl = heroImage
+    ? urlFor(heroImage).width(1200).height(630).fit('crop').url()
+    : undefined
+
+  const description =
+    piece.description ??
+    `${piece.title}${
+      piece.subtitle ? ` — ${piece.subtitle}` : ''
+    }. Pièce unique, coutellerie artisanale française.`
+
+  return {
+    title: `${piece.title} | Flo RD Coutellerie`,
+    description,
+    openGraph: {
+      title: piece.title,
+      description,
+      url: `${baseUrl}/pieces/${slug}`,
+      siteName: 'Flo RD Coutellerie',
+      ...(ogImageUrl && {
+        images: [{ url: ogImageUrl, width: 1200, height: 630, alt: piece.title }],
+      }),
+      type: 'website',
+    },
+    twitter: {
+      card: 'summary_large_image',
+      title: piece.title,
+      description,
+      ...(ogImageUrl && { images: [ogImageUrl] }),
+    },
+  }
 }
 
 export default async function PieceDetailPage({
@@ -59,6 +104,33 @@ export default async function PieceDetailPage({
   })
 
   const isAvailable = piece.status === 'available'
+  const baseUrl = process.env.NEXT_PUBLIC_APP_URL ?? 'https://flordcoutellerie.fr'
+
+  const jsonLd = {
+    '@context': 'https://schema.org',
+    '@type': 'Product',
+    name: piece.title,
+    description: piece.description ?? undefined,
+    image: heroImageSrc !== '/placeholder.jpg' ? [heroImageSrc] : undefined,
+    brand: {
+      '@type': 'Brand',
+      name: 'Flo RD Coutellerie',
+    },
+    offers: {
+      '@type': 'Offer',
+      priceCurrency: 'EUR',
+      price: piece.price ?? undefined,
+      availability:
+        piece.status === 'available'
+          ? 'https://schema.org/InStock'
+          : 'https://schema.org/SoldOut',
+      url: `${baseUrl}/pieces/${piece.slug}`,
+      seller: {
+        '@type': 'Organization',
+        name: 'Flo RD Coutellerie',
+      },
+    },
+  }
 
   const cartPiece = {
     id: piece._id,
@@ -71,6 +143,10 @@ export default async function PieceDetailPage({
 
   return (
     <>
+      <script
+        type="application/ld+json"
+        dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd) }}
+      />
       <Navigation />
 
       <PageTransitionWrapper>
