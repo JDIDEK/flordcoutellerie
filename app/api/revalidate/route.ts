@@ -26,6 +26,6 @@ export async function POST(req: NextRequest) {
     return NextResponse.json({ body })
   } catch (err: unknown) {
     console.error('Revalidation failed', err)
-    return new NextResponse('Internal server error', { status: 500 })
+    return new NextResponse('Revalidation request failed', { status: 500 })
   }
 }
