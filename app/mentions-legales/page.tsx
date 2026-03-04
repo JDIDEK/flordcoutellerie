@@ -1,5 +1,11 @@
+import type { Metadata } from 'next'
 import { Navigation } from '@/components/Navigation'
 import { PageTransitionWrapper } from '@/components/PageTransitionWrapper'
+
+export const metadata: Metadata = {
+  title: 'Mentions Légales | Flo RD Coutellerie',
+  description: 'Mentions légales du site Flo RD Coutellerie : éditeur, hébergement, propriété intellectuelle et données personnelles.',
+}
 
 export default function MentionsLegalesPage() {
   return (

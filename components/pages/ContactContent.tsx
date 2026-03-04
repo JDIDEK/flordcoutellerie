@@ -21,6 +21,9 @@ export function ContactContent() {
 
   type FormField = keyof typeof formData
   const [errors, setErrors] = useState<Partial<Record<FormField, string>>>({})
+  const [isSubmitting, setIsSubmitting] = useState(false)
+  const [submitSuccess, setSubmitSuccess] = useState(false)
+  const [submitError, setSubmitError] = useState<string | null>(null)
   const socialLinks = [
     { label: 'Instagram', href: 'https://www.instagram.com/flo_rd_coutellerie', Icon: Instagram },
     { label: 'YouTube', href: 'https://www.youtube.com/channel/UCYYwsqX5t94tmXsty9wFepw/featured', Icon: Youtube },
@@ -48,7 +51,7 @@ export function ContactContent() {
       }
     }
 
-  const handleSubmit = (e: React.FormEvent) => {
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault()
     const nextErrors: Partial<Record<FormField, string>> = {}
 
@@ -69,16 +72,28 @@ export function ContactContent() {
     setErrors(nextErrors)
     if (Object.keys(nextErrors).length) return
 
-    const subject = 'Contact depuis le site'
-    const mailtoLink = `mailto:floribadeaudumas@gmail.com?subject=${encodeURIComponent(
-      subject
-    )}&body=${encodeURIComponent(
-      `Nom: ${safeData.name}\nEmail: ${safeData.email}\nTéléphone: ${
-        safeData.phone || 'Non renseigné'
-      }\n\nMessage:\n${safeData.message}`
-    )}`
+    setIsSubmitting(true)
+    setSubmitError(null)
 
-    window.location.href = mailtoLink
+    try {
+      const res = await fetch('/api/contact', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(safeData),
+      })
+
+      if (!res.ok) {
+        const data = await res.json().catch(() => ({}))
+        throw new Error(data.error || 'Erreur lors de l’envoi.')
+      }
+
+      setSubmitSuccess(true)
+      setFormData({ name: '', email: '', phone: '', message: '' })
+    } catch (err) {
+      setSubmitError(err instanceof Error ? err.message : 'Erreur lors de l’envoi du message.')
+    } finally {
+      setIsSubmitting(false)
+    }
   }
 
   return (
@@ -129,12 +144,13 @@ export function ContactContent() {
                   onChange={handleFieldChange('name')}
                   required
                   aria-invalid={Boolean(errors.name)}
+                  aria-describedby={errors.name ? 'name-error' : undefined}
                   maxLength={80}
                   autoComplete="name"
                   className="w-full bg-transparent border-b border-border/70 py-2 text-base placeholder:text-muted-foreground/60 focus:outline-none focus:border-primary transition-colors"
                   placeholder="Votre nom"
                 />
-                {errors.name && <p className="text-xs text-destructive mt-1">{errors.name}</p>}
+                {errors.name && <p id="name-error" className="text-xs text-destructive mt-1">{errors.name}</p>}
               </div>
 
               <div className="space-y-1">
@@ -151,12 +167,13 @@ export function ContactContent() {
                   onChange={handleFieldChange('email')}
                   required
                   aria-invalid={Boolean(errors.email)}
+                  aria-describedby={errors.email ? 'email-error' : undefined}
                   maxLength={120}
                   autoComplete="email"
                   className="w-full bg-transparent border-b border-border/70 py-2 text-base placeholder:text-muted-foreground/60 focus:outline-none focus:border-primary transition-colors"
                   placeholder="vous@exemple.com"
                 />
-                {errors.email && <p className="text-xs text-destructive mt-1">{errors.email}</p>}
+                {errors.email && <p id="email-error" className="text-xs text-destructive mt-1">{errors.email}</p>}
               </div>
             </div>
 
@@ -173,13 +190,14 @@ export function ContactContent() {
                 value={formData.phone}
                 onChange={handleFieldChange('phone')}
                 aria-invalid={Boolean(errors.phone)}
+                aria-describedby={errors.phone ? 'phone-error' : undefined}
                 maxLength={30}
                 inputMode="tel"
                 autoComplete="tel"
                 className="w-full bg-transparent border-b border-border/70 py-2 text-base placeholder:text-muted-foreground/60 focus:outline-none focus:border-primary transition-colors"
                 placeholder="+33 6 12 34 56 78"
               />
-              {errors.phone && <p className="text-xs text-destructive mt-1">{errors.phone}</p>}
+              {errors.phone && <p id="phone-error" className="text-xs text-destructive mt-1">{errors.phone}</p>}
             </div>
 
             <div className="space-y-1">
@@ -197,18 +215,28 @@ export function ContactContent() {
                 rows={5}
                 required
                 aria-invalid={Boolean(errors.message)}
+                aria-describedby={errors.message ? 'message-error' : undefined}
                 maxLength={1500}
                 className="w-full bg-transparent border-b border-border/70 py-2 text-base leading-relaxed resize-none placeholder:text-muted-foreground/60 focus:outline-none focus:border-primary transition-colors"
               />
-              {errors.message && <p className="text-xs text-destructive mt-1">{errors.message}</p>}
+              {errors.message && <p id="message-error" className="text-xs text-destructive mt-1">{errors.message}</p>}
             </div>
 
-            <div className="pt-2">
+            <div className="pt-2 space-y-3">
+              {submitSuccess && (
+                <p className="text-sm text-emerald-600 dark:text-emerald-400">
+                  Votre message a bien été envoyé. Nous vous répondrons rapidement.
+                </p>
+              )}
+              {submitError && (
+                <p className="text-sm text-destructive">{submitError}</p>
+              )}
               <button
                 type="submit"
-                className="inline-flex items-center justify-center px-5 py-3 bg-primary text-primary-foreground text-sm font-semibold tracking-wide uppercase rounded-sm hover:brightness-110 transition-all duration-200 shadow-md"
+                disabled={isSubmitting}
+                className="inline-flex items-center justify-center px-5 py-3 bg-primary text-primary-foreground text-sm font-semibold tracking-wide uppercase rounded-sm hover:brightness-110 transition-all duration-200 shadow-md disabled:opacity-50 disabled:cursor-not-allowed"
               >
-                Envoyer la demande
+                {isSubmitting ? 'Envoi en cours...' : 'Envoyer la demande'}
               </button>
             </div>
           </form>

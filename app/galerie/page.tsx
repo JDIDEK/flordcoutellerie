@@ -1,6 +1,17 @@
+import type { Metadata } from 'next'
 import { Navigation } from '@/components/Navigation'
 import { PageTransitionWrapper } from '@/components/PageTransitionWrapper'
 import { HorizontalScrollGallery } from '@/components/HorizontalScrollGallery'
+
+export const metadata: Metadata = {
+  title: 'Galerie | Flo RD Coutellerie',
+  description: 'Galerie photo des réalisations Flo RD Coutellerie : couteaux de cuisine, pliants, outdoor et chasse. Pièces uniques artisanales.',
+  openGraph: {
+    title: 'Galerie | Flo RD Coutellerie',
+    description: 'Galerie photo des réalisations artisanales.',
+    url: 'https://flordcoutellerie.fr/galerie',
+  },
+}
 import { getGalleryImages } from '@/lib/sanity/queries'
 import type { GalleryCategory, GalleryImage } from '@/lib/sanity/types'
 import { urlFor } from '@/sanity/lib/image'

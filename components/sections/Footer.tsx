@@ -14,7 +14,7 @@ export function HomeFooter() {
             </span>
           </div>
 
-          <div className="flex flex-wrap items-center justify-center gap-4 md:gap-6 text-sm text-foreground">
+          <nav aria-label="Liens du pied de page" className="flex flex-wrap items-center justify-center gap-4 md:gap-6 text-sm text-foreground">
             <TransitionLink href="/atelier" className="hover:text-primary transition-colors">
               Atelier
             </TransitionLink>
@@ -30,7 +30,7 @@ export function HomeFooter() {
             <TransitionLink href="/politique-confidentialite" className="hover:text-primary transition-colors">
               Confidentialité
             </TransitionLink>
-          </div>
+          </nav>
 
           <div className="flex flex-col items-center md:items-end gap-1 text-xs text-muted-foreground">
             <p className="text-right leading-tight">SIRET: 914 141 684 00011</p>

@@ -1,6 +1,7 @@
 'use client'
 
 import { useState, useEffect } from 'react'
+import { create } from 'zustand'
 import { X } from 'lucide-react'
 import { Button } from '@/components/ui/button'
 import { TransitionLink } from '@/components/TransitionLink'
@@ -9,13 +10,35 @@ const COOKIE_CONSENT_KEY = 'cookie-consent'
 
 type ConsentState = 'pending' | 'accepted' | 'rejected'
 
-export function CookieBanner() {
-  const [consent, setConsent] = useState<ConsentState>(() => {
-    if (typeof window === 'undefined') return 'pending'
+// Shared reactive store for cookie consent
+type ConsentStore = {
+  consent: ConsentState
+  setConsent: (value: ConsentState) => void
+  hydrate: () => void
+}
+
+export const useConsentStore = create<ConsentStore>((set) => ({
+  consent: 'pending',
+  setConsent: (value) => {
+    localStorage.setItem(COOKIE_CONSENT_KEY, value)
+    set({ consent: value })
+  },
+  hydrate: () => {
     const saved = localStorage.getItem(COOKIE_CONSENT_KEY)
-    return saved === 'accepted' || saved === 'rejected' ? (saved as ConsentState) : 'pending'
-  })
+    if (saved === 'accepted' || saved === 'rejected') {
+      set({ consent: saved })
+    }
+  },
+}))
+
+export function CookieBanner() {
+  const { consent, setConsent, hydrate } = useConsentStore()
   const [isVisible, setIsVisible] = useState(false)
+
+  // Hydrate from localStorage on mount (avoids SSR mismatch)
+  useEffect(() => {
+    hydrate()
+  }, [hydrate])
 
   useEffect(() => {
     if (consent !== 'pending') return
@@ -24,18 +47,13 @@ export function CookieBanner() {
   }, [consent])
 
   const handleAccept = () => {
-    localStorage.setItem(COOKIE_CONSENT_KEY, 'accepted')
     setConsent('accepted')
     setIsVisible(false)
-    // Analytics is already loaded, no action needed
   }
 
   const handleReject = () => {
-    localStorage.setItem(COOKIE_CONSENT_KEY, 'rejected')
     setConsent('rejected')
     setIsVisible(false)
-    // Note: Vercel Analytics respects Do Not Track by default
-    // For full compliance, you may want to disable it entirely when rejected
   }
 
   const handleClose = () => {
@@ -113,13 +131,13 @@ export function CookieBanner() {
   )
 }
 
-// Hook to check consent status (useful for conditionally loading analytics)
+// Hook to check consent status reactively
 export function useCookieConsent() {
-  return useState<ConsentState>(() => {
-    if (typeof window === 'undefined') return 'pending'
-    const savedConsent = localStorage.getItem(COOKIE_CONSENT_KEY)
-    if (savedConsent === 'accepted') return 'accepted'
-    if (savedConsent === 'rejected') return 'rejected'
-    return 'pending'
-  })[0]
+  const { consent, hydrate } = useConsentStore()
+
+  useEffect(() => {
+    hydrate()
+  }, [hydrate])
+
+  return consent
 }

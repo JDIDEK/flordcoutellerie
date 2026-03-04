@@ -46,40 +46,57 @@ export function Navigation({ alwaysVisible = false }: NavigationProps) {
       return
     }
 
-    const isMobile = window.innerWidth < 768
+    const mobileQuery = window.matchMedia('(max-width: 767px)')
 
-    if (isMobile) {
-      return
-    }
-
-    const handleScroll = () => {
-      const currentScrollY = window.scrollY
-      const lastScrollY = lastScrollYRef.current
-      const delta = currentScrollY - lastScrollY
-      const DIRECTION_THRESHOLD = 12
-
-      if (currentScrollY < 100) {
+    const setupScroll = () => {
+      if (mobileQuery.matches) {
         setIsVisible(true)
-      } else if (Math.abs(delta) > DIRECTION_THRESHOLD) {
-        setIsVisible(delta < 0)
+        return () => {}
       }
 
-      lastScrollYRef.current = currentScrollY
-    }
-    
-    let ticking = false
-    const onScroll = () => {
-      if (!ticking) {
-        requestAnimationFrame(() => {
-          handleScroll()
-          ticking = false
-        })
-        ticking = true
+      const handleScroll = () => {
+        const currentScrollY = window.scrollY
+        const lastScrollY = lastScrollYRef.current
+        const delta = currentScrollY - lastScrollY
+        const DIRECTION_THRESHOLD = 12
+
+        if (currentScrollY < 100) {
+          setIsVisible(true)
+        } else if (Math.abs(delta) > DIRECTION_THRESHOLD) {
+          setIsVisible(delta < 0)
+        }
+
+        lastScrollYRef.current = currentScrollY
       }
+
+      let ticking = false
+      const onScroll = () => {
+        if (!ticking) {
+          requestAnimationFrame(() => {
+            handleScroll()
+            ticking = false
+          })
+          ticking = true
+        }
+      }
+
+      window.addEventListener('scroll', onScroll, { passive: true })
+      return () => window.removeEventListener('scroll', onScroll)
     }
-    
-    window.addEventListener('scroll', onScroll, { passive: true })
-    return () => window.removeEventListener('scroll', onScroll)
+
+    let cleanupScroll = setupScroll()
+
+    const handleMediaChange = () => {
+      cleanupScroll()
+      cleanupScroll = setupScroll()
+    }
+
+    mobileQuery.addEventListener('change', handleMediaChange)
+
+    return () => {
+      cleanupScroll()
+      mobileQuery.removeEventListener('change', handleMediaChange)
+    }
   }, [alwaysVisible])
 
   useEffect(() => {

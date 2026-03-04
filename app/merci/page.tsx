@@ -1,7 +1,14 @@
+import type { Metadata } from 'next'
 import { Suspense } from 'react'
 
 import { Navigation } from '@/components/Navigation'
 import { MerciContent } from '@/components/pages/MerciContent'
+
+export const metadata: Metadata = {
+  title: 'Merci | Flo RD Coutellerie',
+  description: 'Merci pour votre commande chez Flo RD Coutellerie.',
+  robots: { index: false, follow: false },
+}
 
 export default function MerciPage() {
   return (

@@ -17,7 +17,6 @@ type CartStore = {
   addItem: (item: Omit<CartItem, 'quantity'> & { quantity?: number }) => void
   removeItem: (id: string) => void
   clear: () => void
-  setQuantity: (id: string, quantity: number) => void
   isInCart: (id: string) => boolean
 }
 
@@ -40,12 +39,6 @@ export const useCart = create<CartStore>()(
       isInCart: (id: string) => get().items.some((item) => item.id === id),
       removeItem: (id) =>
         set((state) => ({ items: state.items.filter((item) => item.id !== id) })),
-      setQuantity: (id, _quantity) =>
-        set((state) => ({
-          items: state.items.map((item) =>
-            item.id === id ? { ...item, quantity: 1 } : item
-          ),
-        })),
       clear: () => set({ items: [] }),
     }),
     {

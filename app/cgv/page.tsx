@@ -1,5 +1,11 @@
+import type { Metadata } from 'next'
 import { Navigation } from '@/components/Navigation'
 import { PageTransitionWrapper } from '@/components/PageTransitionWrapper'
+
+export const metadata: Metadata = {
+  title: 'Conditions Générales de Vente | Flo RD Coutellerie',
+  description: 'Conditions Générales de Vente de Flo RD Coutellerie : commandes, paiement, livraison, garantie et droit de rétractation.',
+}
 
 export default function CGVPage() {
   return (

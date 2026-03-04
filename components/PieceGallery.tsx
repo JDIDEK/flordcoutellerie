@@ -78,8 +78,8 @@ export function PieceGallery({ images, status }: PieceGalleryProps) {
 
         {hasMultiple && (
           <>
-            <CarouselPrevious className="top-1/2 -left-6 -translate-y-1/2 bg-white/90 text-black shadow-lg hover:bg-white hover:text-black opacity-0 group-hover:opacity-100 pointer-events-none group-hover:pointer-events-auto transition-opacity duration-200" />
-            <CarouselNext className="top-1/2 -right-6 -translate-y-1/2 bg-white/90 text-black shadow-lg hover:bg-white hover:text-black opacity-0 group-hover:opacity-100 pointer-events-none group-hover:pointer-events-auto transition-opacity duration-200" />
+            <CarouselPrevious className="top-1/2 -left-6 -translate-y-1/2 bg-background/90 text-foreground shadow-lg hover:bg-background hover:text-foreground opacity-0 group-hover:opacity-100 pointer-events-none group-hover:pointer-events-auto transition-opacity duration-200" />
+            <CarouselNext className="top-1/2 -right-6 -translate-y-1/2 bg-background/90 text-foreground shadow-lg hover:bg-background hover:text-foreground opacity-0 group-hover:opacity-100 pointer-events-none group-hover:pointer-events-auto transition-opacity duration-200" />
           </>
         )}
       </Carousel>

@@ -84,7 +84,7 @@ export const piece = defineType({
     }),
 
     // --- ONGLET TECHNIQUE ---
-  defineField({
+    defineField({
       name: 'features',
       title: 'Caractéristiques',
       type: 'array',

@@ -1,6 +1,12 @@
+import type { Metadata } from 'next'
 import { Navigation } from '@/components/Navigation'
 import { PageTransitionWrapper } from '@/components/PageTransitionWrapper'
 import { TransitionLink } from '@/components/TransitionLink'
+
+export const metadata: Metadata = {
+  title: 'Politique de Confidentialité | Flo RD Coutellerie',
+  description: 'Politique de confidentialité de Flo RD Coutellerie : données collectées, finalités, durée de conservation et vos droits RGPD.',
+}
 
 export default function PolitiqueConfidentialitePage() {
   return (
@@ -213,7 +219,7 @@ export default function PolitiqueConfidentialitePage() {
               </section>
 
               <p className="text-sm text-muted-foreground text-center pt-10 border-t border-border">
-                Dernière mise à jour : Décembre 2024
+                Dernière mise à jour : Mars 2026
               </p>
 
               <div className="text-center pt-4">

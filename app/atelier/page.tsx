@@ -1,5 +1,16 @@
+import type { Metadata } from 'next'
 import { Navigation } from '@/components/Navigation'
 import { PageTransitionWrapper } from '@/components/PageTransitionWrapper'
+
+export const metadata: Metadata = {
+  title: "L'Atelier | Flo RD Coutellerie",
+  description: "Découvrez l'atelier de Flo RD Coutellerie : fabrication artisanale, matériaux nobles et savoir-faire d'exception pour des couteaux uniques.",
+  openGraph: {
+    title: "L'Atelier | Flo RD Coutellerie",
+    description: "Découvrez l'atelier de Flo RD Coutellerie et son savoir-faire artisanal.",
+    url: 'https://flordcoutellerie.fr/atelier',
+  },
+}
 
 export default function AboutPage() {
   return (

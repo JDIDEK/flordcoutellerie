@@ -17,8 +17,6 @@ export function isStepComplete(step: StepId, config: WizardConfig): boolean {
       return Boolean(config.guillochageCentral)
     case 'pliant-guillochage-platines':
       return Boolean(config.guillochagePlatineLeft && config.guillochagePlatineRight)
-    case 'pliant-guillochage':
-      return Boolean(config.guillochageCentral && config.guillochagePlatineLeft && config.guillochagePlatineRight)
     case 'outdoor-intensity':
       return Boolean(config.outdoorUse)
     case 'outdoor-form':

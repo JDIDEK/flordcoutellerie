@@ -1,5 +1,17 @@
+import type { Metadata } from 'next'
 import dynamic from 'next/dynamic'
 import { Navigation } from '@/components/Navigation'
+
+export const metadata: Metadata = {
+  title: "Flo RD Coutellerie | Couteaux d'Art Français",
+  description: "Coutelier d'art français créant des lames sur mesure et pièces uniques. Aciers Damasteel, VG10, 14C28N. Guillochage fleuri et manches en bois précieux.",
+  openGraph: {
+    title: "Flo RD Coutellerie | Couteaux d'Art Français",
+    description: "Coutelier d'art français créant des lames sur mesure et pièces uniques.",
+    url: 'https://flordcoutellerie.fr',
+    type: 'website',
+  },
+}
 import { PageTransitionWrapper } from '@/components/PageTransitionWrapper'
 import { HomeQuickAccessSection } from '@/components/sections/QuickAccess'
 

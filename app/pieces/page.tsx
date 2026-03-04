@@ -1,8 +1,19 @@
 // app/pieces/page.tsx
+import type { Metadata } from 'next'
 import { Navigation } from '@/components/Navigation'
 import { ProductCard } from '@/components/ProductCard'
 import { PageTransitionWrapper } from '@/components/PageTransitionWrapper'
 import { getPieces } from '@/lib/sanity/queries'
+
+export const metadata: Metadata = {
+  title: 'Pièces disponibles | Flo RD Coutellerie',
+  description: 'Découvrez les couteaux artisanaux disponibles : pièces uniques en acier Damasteel, VG10 et 14C28N, avec guillochage fleuri et manches en bois précieux.',
+  openGraph: {
+    title: 'Pièces disponibles | Flo RD Coutellerie',
+    description: 'Découvrez les couteaux artisanaux disponibles à la vente.',
+    url: 'https://flordcoutellerie.fr/pieces',
+  },
+}
 
 export default async function PiecesPage() {
   const pieces = await getPieces()

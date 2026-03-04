@@ -18,7 +18,6 @@ export type StepId =
   | 'steel'
   | 'damasteel-pattern'
   | 'sheath'
-  | 'pliant-guillochage'
   | 'handle'
   | 'handle-composition'
   | 'personalization'
