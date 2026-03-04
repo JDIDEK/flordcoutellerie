@@ -3,6 +3,7 @@ import { groq } from 'next-sanity'
 import type Stripe from 'stripe'
 import { z } from 'zod'
 
+import { logger } from '@/lib/logger'
 import { getStripeClient } from '@/lib/stripe'
 import { client } from '@/sanity/lib/client'
 
@@ -136,7 +137,7 @@ export async function POST(req: Request) {
 
     return NextResponse.json({ url: session.url, id: session.id })
   } catch (error) {
-    console.error('Stripe checkout session error', error)
+    logger.error('Stripe checkout session error', error)
     return NextResponse.json(
       { error: 'Erreur lors de la creation de la session de paiement.' },
       { status: 500 }

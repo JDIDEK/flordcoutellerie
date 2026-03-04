@@ -4,6 +4,7 @@ import { createClient } from 'next-sanity'
 import Stripe from 'stripe'
 import { Resend } from 'resend'
 
+import { logger } from '@/lib/logger'
 import { getStripeClient } from '@/lib/stripe'
 import { apiVersion, dataset, projectId } from '@/sanity/env'
 
@@ -82,7 +83,7 @@ export async function POST(req: Request) {
   try {
     event = stripe.webhooks.constructEvent(rawBody, signature, webhookSecret)
   } catch (err: unknown) {
-    console.error('Stripe webhook signature verification failed', err)
+    logger.error('Stripe webhook signature verification failed', err)
     return NextResponse.json({ error: 'Webhook signature verification failed.' }, { status: 400 })
   }
 
@@ -100,13 +101,13 @@ export async function POST(req: Request) {
       paymentIntent = session.payment_intent as Stripe.PaymentIntent
     }
   } catch (error) {
-    console.error('Unable to retrieve payment intent', error)
+    logger.error('Unable to retrieve payment intent', error)
   }
 
   const pieceIds = parsePieceIdsFromMetadata(session, paymentIntent)
 
   if (pieceIds.length === 0) {
-    console.warn('No piece IDs found in metadata for session', session.id)
+    logger.warn('No piece IDs found in metadata for session', { sessionId: session.id })
     return NextResponse.json({ received: true, warning: 'No piece IDs found.' })
   }
 
@@ -114,7 +115,7 @@ export async function POST(req: Request) {
   try {
     sanity = getSanityWriteClient()
   } catch (error) {
-    console.error('Sanity write client creation failed', error)
+    logger.error('Sanity write client creation failed', error)
     return NextResponse.json(
       { error: 'Configuration Sanity manquante pour les ecritures.' },
       { status: 500 }
@@ -127,7 +128,7 @@ export async function POST(req: Request) {
     await tx.commit()
     revalidateTag('piece', 'default')
   } catch (error) {
-    console.error('Failed to update Sanity pieces to sold', error)
+    logger.error('Failed to update Sanity pieces to sold', error)
     return NextResponse.json(
       { error: 'Mise a jour Sanity echouee.' },
       { status: 500 }
@@ -158,10 +159,10 @@ export async function POST(req: Request) {
         ].join('\n'),
       })
     } catch (error) {
-      console.error('Failed to send confirmation email via Resend', error)
+      logger.error('Failed to send confirmation email via Resend', error)
     }
   } else {
-    console.warn('No customer email found on checkout session', session.id)
+    logger.warn('No customer email found on checkout session', { sessionId: session.id })
   }
 
   return NextResponse.json({ received: true })
