@@ -20,11 +20,10 @@ export const metadata: Metadata = {
   keywords: ['coutellerie artisanale', 'couteaux sur mesure', 'damasteel', 'forge française', 'lames artisanales'],
   icons: {
     icon: [
-      { url: '/assets/images/icon-light-32x32.png', media: '(prefers-color-scheme: light)' },
-      { url: '/assets/images/icon-dark-32x32.png', media: '(prefers-color-scheme: dark)' },
-      { url: '/assets/images/icon.svg', type: 'image/svg+xml' },
+      { url: '/assets/images/Logo-Clair-Petit.svg', media: '(prefers-color-scheme: light)' },
+      { url: '/assets/images/Logo-Clair-Petit.svg', media: '(prefers-color-scheme: dark)' },
     ],
-    apple: '/assets/images/apple-icon.png',
+    apple: '/assets/images/flo/flo.png',
   },
 }
 

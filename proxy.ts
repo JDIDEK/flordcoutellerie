@@ -38,7 +38,7 @@ function isRateLimited(key: string): boolean {
 
 // Note: This in-memory rate limiter works per-instance. In serverless or
 // multi-instance deployments, consider a distributed store (e.g. Redis, Vercel KV).
-export function middleware(req: NextRequest) {
+export function proxy(req: NextRequest) {
   cleanupExpiredEntries()
 
   const key = getRateLimitKey(req)
