@@ -4,9 +4,15 @@ import { revalidateTag } from 'next/cache'
 
 export async function POST(req: NextRequest) {
   try {
+    const secret = process.env.SANITY_WEBHOOK_SECRET
+    if (!secret) {
+      console.error('Missing environment variable: SANITY_WEBHOOK_SECRET')
+      return new NextResponse('Server configuration error', { status: 500 })
+    }
+
     const { isValidSignature, body } = await parseBody<{ _type: string }>(
       req,
-      process.env.SANITY_WEBHOOK_SECRET
+      secret
     )
 
     if (!isValidSignature) {
@@ -18,8 +24,8 @@ export async function POST(req: NextRequest) {
     }
 
     return NextResponse.json({ body })
-  } catch (err: any) {
-    console.error(err)
-    return new NextResponse(err.message, { status: 500 })
+  } catch (err: unknown) {
+    console.error('Revalidation failed', err)
+    return new NextResponse('Internal server error', { status: 500 })
   }
 }
