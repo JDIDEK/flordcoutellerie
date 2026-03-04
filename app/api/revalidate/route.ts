@@ -2,11 +2,13 @@ import { type NextRequest, NextResponse } from 'next/server'
 import { parseBody } from 'next-sanity/webhook'
 import { revalidateTag } from 'next/cache'
 
+import { logger } from '@/lib/logger'
+
 export async function POST(req: NextRequest) {
   try {
     const secret = process.env.SANITY_WEBHOOK_SECRET
     if (!secret) {
-      console.error('Missing environment variable: SANITY_WEBHOOK_SECRET')
+      logger.error('Missing environment variable: SANITY_WEBHOOK_SECRET')
       return new NextResponse('Server configuration error', { status: 500 })
     }
 
@@ -25,7 +27,7 @@ export async function POST(req: NextRequest) {
 
     return NextResponse.json({ body })
   } catch (err: unknown) {
-    console.error('Revalidation failed', err)
+    logger.error('Revalidation failed', err)
     return new NextResponse('Revalidation request failed', { status: 500 })
   }
 }

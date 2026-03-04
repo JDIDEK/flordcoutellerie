@@ -1,5 +1,7 @@
 import Stripe from 'stripe'
 
+import { logger } from '@/lib/logger'
+
 let stripeClient: Stripe | null = null
 
 export function getStripeClient() {
@@ -8,7 +10,7 @@ export function getStripeClient() {
   const secretKey = process.env.STRIPE_SECRET_KEY
 
   if (!secretKey) {
-    console.error('Missing environment variable: STRIPE_SECRET_KEY')
+    logger.error('Missing environment variable: STRIPE_SECRET_KEY')
     return null
   }
 
