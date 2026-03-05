@@ -1,5 +1,15 @@
 import { withNextVideo } from "next-video/process";
 /** @type {import('next').NextConfig} */
+const scriptSrc = [
+  "'self'",
+  "'unsafe-inline'",
+  'https://va.vercel-scripts.com',
+]
+
+if (process.env.NODE_ENV !== 'production') {
+  scriptSrc.push("'unsafe-eval'")
+}
+
 const nextConfig = {
   images: {
     formats: ['image/avif', 'image/webp'],
@@ -58,12 +68,12 @@ const nextConfig = {
             key: 'Content-Security-Policy',
             value: [
               "default-src 'self'",
-              "script-src 'self' 'unsafe-inline' 'unsafe-eval' https://js.stripe.com https://va.vercel-scripts.com",
+              `script-src ${scriptSrc.join(' ')}`,
               "style-src 'self' 'unsafe-inline' https://fonts.googleapis.com",
               "img-src 'self' data: blob: https://cdn.sanity.io https://image.mux.com",
               "font-src 'self' https://fonts.gstatic.com",
-              "connect-src 'self' https://*.sanity.io https://api.stripe.com https://*.mux.com https://va.vercel-scripts.com wss://*.sanity.io",
-              "frame-src 'self' https://js.stripe.com",
+              "connect-src 'self' https://*.sanity.io https://*.mux.com https://va.vercel-scripts.com wss://*.sanity.io",
+              "frame-src 'self'",
               "media-src 'self' https://stream.mux.com blob:",
               "object-src 'none'",
               "base-uri 'self'",

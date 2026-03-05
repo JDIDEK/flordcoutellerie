@@ -11,7 +11,14 @@ export function ThemeToggle({ className = '' }: { className?: string }) {
     const prefersDark = window.matchMedia('(prefers-color-scheme: dark)').matches
     const resolvedDark = saved ? saved === 'dark' : prefersDark
     document.documentElement.classList.toggle('dark', resolvedDark)
-    setThemeState({ isDark: resolvedDark, mounted: true })
+
+    const animationFrame = window.requestAnimationFrame(() => {
+      setThemeState({ isDark: resolvedDark, mounted: true })
+    })
+
+    return () => {
+      window.cancelAnimationFrame(animationFrame)
+    }
   }, [])
 
   const toggleTheme = () => {

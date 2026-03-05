@@ -3,9 +3,21 @@ import { Resend } from 'resend'
 import { z } from 'zod'
 
 import { logger } from '@/lib/logger'
+import { rateLimit } from '@/lib/rate-limit'
+import { getClientIp } from '@/lib/request'
 
 export const runtime = 'nodejs'
 export const dynamic = 'force-dynamic'
+
+const CONTACT_IP_RATE_LIMIT = {
+  limit: 5,
+  windowMs: 30 * 60 * 1000,
+} as const
+
+const CONTACT_EMAIL_RATE_LIMIT = {
+  limit: 3,
+  windowMs: 30 * 60 * 1000,
+} as const
 
 const contactSchema = z
   .object({
@@ -17,6 +29,24 @@ const contactSchema = z
   .strict()
 
 export async function POST(req: Request) {
+  const ip = getClientIp(req)
+  const ipLimit = rateLimit({
+    key: `contact:${ip}`,
+    ...CONTACT_IP_RATE_LIMIT,
+  })
+
+  if (!ipLimit.allowed) {
+    return NextResponse.json(
+      { error: 'Trop de messages envoyés. Réessayez plus tard.' },
+      {
+        status: 429,
+        headers: {
+          'Retry-After': String(ipLimit.retryAfterSeconds),
+        },
+      }
+    )
+  }
+
   let body: unknown
 
   try {
@@ -33,6 +63,22 @@ export async function POST(req: Request) {
   }
 
   const { name, email, phone, message } = parsed.data
+  const emailLimit = rateLimit({
+    key: `contact-email:${email.toLowerCase()}`,
+    ...CONTACT_EMAIL_RATE_LIMIT,
+  })
+
+  if (!emailLimit.allowed) {
+    return NextResponse.json(
+      { error: 'Cet email a envoyé trop de messages récemment. Réessayez plus tard.' },
+      {
+        status: 429,
+        headers: {
+          'Retry-After': String(emailLimit.retryAfterSeconds),
+        },
+      }
+    )
+  }
 
   const resendApiKey = process.env.RESEND_API_KEY
   const recipientEmail = process.env.CONTACT_RECIPIENT_EMAIL ?? process.env.RESEND_FROM_EMAIL

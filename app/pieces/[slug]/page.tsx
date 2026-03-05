@@ -11,6 +11,8 @@ import { PageTransitionWrapper } from '@/components/PageTransitionWrapper'
 import { TransitionLink } from '@/components/TransitionLink'
 import { Button } from '@/components/ui/button'
 import { PieceGallery } from '@/components/PieceGallery'
+import { escapeJsonForHtml } from '@/lib/request'
+import { resolvePieceStatus } from '@/lib/pieces'
 import { getPieceBySlug, getAllPieceSlugs } from '@/lib/sanity/queries'
 import { formatCurrency } from '@/lib/utils'
 import { urlFor } from '@/sanity/lib/image'
@@ -80,6 +82,10 @@ export default async function PieceDetailPage({
 
   const formattedPrice = formatCurrency(piece.price)
   const formattedOriginalPrice = formatCurrency(piece.originalPrice)
+  const displayStatus = resolvePieceStatus(
+    piece.status,
+    piece.reservationExpiresAt
+  )
   const heroImage = piece.mainImage ?? piece.gallery?.[0]
   const heroImageSrc = heroImage
     ? urlFor(heroImage).width(1600).height(1600).fit('crop').url()
@@ -103,7 +109,7 @@ export default async function PieceDetailPage({
     }
   })
 
-  const isAvailable = piece.status === 'available'
+  const isAvailable = displayStatus === 'available'
   const baseUrl = process.env.NEXT_PUBLIC_APP_URL ?? 'https://flordcoutellerie.fr'
 
   const jsonLd = {
@@ -121,7 +127,7 @@ export default async function PieceDetailPage({
       priceCurrency: 'EUR',
       price: piece.price ?? undefined,
       availability:
-        piece.status === 'available'
+        displayStatus === 'available'
           ? 'https://schema.org/InStock'
           : 'https://schema.org/SoldOut',
       url: `${baseUrl}/pieces/${piece.slug}`,
@@ -138,14 +144,14 @@ export default async function PieceDetailPage({
     price: piece.price,
     image: heroImageSrc,
     slug: piece.slug,
-    status: piece.status,
+    status: displayStatus,
   }
 
   return (
     <>
       <script
         type="application/ld+json"
-        dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd) }}
+        dangerouslySetInnerHTML={{ __html: escapeJsonForHtml(jsonLd) }}
       />
       <Navigation />
 
@@ -160,7 +166,7 @@ export default async function PieceDetailPage({
             />
 
             <div className="grid lg:grid-cols-[1.1fr_0.9fr] gap-14 items-start">
-              <PieceGallery images={galleryImages} status={piece.status} />
+              <PieceGallery images={galleryImages} status={displayStatus} />
 
               <section className="space-y-8">
                 <div className="space-y-3 md:animate-slide-in-right">
@@ -240,7 +246,7 @@ export default async function PieceDetailPage({
                         Indisponible
                       </Button>
                       <p className="text-xs text-muted-foreground leading-relaxed">
-                        {piece.status === 'reserved'
+                        {displayStatus === 'reserved'
                           ? 'Cette pièce est réservée mais peut être adaptée sur commande.'
                           : 'Cette pièce est vendue mais peut être recréée avec des variations uniques.'}
                       </p>

@@ -3,6 +3,7 @@ import type { Metadata } from 'next'
 import { Navigation } from '@/components/Navigation'
 import { ProductCard } from '@/components/ProductCard'
 import { PageTransitionWrapper } from '@/components/PageTransitionWrapper'
+import { resolvePieceStatus } from '@/lib/pieces'
 import { getPieces } from '@/lib/sanity/queries'
 
 export const metadata: Metadata = {
@@ -17,9 +18,15 @@ export const metadata: Metadata = {
 
 export default async function PiecesPage() {
   const pieces = await getPieces()
+  const normalizedPieces = pieces.map((piece) => ({
+    ...piece,
+    status: resolvePieceStatus(piece.status, piece.reservationExpiresAt),
+  }))
 
-  const available = pieces.filter((p) => !p.status || p.status === 'available')
-  const soldOrReserved = pieces.filter(
+  const available = normalizedPieces.filter(
+    (piece) => !piece.status || piece.status === 'available'
+  )
+  const soldOrReserved = normalizedPieces.filter(
     (p) => p.status === 'sold' || p.status === 'reserved'
   )
 

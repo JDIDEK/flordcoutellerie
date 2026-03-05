@@ -9,6 +9,7 @@ export type PieceListItem = {
   subtitle?: string
   category?: string
   status?: SanityPieceStatus
+  reservationExpiresAt?: string
   price?: number
   originalPrice?: number
   steel?: string
@@ -44,6 +45,7 @@ export type SignaturePiece = {
   title: string
   steelSummary?: string
   status?: SanityPieceStatus
+  reservationExpiresAt?: string
   price?: number
   mainImage?: SanityImageSource
 }

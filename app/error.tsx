@@ -33,9 +33,14 @@ export default function GlobalError({
             <Button onClick={reset} size="lg">
               Réessayer
             </Button>
-            {/* eslint-disable-next-line @next/next/no-html-link-for-pages -- Intentional full reload in error boundary */}
-            <Button asChild variant="outline" size="lg">
-              <a href="/">Retour à l&apos;accueil</a>
+            <Button
+              variant="outline"
+              size="lg"
+              onClick={() => {
+                window.location.href = '/'
+              }}
+            >
+              Retour à l&apos;accueil
             </Button>
           </div>
         </div>
