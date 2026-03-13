@@ -1,6 +1,8 @@
 import type { Metadata } from 'next'
-import dynamic from 'next/dynamic'
 import { Navigation } from '@/components/Navigation'
+import { HomeHeroSection } from '@/components/sections/Hero'
+import { PageTransitionWrapper } from '@/components/PageTransitionWrapper'
+import { HomeQuickAccessSection } from '@/components/sections/QuickAccess'
 
 export const metadata: Metadata = {
   title: "Flo RD Coutellerie | Couteaux d'Art Français",
@@ -12,13 +14,6 @@ export const metadata: Metadata = {
     type: 'website',
   },
 }
-import { PageTransitionWrapper } from '@/components/PageTransitionWrapper'
-import { HomeQuickAccessSection } from '@/components/sections/QuickAccess'
-
-const HomeHeroSection = dynamic(
-  () => import('@/components/sections/Hero').then(mod => ({ default: mod.HomeHeroSection })),
-  { ssr: true }
-)
 
 export default async function Home() {
   return (
@@ -26,7 +21,7 @@ export default async function Home() {
       <Navigation alwaysVisible />
 
       <PageTransitionWrapper>
-        <main className="relative isolate min-h-screen overflow-visible">
+        <main className="relative isolate min-h-screen overflow-x-hidden bg-background">
           <HomeHeroSection />
           <HomeQuickAccessSection />
         </main>

@@ -9,14 +9,44 @@ interface PageTransitionWrapperProps {
 }
 
 export function PageTransitionWrapper({ children, className }: PageTransitionWrapperProps) {
-  const [isVisible, setIsVisible] = useState(false)
+  const [isVisible, setIsVisible] = useState(() => {
+    if (typeof document === 'undefined') return false
+    return document.documentElement.dataset.siteLoaderComplete === 'true'
+  })
 
   useEffect(() => {
-    // Small delay to ensure the DOM is ready
-    const timer = requestAnimationFrame(() => {
-      setIsVisible(true)
-    })
-    return () => cancelAnimationFrame(timer)
+    let frameId: number | null = null
+
+    const reveal = () => {
+      if (frameId !== null) {
+        cancelAnimationFrame(frameId)
+      }
+      frameId = requestAnimationFrame(() => {
+        setIsVisible(true)
+      })
+    }
+
+    if (document.documentElement.dataset.siteLoaderComplete === 'true') {
+      reveal()
+      return () => {
+        if (frameId !== null) {
+          cancelAnimationFrame(frameId)
+        }
+      }
+    }
+
+    const handleLoaderFinished = () => {
+      reveal()
+    }
+
+    window.addEventListener('site-loader-finished', handleLoaderFinished)
+
+    return () => {
+      window.removeEventListener('site-loader-finished', handleLoaderFinished)
+      if (frameId !== null) {
+        cancelAnimationFrame(frameId)
+      }
+    }
   }, [])
 
   return (

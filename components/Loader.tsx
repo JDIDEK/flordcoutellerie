@@ -49,6 +49,24 @@ export function SiteLoader() {
     window.dispatchEvent(new Event('site-loader-finished'))
   }, [isLoading])
 
+  useEffect(() => {
+    const previousBodyOverflow = document.body.style.overflow
+    const previousHtmlOverflow = document.documentElement.style.overflow
+
+    if (isVisible) {
+      document.body.style.overflow = 'hidden'
+      document.documentElement.style.overflow = 'hidden'
+    } else {
+      document.body.style.overflow = previousBodyOverflow
+      document.documentElement.style.overflow = previousHtmlOverflow
+    }
+
+    return () => {
+      document.body.style.overflow = previousBodyOverflow
+      document.documentElement.style.overflow = previousHtmlOverflow
+    }
+  }, [isVisible])
+
   if (!isVisible) return null
 
   return (
