@@ -7,10 +7,8 @@ export function ThemeToggle({ className = '' }: { className?: string }) {
 
   useEffect(() => {
     if (typeof window === 'undefined') return
-    const saved = localStorage.getItem('theme')
-    const prefersDark = window.matchMedia('(prefers-color-scheme: dark)').matches
-    const resolvedDark = saved ? saved === 'dark' : prefersDark
-    document.documentElement.classList.toggle('dark', resolvedDark)
+    const resolvedDark = document.documentElement.classList.contains('dark')
+    document.documentElement.style.colorScheme = resolvedDark ? 'dark' : 'light'
 
     const animationFrame = window.requestAnimationFrame(() => {
       setThemeState({ isDark: resolvedDark, mounted: true })
@@ -27,9 +25,11 @@ export function ThemeToggle({ className = '' }: { className?: string }) {
     
     if (newIsDark) {
       document.documentElement.classList.add('dark')
+      document.documentElement.style.colorScheme = 'dark'
       localStorage.setItem('theme', 'dark')
     } else {
       document.documentElement.classList.remove('dark')
+      document.documentElement.style.colorScheme = 'light'
       localStorage.setItem('theme', 'light')
     }
   }

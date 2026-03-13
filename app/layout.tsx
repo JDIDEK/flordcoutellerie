@@ -6,6 +6,18 @@ import { ViewportHeight } from '@/components/ViewportHeight'
 import { AnalyticsGate } from '@/components/AnalyticsGate'
 import '@/styles/globals.css'
 
+const themeInitScript = `
+(() => {
+  try {
+    const savedTheme = localStorage.getItem('theme')
+    const prefersDark = window.matchMedia('(prefers-color-scheme: dark)').matches
+    const isDark = savedTheme ? savedTheme === 'dark' : prefersDark
+    document.documentElement.classList.toggle('dark', isDark)
+    document.documentElement.style.colorScheme = isDark ? 'dark' : 'light'
+  } catch (_) {}
+})()
+`
+
 const cormorant = Cormorant_Garamond({
   subsets: ['latin'],
   weight: ['300', '400', '500', '600', '700'],
@@ -36,6 +48,9 @@ export const viewport = {
 export default function RootLayout({ children }: { children: React.ReactNode }) {
   return (
     <html lang="fr" suppressHydrationWarning>
+      <head>
+        <script dangerouslySetInnerHTML={{ __html: themeInitScript }} />
+      </head>
       <body className={`${cormorant.variable} font-body antialiased`}>
         <ViewportHeight />
         <SiteLoader />

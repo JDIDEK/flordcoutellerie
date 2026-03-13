@@ -4,6 +4,7 @@
 @custom-variant dark (&:is(.dark *));
 
 :root {
+  color-scheme: light;
   /* Palette de couleurs du site - Thème clair */
   --background: #F2EAE4;
   --foreground: #212120;
@@ -35,6 +36,7 @@
 
 /* Thème sombre */
 .dark {
+  color-scheme: dark;
   --background: oklch(0.12 0.01 30);
   --foreground: oklch(0.95 0.01 60);
   --card: oklch(0.15 0.015 30);
