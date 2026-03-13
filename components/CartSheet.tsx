@@ -4,6 +4,7 @@ import Image from 'next/image'
 import { ShoppingBag, Trash2, Loader2 } from 'lucide-react'
 import { useState } from 'react'
 
+import { CheckoutConsentDialog } from '@/components/CheckoutConsentDialog'
 import { Button } from '@/components/ui/button'
 import { TransitionLink } from '@/components/TransitionLink'
 import {
@@ -30,6 +31,7 @@ export function CartSheet({ className, triggerClassName }: CartSheetProps) {
   const [open, setOpen] = useState(false)
   const [isLoading, setIsLoading] = useState(false)
   const [error, setError] = useState<string | null>(null)
+  const [isConsentOpen, setIsConsentOpen] = useState(false)
 
   const totalItems = items.reduce((sum, item) => sum + item.quantity, 0)
   const totalPrice = items.reduce(
@@ -64,6 +66,7 @@ export function CartSheet({ className, triggerClassName }: CartSheetProps) {
 
       if (data.url) {
         window.location.href = data.url
+        return
       }
     } catch (err) {
       setError(err instanceof Error ? err.message : 'Erreur inattendue')
@@ -210,7 +213,10 @@ export function CartSheet({ className, triggerClassName }: CartSheetProps) {
             size="lg"
             disabled={items.length === 0 || isLoading}
             className="w-full"
-            onClick={handleCheckout}
+            onClick={() => {
+              setError(null)
+              setIsConsentOpen(true)
+            }}
           >
             {isLoading ? (
               <>
@@ -234,6 +240,14 @@ export function CartSheet({ className, triggerClassName }: CartSheetProps) {
           )}
         </SheetFooter>
       </SheetContent>
+      <CheckoutConsentDialog
+        open={isConsentOpen}
+        onOpenChange={setIsConsentOpen}
+        onConfirm={handleCheckout}
+        isLoading={isLoading}
+        error={error}
+        itemCount={totalItems}
+      />
     </Sheet>
   )
 }

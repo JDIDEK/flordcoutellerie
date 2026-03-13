@@ -3,6 +3,7 @@
 import { useState } from 'react'
 import { Loader2 } from 'lucide-react'
 
+import { CheckoutConsentDialog } from '@/components/CheckoutConsentDialog'
 import { Button } from '@/components/ui/button'
 
 type BuyNowButtonProps = {
@@ -13,6 +14,7 @@ type BuyNowButtonProps = {
 export function BuyNowButton({ pieceId, disabled }: BuyNowButtonProps) {
   const [isLoading, setIsLoading] = useState(false)
   const [error, setError] = useState<string | null>(null)
+  const [isConsentOpen, setIsConsentOpen] = useState(false)
 
   const handleBuyNow = async () => {
     setIsLoading(true)
@@ -33,6 +35,7 @@ export function BuyNowButton({ pieceId, disabled }: BuyNowButtonProps) {
 
       if (data.url) {
         window.location.href = data.url
+        return
       }
     } catch (err) {
       setError(err instanceof Error ? err.message : 'Erreur inattendue')
@@ -49,7 +52,10 @@ export function BuyNowButton({ pieceId, disabled }: BuyNowButtonProps) {
         className="w-full hover:shadow-sm"
         type="button"
         disabled={disabled || isLoading}
-        onClick={handleBuyNow}
+        onClick={() => {
+          setError(null)
+          setIsConsentOpen(true)
+        }}
       >
         {isLoading ? (
           <>
@@ -63,6 +69,14 @@ export function BuyNowButton({ pieceId, disabled }: BuyNowButtonProps) {
       {error && (
         <p className="text-xs text-destructive text-center">{error}</p>
       )}
+      <CheckoutConsentDialog
+        open={isConsentOpen}
+        onOpenChange={setIsConsentOpen}
+        onConfirm={handleBuyNow}
+        isLoading={isLoading}
+        error={error}
+        itemCount={1}
+      />
     </div>
   )
 }

@@ -1,11 +1,11 @@
 import { randomUUID } from 'node:crypto'
 
-import { revalidateTag } from 'next/cache'
 import { NextResponse } from 'next/server'
 import { groq } from 'next-sanity'
 import type Stripe from 'stripe'
 import { z } from 'zod'
 
+import { revalidatePieceTag } from '@/lib/cache'
 import { logger } from '@/lib/logger'
 import {
   createReservationExpiry,
@@ -118,11 +118,18 @@ export async function POST(req: Request) {
   }
 
   try {
-    const pieces = await sanity.fetch<PieceForCheckout[]>(
-      piecesPricingQuery,
-      { ids: uniqueIds },
-      { cache: 'no-store' }
-    )
+    let pieces = await fetchPiecesForCheckout(sanity, uniqueIds)
+
+    const now = Date.now()
+    const repairedExpiredReservations = await repairExpiredReservations({
+      sanity,
+      pieces,
+      now,
+    })
+
+    if (repairedExpiredReservations) {
+      pieces = await fetchPiecesForCheckout(sanity, uniqueIds)
+    }
 
     const foundIds = new Set(pieces.map((piece) => piece._id))
     const missingIds = uniqueIds.filter((id) => !foundIds.has(id))
@@ -133,8 +140,6 @@ export async function POST(req: Request) {
         { status: 404 }
       )
     }
-
-    const now = Date.now()
     const unavailablePieces = pieces.filter((piece) => {
       const reservedAndActive =
         piece.status === 'reserved' &&
@@ -177,7 +182,7 @@ export async function POST(req: Request) {
 
     try {
       await reserveTx.commit({ visibility: 'sync' })
-      revalidateTag('piece', 'default')
+      revalidatePieceTag()
     } catch (error) {
       logger.warn('Piece reservation conflict during checkout', { error, productIds: uniqueIds })
 
@@ -330,7 +335,7 @@ async function releaseReservation({
     })
 
     await tx.commit({ visibility: 'sync' })
-    revalidateTag('piece', 'default')
+    revalidatePieceTag()
   } catch (error) {
     logger.error('Failed to release reservation after checkout error', error, {
       pieceIds,
@@ -350,4 +355,63 @@ function isRevisionConflictError(error: unknown) {
     message.includes('conflict') ||
     message.includes('documentrevisionidmismatch')
   )
+}
+
+async function fetchPiecesForCheckout(
+  sanity: ReturnType<typeof getSanityWriteClient>,
+  ids: string[]
+) {
+  return sanity.fetch<PieceForCheckout[]>(
+    piecesPricingQuery,
+    { ids },
+    { cache: 'no-store' }
+  )
+}
+
+async function repairExpiredReservations({
+  sanity,
+  pieces,
+  now,
+}: {
+  sanity: ReturnType<typeof getSanityWriteClient>
+  pieces: PieceForCheckout[]
+  now: number
+}) {
+  const expiredPieces = pieces.filter(
+    (piece) =>
+      piece.status === 'reserved' &&
+      isReservationExpired(piece.reservationExpiresAt, now)
+  )
+
+  if (expiredPieces.length === 0) {
+    return false
+  }
+
+  const tx = sanity.transaction()
+  expiredPieces.forEach((piece) => {
+    tx.patch(piece._id, (patch) =>
+      patch
+        .ifRevisionId(piece._rev)
+        .set({ status: 'available' })
+        .unset(['reservationId', 'reservedAt', 'reservationExpiresAt'])
+    )
+  })
+
+  try {
+    await tx.commit({ visibility: 'sync' })
+    revalidatePieceTag()
+    logger.info('Released expired reservations before checkout', {
+      pieceIds: expiredPieces.map((piece) => piece._id),
+    })
+    return true
+  } catch (error) {
+    if (isRevisionConflictError(error)) {
+      logger.warn('Expired reservation repair hit a revision conflict', {
+        pieceIds: expiredPieces.map((piece) => piece._id),
+      })
+      return true
+    }
+
+    throw error
+  }
 }

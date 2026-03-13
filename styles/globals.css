@@ -220,6 +220,38 @@ html {
   }
 }
 
+@keyframes workshop-marquee {
+  from {
+    transform: translateX(0);
+  }
+  to {
+    transform: translateX(-50%);
+  }
+}
+
+.workshop-marquee {
+  animation-name: workshop-marquee;
+  animation-iteration-count: infinite;
+  animation-timing-function: linear;
+  will-change: transform;
+}
+
+@keyframes workshop-marquee-vertical {
+  from {
+    transform: translateY(0);
+  }
+  to {
+    transform: translateY(-50%);
+  }
+}
+
+.workshop-marquee-vertical {
+  animation-name: workshop-marquee-vertical;
+  animation-iteration-count: infinite;
+  animation-timing-function: linear;
+  will-change: transform;
+}
+
 @keyframes fade-in-up-mobile {
   from {
     opacity: 0;

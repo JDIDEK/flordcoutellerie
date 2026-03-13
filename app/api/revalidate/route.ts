@@ -1,7 +1,7 @@
 import { type NextRequest, NextResponse } from 'next/server'
 import { parseBody } from 'next-sanity/webhook'
-import { revalidateTag } from 'next/cache'
 
+import { revalidateSanityType } from '@/lib/cache'
 import { logger } from '@/lib/logger'
 
 export async function POST(req: NextRequest) {
@@ -21,9 +21,7 @@ export async function POST(req: NextRequest) {
       return new NextResponse('Invalid signature', { status: 401 })
     }
 
-    if (body?._type === 'piece') {
-      revalidateTag('piece', 'default')
-    }
+    revalidateSanityType(body?._type)
 
     return NextResponse.json({ body })
   } catch (err: unknown) {
