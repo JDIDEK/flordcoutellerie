@@ -1,58 +1,72 @@
 'use client'
 
-import { useState, useEffect } from 'react'
-import { create } from 'zustand'
+import { useEffect, useState, useSyncExternalStore } from 'react'
 import { X } from 'lucide-react'
 import { Button } from '@/components/ui/button'
 import { TransitionLink } from '@/components/TransitionLink'
 
 const COOKIE_CONSENT_KEY = 'cookie-consent'
+const COOKIE_CONSENT_CHANGE_EVENT = 'cookie-consent-change'
 
 type ConsentState = 'pending' | 'accepted' | 'rejected'
 
-// Shared reactive store for cookie consent
-type ConsentStore = {
-  consent: ConsentState
-  setConsent: (value: ConsentState) => void
-  hydrate: () => void
+function readConsentSnapshot(): ConsentState {
+  if (typeof window === 'undefined') {
+    return 'pending'
+  }
+
+  const saved = localStorage.getItem(COOKIE_CONSENT_KEY)
+  return saved === 'accepted' || saved === 'rejected' ? saved : 'pending'
 }
 
-export const useConsentStore = create<ConsentStore>((set) => ({
-  consent: 'pending',
-  setConsent: (value) => {
-    localStorage.setItem(COOKIE_CONSENT_KEY, value)
-    set({ consent: value })
-  },
-  hydrate: () => {
-    const saved = localStorage.getItem(COOKIE_CONSENT_KEY)
-    if (saved === 'accepted' || saved === 'rejected') {
-      set({ consent: saved })
+function subscribeToConsent(callback: () => void) {
+  if (typeof window === 'undefined') {
+    return () => {}
+  }
+
+  const handleConsentChange = () => callback()
+  const handleStorage = (event: StorageEvent) => {
+    if (event.key === COOKIE_CONSENT_KEY) {
+      callback()
     }
-  },
-}))
+  }
+
+  window.addEventListener(COOKIE_CONSENT_CHANGE_EVENT, handleConsentChange)
+  window.addEventListener('storage', handleStorage)
+
+  return () => {
+    window.removeEventListener(COOKIE_CONSENT_CHANGE_EVENT, handleConsentChange)
+    window.removeEventListener('storage', handleStorage)
+  }
+}
+
+function setCookieConsent(value: Exclude<ConsentState, 'pending'>) {
+  localStorage.setItem(COOKIE_CONSENT_KEY, value)
+  window.dispatchEvent(new Event(COOKIE_CONSENT_CHANGE_EVENT))
+}
+
+export function useCookieConsent() {
+  return useSyncExternalStore(subscribeToConsent, readConsentSnapshot, () => 'pending')
+}
 
 export function CookieBanner() {
-  const { consent, setConsent, hydrate } = useConsentStore()
+  const consent = useCookieConsent()
   const [isVisible, setIsVisible] = useState(false)
-
-  // Hydrate from localStorage on mount (avoids SSR mismatch)
-  useEffect(() => {
-    hydrate()
-  }, [hydrate])
 
   useEffect(() => {
     if (consent !== 'pending') return
+
     const timer = setTimeout(() => setIsVisible(true), 1000)
     return () => clearTimeout(timer)
   }, [consent])
 
   const handleAccept = () => {
-    setConsent('accepted')
+    setCookieConsent('accepted')
     setIsVisible(false)
   }
 
   const handleReject = () => {
-    setConsent('rejected')
+    setCookieConsent('rejected')
     setIsVisible(false)
   }
 
@@ -129,15 +143,4 @@ export function CookieBanner() {
       </div>
     </div>
   )
-}
-
-// Hook to check consent status reactively
-export function useCookieConsent() {
-  const { consent, hydrate } = useConsentStore()
-
-  useEffect(() => {
-    hydrate()
-  }, [hydrate])
-
-  return consent
 }

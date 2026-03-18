@@ -1,40 +1,59 @@
 'use client'
 
-import { useEffect, useState } from 'react'
+import { useSyncExternalStore } from 'react'
 
-export function ThemeToggle({ className = '' }: { className?: string }) {
-  const [{ isDark, mounted }, setThemeState] = useState({ isDark: false, mounted: false })
+const THEME_STORAGE_KEY = 'theme'
+const THEME_CHANGE_EVENT = 'theme-change'
 
-  useEffect(() => {
-    if (typeof window === 'undefined') return
-    const resolvedDark = document.documentElement.classList.contains('dark')
-    document.documentElement.style.colorScheme = resolvedDark ? 'dark' : 'light'
+type ThemeMode = 'light' | 'dark'
 
-    const animationFrame = window.requestAnimationFrame(() => {
-      setThemeState({ isDark: resolvedDark, mounted: true })
-    })
+function readThemeSnapshot(): ThemeMode | null {
+  if (typeof document === 'undefined') {
+    return null
+  }
 
-    return () => {
-      window.cancelAnimationFrame(animationFrame)
-    }
-  }, [])
+  return document.documentElement.classList.contains('dark') ? 'dark' : 'light'
+}
 
-  const toggleTheme = () => {
-    const newIsDark = !isDark
-    setThemeState({ isDark: newIsDark, mounted: true })
-    
-    if (newIsDark) {
-      document.documentElement.classList.add('dark')
-      document.documentElement.style.colorScheme = 'dark'
-      localStorage.setItem('theme', 'dark')
-    } else {
-      document.documentElement.classList.remove('dark')
-      document.documentElement.style.colorScheme = 'light'
-      localStorage.setItem('theme', 'light')
+function subscribeToTheme(callback: () => void) {
+  if (typeof window === 'undefined') {
+    return () => {}
+  }
+
+  const handleThemeChange = () => callback()
+  const handleStorage = (event: StorageEvent) => {
+    if (event.key === THEME_STORAGE_KEY) {
+      callback()
     }
   }
 
-  if (!mounted) return null
+  window.addEventListener(THEME_CHANGE_EVENT, handleThemeChange)
+  window.addEventListener('storage', handleStorage)
+
+  return () => {
+    window.removeEventListener(THEME_CHANGE_EVENT, handleThemeChange)
+    window.removeEventListener('storage', handleStorage)
+  }
+}
+
+export function ThemeToggle({ className = '' }: { className?: string }) {
+  const theme = useSyncExternalStore(subscribeToTheme, readThemeSnapshot, () => null)
+
+  const toggleTheme = () => {
+    if (theme === null) return
+
+    const nextTheme: ThemeMode = theme === 'dark' ? 'light' : 'dark'
+    const isDark = nextTheme === 'dark'
+
+    document.documentElement.classList.toggle('dark', isDark)
+    document.documentElement.style.colorScheme = nextTheme
+    localStorage.setItem(THEME_STORAGE_KEY, nextTheme)
+    window.dispatchEvent(new Event(THEME_CHANGE_EVENT))
+  }
+
+  if (theme === null) return null
+
+  const isDark = theme === 'dark'
 
   return (
     <button

@@ -1,28 +1,17 @@
 'use client'
 
-import { useEffect, useState, type ComponentType } from 'react'
+import dynamic from 'next/dynamic'
 import { useCookieConsent } from '@/components/CookieBanner'
+
+const VercelAnalytics = dynamic(
+  () => import('@vercel/analytics/react').then((mod) => mod.Analytics),
+  { ssr: false },
+)
 
 export function AnalyticsGate() {
   const consent = useCookieConsent()
-  const [AnalyticsComponent, setAnalyticsComponent] = useState<ComponentType | null>(null)
 
-  useEffect(() => {
-    if (consent !== 'accepted') return
+  if (consent !== 'accepted') return null
 
-    let isMounted = true
-
-    import('@vercel/analytics/react').then((mod) => {
-      if (!isMounted) return
-      setAnalyticsComponent(() => mod.Analytics)
-    })
-
-    return () => {
-      isMounted = false
-    }
-  }, [consent])
-
-  if (!AnalyticsComponent) return null
-
-  return <AnalyticsComponent />
+  return <VercelAnalytics />
 }

@@ -2,6 +2,7 @@
 
 import { useEffect, useRef, useState } from 'react'
 import BackgroundVideo from 'next-video/background-video'
+import { useMediaQuery } from '@/hooks/use-mobile'
 import mainVideo from '@/videos/main-video.mp4'
 
 const DESKTOP_SCALE_START = 0.9
@@ -20,10 +21,7 @@ export function VideoScrollSection() {
 
   const [scale, setScale] = useState(1)
   const [borderRadius, setBorderRadius] = useState(0)
-  const [isDesktop, setIsDesktop] = useState(() => {
-    if (typeof window === 'undefined') return false
-    return window.matchMedia('(min-width: 1024px)').matches
-  })
+  const isDesktop = useMediaQuery('(min-width: 1024px)')
 
   useEffect(() => {
     if (!videoRef.current) return
@@ -33,15 +31,6 @@ export function VideoScrollSection() {
       playPromise.catch(() => {
       })
     }
-  }, [])
-
-  useEffect(() => {
-    const mediaQuery = window.matchMedia('(min-width: 1024px)')
-    const handleChange = (event: MediaQueryListEvent) => setIsDesktop(event.matches)
-
-    mediaQuery.addEventListener('change', handleChange)
-
-    return () => mediaQuery.removeEventListener('change', handleChange)
   }, [])
 
   useEffect(() => {

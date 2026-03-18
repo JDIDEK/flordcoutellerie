@@ -156,6 +156,24 @@ NEXT_PUBLIC_APP_URL
 - Toujours typer avec TypeScript
 - Pour les vidéos, ajouter les fichiers dans `videos/` puis exécuter `npx next-video sync`
 
+## Conventions React
+- `useEffect` est un escape hatch, pas un outil de flux de données interne.
+- Par défaut, ne pas utiliser `useEffect` pour :
+  - dériver un état depuis des props ou un autre état ;
+  - déclencher une logique métier après une action utilisateur ;
+  - réinitialiser un composant quand un identifiant change ;
+  - faire du `fetch` client brut ;
+  - synchroniser deux composants frères.
+- Préférer à la place :
+  - calculer les valeurs pendant le rendu ;
+  - placer la logique dans les event handlers ;
+  - utiliser `key` pour réinitialiser un sous-arbre ;
+  - privilégier les Server Components et le data fetching Next.js ; sinon utiliser une lib dédiée (`useQuery`, `SWR`) ;
+  - remonter l'état au parent commun.
+- `useEffect` n'est autorisé que pour synchroniser avec un système externe :
+  DOM non-React, listeners navigateur, timers, `localStorage`, WebSocket, librairie tierce.
+- Si un `useEffect` est nécessaire, l'encapsuler dans un hook explicite quand c'est pertinent, avec cleanup correct.
+
 ## Checklist avant PR
 - [ ] `pnpm lint` passe sans erreur
 - [ ] `pnpm build` réussit

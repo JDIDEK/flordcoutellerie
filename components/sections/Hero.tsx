@@ -1,8 +1,9 @@
 'use client'
 
 import Image from 'next/image'
-import { useEffect, useMemo, useRef, useState } from 'react'
+import { useEffect, useRef, useState } from 'react'
 import BackgroundVideo from 'next-video/background-video'
+import { useMediaQuery } from '@/hooks/use-mobile'
 import mainVideo from '@/videos/main-video.mp4'
 import { useParallax } from '@/hooks/use-parallax'
 
@@ -18,13 +19,9 @@ export function HomeHeroSection() {
     if (typeof document === 'undefined') return false
     return document.documentElement.dataset.siteLoaderComplete === 'true'
   })
-
-  const isMobile = useMemo(() => {
-    if (typeof window === 'undefined') return false
-    const isCoarsePointer = window.matchMedia('(pointer: coarse)').matches
-    const isSmallScreen = window.matchMedia('(max-width: 1024px)').matches
-    return isCoarsePointer || isSmallScreen
-  }, [])
+  const isCoarsePointer = useMediaQuery('(pointer: coarse)')
+  const isSmallScreen = useMediaQuery('(max-width: 1024px)')
+  const isMobile = isCoarsePointer || isSmallScreen
 
   const videoParallaxRef = useParallax<HTMLDivElement>({ strength: 10, scale: 1.03, disabled: isMobile })
 
