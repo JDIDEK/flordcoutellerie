@@ -70,11 +70,11 @@ const nextConfig = {
               "default-src 'self'",
               `script-src ${scriptSrc.join(' ')}`,
               "style-src 'self' 'unsafe-inline' https://fonts.googleapis.com",
-              "img-src 'self' data: blob: https://cdn.sanity.io https://image.mux.com",
+              "img-src 'self' data: blob: https://cdn.sanity.io https://image.mux.com https://*.public.blob.vercel-storage.com",
               "font-src 'self' https://fonts.gstatic.com",
-              "connect-src 'self' https://*.sanity.io https://*.mux.com https://va.vercel-scripts.com wss://*.sanity.io",
+              "connect-src 'self' https://*.sanity.io https://*.mux.com https://blob.vercel-storage.com https://*.public.blob.vercel-storage.com https://va.vercel-scripts.com wss://*.sanity.io",
               "frame-src 'self'",
-              "media-src 'self' https://stream.mux.com blob:",
+              "media-src 'self' https://stream.mux.com https://*.public.blob.vercel-storage.com blob:",
               "object-src 'none'",
               "base-uri 'self'",
               "form-action 'self'",
@@ -87,4 +87,6 @@ const nextConfig = {
   },
 }
 
-export default withNextVideo(nextConfig);
+export default withNextVideo(nextConfig, {
+  provider: 'vercel-blob',
+});

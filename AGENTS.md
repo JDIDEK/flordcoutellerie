@@ -6,7 +6,7 @@ Ce fichier sert de guide rapide pour travailler dans ce repo.
 - Site Next.js (App Router) pour un atelier de coutellerie artisanale.
 - Contenu géré par Sanity (pièces et galerie).
 - Paiement via Stripe, emails via Resend.
-- Vidéo hero gérée par next-video.
+- Vidéo hero gérée par next-video avec Vercel Blob.
 - **Configurateur sur-mesure** : wizard multi-étapes pour commander des couteaux personnalisés.
 
 ## Stack technique
@@ -14,7 +14,7 @@ Ce fichier sert de guide rapide pour travailler dans ce repo.
 - Tailwind CSS v4 (styles dans `styles/globals.css`).
 - Sanity Studio embarqué dans `app/studio`.
 - Stripe + Resend pour le checkout.
-- next-video pour les assets vidéo.
+- next-video + Vercel Blob pour les assets vidéo.
 - shadcn/ui pour les composants UI.
 
 ## Démarrage rapide
@@ -143,8 +143,7 @@ STRIPE_SECRET_KEY
 STRIPE_WEBHOOK_SECRET
 RESEND_API_KEY
 RESEND_FROM_EMAIL
-MUX_TOKEN_ID
-MUX_TOKEN_SECRET
+BLOB_READ_WRITE_TOKEN
 NEXT_PUBLIC_APP_URL
 ```
 
@@ -155,6 +154,7 @@ NEXT_PUBLIC_APP_URL
 - Données/helpers : camelCase, fichiers .ts
 - Toujours typer avec TypeScript
 - Pour les vidéos, ajouter les fichiers dans `videos/` puis exécuter `npx next-video sync`
+- Les fichiers source vidéo sont ignorés par Git: ils doivent exister localement pour être uploadés vers Vercel Blob.
 
 ## Conventions React
 - `useEffect` est un escape hatch, pas un outil de flux de données interne.
