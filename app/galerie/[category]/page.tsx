@@ -67,7 +67,7 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
 // ─── Helpers ──────────────────────────────────────────────────────────────────
 
 /**
- * Une miniature par image de la collection.
+ * Une miniature par couteau = première image uniquement.
  */
 function buildThumbs(knives: GalleryKnife[]): ThumbEntry[] {
   const entries: ThumbEntry[] = []
@@ -76,16 +76,13 @@ function buildThumbs(knives: GalleryKnife[]): ThumbEntry[] {
     const images = (knife.images ?? []).filter(hasImageAsset) as GalleryKnifeImageWithAsset[]
     if (images.length === 0) continue
 
-    for (let i = 0; i < images.length; i += 1) {
-      const image = images[i]
-
-      entries.push({
-        type: 'single',
-        src: getUrl(image, 240, 135),
-        alt: image.alt ?? knife.name,
-        targetId: getImageTargetId(knife._id, image, i),
-      })
-    }
+    const firstImage = images[0]
+    entries.push({
+      type: 'single',
+      src: getUrl(firstImage, 240, 135),
+      alt: firstImage.alt ?? knife.name,
+      targetId: getImageTargetId(knife._id, firstImage, 0),
+    })
   }
 
   return entries
@@ -124,7 +121,15 @@ export default async function GalerieCategoryPage({ params }: Props) {
             <>
               <ScrollNavSidebar thumbs={thumbs} />
 
-              <div className="mx-auto max-w-4xl px-4 md:px-8 pt-28 pb-20 md:pt-32 space-y-20 md:space-y-32">
+              <div className="mx-auto max-w-4xl px-4 md:px-8 pt-28 pb-36 md:pt-32 md:pb-44 space-y-20 md:space-y-32">
+                <TransitionLink
+                  href="/galerie"
+                  className="inline-flex items-center gap-2 text-xs uppercase tracking-[0.25em] text-foreground hover:text-muted-foreground transition-colors"
+                >
+                  <ArrowLeft className="w-3 h-3" />
+                  Retour à la galerie
+                </TransitionLink>
+
                 {knives.map((knife, knifeIndex) => (
                   <KnifeBlock key={knife._id} knife={knife} knifeIndex={knifeIndex} />
                 ))}

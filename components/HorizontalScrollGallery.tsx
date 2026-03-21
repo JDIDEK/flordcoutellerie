@@ -120,9 +120,9 @@ export function HorizontalScrollGallery({ collections }: HorizontalScrollGallery
     cacheCardPositions()
     window.addEventListener('resize', cacheCardPositions)
 
-    const slopeStrength = isMobile ? 80 : 250
-    const rotateYMultiplier = isMobile ? -8 : -15
-    const rotateZMultiplier = isMobile ? 2 : 5
+    const slopeStrength = isMobile ? 260 : 700
+    const rotateYMultiplier = isMobile ? -16 : -32
+    const rotateZMultiplier = isMobile ? 6 : 12
 
     const animate = () => {
       const state = stateRef.current
@@ -150,6 +150,8 @@ export function HorizontalScrollGallery({ collections }: HorizontalScrollGallery
         const { min, max } = cachedTranslateRange
         const currentTranslateX = min + progress * (max - min)
         scrollContent.style.transform = `translate3d(${currentTranslateX}px, 0, 0)`
+        const centerOffsetY = 0
+        const globalParallaxY = 0
 
         const cards = Array.from(scrollContent.children) as HTMLElement[]
 
@@ -160,7 +162,7 @@ export function HorizontalScrollGallery({ collections }: HorizontalScrollGallery
           const cardCenterX = cardData.offsetLeft + cardData.width / 2 + currentTranslateX
           const distanceNorm = (cardCenterX - cachedViewportCenter) / cachedViewportCenter
 
-          const translateY = -distanceNorm * slopeStrength
+          const translateY = centerOffsetY + -distanceNorm * slopeStrength + globalParallaxY
 
           const distanceAbs = Math.abs(distanceNorm)
           const baseScale = isMobile ? 0.85 : 0.9
@@ -202,15 +204,18 @@ export function HorizontalScrollGallery({ collections }: HorizontalScrollGallery
         dragStateRef.current.startTarget = stateRef.current.target
         dragStateRef.current.isDragging = true
         dragStateRef.current.hasMoved = false
-        setIsDragging(true)
-        viewport.setPointerCapture?.(event.pointerId)
       }
 
       const handlePointerMove = (event: PointerEvent) => {
         if (!dragStateRef.current.isDragging) return
 
         const deltaX = dragStateRef.current.startX - event.clientX
-        if (Math.abs(deltaX) > 5) dragStateRef.current.hasMoved = true
+        if (Math.abs(deltaX) > 16) {
+          dragStateRef.current.hasMoved = true
+          setIsDragging(true)
+        }
+
+        if (!dragStateRef.current.hasMoved) return
 
         stateRef.current.target = clampProgress(
           dragStateRef.current.startTarget + deltaX / swipeDistance
@@ -221,12 +226,9 @@ export function HorizontalScrollGallery({ collections }: HorizontalScrollGallery
         if (!dragStateRef.current.isDragging) return
 
         if (dragStateRef.current.hasMoved) {
-          clickGuardRef.current = performance.now() + 180
+          clickGuardRef.current = performance.now() + 120
         }
 
-        if (viewport.hasPointerCapture?.(event.pointerId)) {
-          viewport.releasePointerCapture(event.pointerId)
-        }
         resetDragState()
       }
 
@@ -234,14 +236,12 @@ export function HorizontalScrollGallery({ collections }: HorizontalScrollGallery
       viewport.addEventListener('pointermove', handlePointerMove)
       viewport.addEventListener('pointerup', handlePointerEnd)
       viewport.addEventListener('pointercancel', handlePointerEnd)
-      viewport.addEventListener('lostpointercapture', resetDragState)
 
       removePointerListeners = () => {
         viewport.removeEventListener('pointerdown', handlePointerDown)
         viewport.removeEventListener('pointermove', handlePointerMove)
         viewport.removeEventListener('pointerup', handlePointerEnd)
         viewport.removeEventListener('pointercancel', handlePointerEnd)
-        viewport.removeEventListener('lostpointercapture', resetDragState)
       }
     }
 
@@ -289,12 +289,8 @@ export function HorizontalScrollGallery({ collections }: HorizontalScrollGallery
           {collections.map((collection, index) => {
             const isHovered = hoveredId === collection.id
             const showWaveLayer = !isHovered && !isMobile
-            const collectionMeta = [collection.category, collection.meta]
-              .filter(Boolean)
-              .join(' • ')
-
             // Résoudre le href de destination
-            const href = `/galerie/${collection.categorySlug}`
+            const href = collection.categorySlug ? `/galerie/${collection.categorySlug}` : '/galerie'
 
             return (
               <article
@@ -365,17 +361,8 @@ export function HorizontalScrollGallery({ collections }: HorizontalScrollGallery
                       transform: isMobile ? 'translateZ(40px)' : 'translateZ(80px)',
                     }}
                   >
-                    <p
-                      className={`tracking-[0.3em] uppercase text-white/90 ${
-                        isMobile ? 'text-[0.6rem] mb-2' : 'text-xs mb-4'
-                      }`}
-                      style={metaTextShadow}
-                    >
-                      {collectionMeta}
-                    </p>
-
                     <h2
-                      className={`font-serif font-light tracking-[0.05em] text-white ${
+                      className={`font-serif font-bold tracking-[0.05em] text-white ${
                         isMobile ? 'text-3xl mb-2' : 'text-6xl lg:text-7xl mb-3'
                       }`}
                       style={titleTextShadow}
@@ -384,8 +371,8 @@ export function HorizontalScrollGallery({ collections }: HorizontalScrollGallery
                     </h2>
 
                     <p
-                      className={`text-white/95 leading-relaxed ${
-                        isMobile ? 'text-xs max-w-[80%]' : 'text-sm max-w-md'
+                      className={`text-white/95 leading-relaxed font-semibold ${
+                        isMobile ? 'text-sm max-w-[85%]' : 'text-lg max-w-xl'
                       }`}
                       style={subtitleTextShadow}
                     >
@@ -395,7 +382,7 @@ export function HorizontalScrollGallery({ collections }: HorizontalScrollGallery
                     {/* Indicateur "Voir" sur hover desktop */}
                     {!isMobile && collection.pieces > 0 && (
                       <p
-                        className="mt-6 text-[0.6rem] uppercase tracking-[0.35em] text-white/70 opacity-0 group-hover:opacity-100 transition-opacity duration-300"
+                        className="mt-6 text-[0.6rem] uppercase tracking-[0.35em] text-white/70 font-bold opacity-0 group-hover:opacity-100 transition-opacity duration-300"
                         style={metaTextShadow}
                       >
                         Voir la collection →

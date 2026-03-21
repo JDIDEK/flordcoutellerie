@@ -71,7 +71,7 @@ export const galleryKnife = defineType({
         layout: 'grid',
       },
       validation: (rule) => rule.min(1).error('Au moins une photo est requise.'),
-      description: `Meme logique que la galerie boutique. Ajoutez plusieurs photos et la premiere sera la grande image principale. ${supportedStudioImageFormatsDescription}`,
+      description: `Ajoutez plusieurs photos et la premiere sera la grande image principale. ${supportedStudioImageFormatsDescription}`,
     }),
 
     defineField({
