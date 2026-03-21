@@ -1,7 +1,12 @@
 'use client'
 
-import { Badge } from '@/components/ui/badge'
-import { StepHeader, PlaceholderVisual } from '../ui'
+import {
+  StepHeader,
+  PlaceholderVisual,
+  getOptionCardClassName,
+  optionCardContentClassName,
+  optionCardVisualClassName,
+} from '../ui'
 import { sheathOptions } from '../data'
 import type { WizardConfig, Action } from '../types'
 
@@ -23,22 +28,43 @@ export function SheathStep({ config, dispatch }: SheathStepProps) {
           return (
             <div
               key={sheath.id}
-              className={`flex items-stretch border-2 cursor-pointer transition-all ${
-                isSelected ? 'border-primary bg-primary/5' : 'border-foreground/20 hover:border-foreground/40'
-              }`}
+              className={getOptionCardClassName(isSelected, 'flex items-stretch')}
               onClick={() => dispatch({ type: 'setSheath', sheath: sheath.id })}
             >
-              <div className="flex-1 flex flex-col justify-center px-4 py-3">
+              <div className={optionCardContentClassName}>
                 <div className="flex items-center gap-2">
                   <span className={`font-medium ${isSelected ? 'text-primary' : ''}`}>Étui {sheath.label}</span>
                 </div>
-                <p className="text-xs text-muted-foreground mt-0.5">{sheath.description}</p>
+                <p
+                  className="mt-0.5 text-xs text-muted-foreground"
+                  style={{
+                    display: '-webkit-box',
+                    WebkitLineClamp: 2,
+                    WebkitBoxOrient: 'vertical',
+                    overflow: 'hidden',
+                  }}
+                >
+                  {sheath.description}
+                </p>
                 {sheath.note && (
-                  <p className="text-xs text-muted-foreground italic mt-0.5">{sheath.note}</p>
+                  <p
+                    className="mt-0.5 text-xs italic text-muted-foreground"
+                    style={{
+                      display: '-webkit-box',
+                      WebkitLineClamp: 1,
+                      WebkitBoxOrient: 'vertical',
+                      overflow: 'hidden',
+                    }}
+                  >
+                    {sheath.note}
+                  </p>
                 )}
               </div>
-              <div className="w-28 aspect-[2/1] bg-muted/30 flex-shrink-0">
-                <PlaceholderVisual label="Photo" />
+              <div className={optionCardVisualClassName}>
+                <PlaceholderVisual
+                  label="Photo"
+                  className="h-full rounded-none border-0 bg-transparent"
+                />
               </div>
             </div>
           )

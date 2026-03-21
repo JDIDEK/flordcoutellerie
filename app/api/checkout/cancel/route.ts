@@ -59,11 +59,18 @@ export async function POST(req: Request) {
         try {
           await stripe.checkout.sessions.expire(sessionId)
         } catch (error) {
-          logger.warn('Failed to expire Stripe checkout session after cart removal', {
-            sessionId,
-            reservationId,
-            error,
-          })
+          if (isAlreadyClosedCheckoutSessionError(error)) {
+            logger.info('Stripe checkout session already closed during cart removal', {
+              sessionId,
+              reservationId,
+            })
+          } else {
+            logger.warn('Failed to expire Stripe checkout session after cart removal', {
+              sessionId,
+              reservationId,
+              error,
+            })
+          }
         }
       }
     }
@@ -75,4 +82,27 @@ export async function POST(req: Request) {
       { status: 500 }
     )
   }
+}
+
+function isAlreadyClosedCheckoutSessionError(error: unknown) {
+  if (!error || typeof error !== 'object') {
+    return false
+  }
+
+  const maybeStripeError = error as {
+    type?: string
+    raw?: { message?: string }
+    message?: string
+  }
+
+  const message =
+    maybeStripeError.raw?.message?.toLowerCase() ??
+    maybeStripeError.message?.toLowerCase() ??
+    ''
+
+  return (
+    maybeStripeError.type === 'StripeInvalidRequestError' &&
+    message.includes('only checkout sessions with a status in') &&
+    message.includes('status of `expired`')
+  )
 }

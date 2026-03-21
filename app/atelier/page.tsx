@@ -2,6 +2,7 @@ import type { Metadata } from 'next'
 
 import { Navigation } from '@/components/Navigation'
 import { PageTransitionWrapper } from '@/components/PageTransitionWrapper'
+import { Separator } from '@/components/ui/separator'
 
 export const metadata: Metadata = {
   title: "L'Atelier | Flo RD Coutellerie",
@@ -35,9 +36,6 @@ export default function AtelierPage() {
               </section>
 
               <section>
-                <h2 className="mb-10 font-serif text-2xl font-light text-foreground md:text-3xl">
-                  Les matériaux
-                </h2>
                 <div className="space-y-6">
                   <p className="leading-relaxed text-muted-foreground sm:text-lg">
                     Je travaille exclusivement avec de l&apos;acier inoxydable et haut de gamme. Les matériaux
@@ -53,9 +51,6 @@ export default function AtelierPage() {
               </section>
 
               <section>
-                <h2 className="mb-10 font-serif text-2xl font-light text-foreground md:text-3xl">
-                  L&apos;artisan
-                </h2>
                 <p className="leading-relaxed text-muted-foreground sm:text-lg">
                   Je m&apos;appelle Florent, 28 ans, ingénieur de formation. J&apos;ai quitté l&apos;industrie, et fait le
                   choix d&apos;un travail artisanal indépendant, plus direct et plus maîtrisé.

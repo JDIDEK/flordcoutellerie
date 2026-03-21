@@ -3,3 +3,8 @@ export { StepHeader } from './StepHeader'
 export { MetricLine } from './MetricLine'
 export { PriceStars } from './PriceStars'
 export { PlaceholderVisual } from './PlaceholderVisual'
+export {
+  getOptionCardClassName,
+  optionCardContentClassName,
+  optionCardVisualClassName,
+} from './optionCard'

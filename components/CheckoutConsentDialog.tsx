@@ -64,7 +64,7 @@ export function CheckoutConsentDialog({
                 Verification avant paiement
               </p>
               <Dialog.Title className="max-w-lg text-2xl font-light tracking-tight text-foreground">
-                Confirmer votre majorite et l&apos;acceptation des CGV
+                Confirmez votre majorité et l&apos;acceptation des CGV
               </Dialog.Title>
               <Dialog.Description className="text-sm leading-relaxed text-muted-foreground">
                 {itemCount > 1
