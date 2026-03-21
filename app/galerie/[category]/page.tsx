@@ -24,6 +24,11 @@ type GalleryKnifeImageWithAsset = GalleryKnifeImage & {
   asset: NonNullable<GalleryKnifeImage['asset']>
 }
 
+type AssetDimensions = {
+  width: number
+  height: number
+}
+
 function getUrl(image: GalleryKnifeImageWithAsset, width: number, height: number) {
   return urlFor(image.asset).width(width).height(height).fit('max').url() ?? '/placeholder.svg'
 }
@@ -34,6 +39,29 @@ function getImageTargetId(
   imageIndex: number,
 ) {
   return `${knifeId}-${image._key ?? `${imageIndex}`}`
+}
+
+function getAssetDimensions(image: GalleryKnifeImageWithAsset): AssetDimensions | null {
+  const { asset } = image
+  if (!asset || typeof asset !== 'object') return null
+
+  const candidate = asset as {
+    metadata?: {
+      dimensions?: {
+        width?: number
+        height?: number
+      }
+    }
+  }
+
+  const width = candidate.metadata?.dimensions?.width
+  const height = candidate.metadata?.dimensions?.height
+
+  if (typeof width === 'number' && typeof height === 'number') {
+    return { width, height }
+  }
+
+  return null
 }
 
 // ─── Metadata ─────────────────────────────────────────────────────────────────
@@ -237,7 +265,7 @@ function FullImage({
   alt: string
   targetId: string
 }) {
-  const dims = image.asset?.metadata?.dimensions
+  const dims = getAssetDimensions(image)
   const aspectRatio = dims ? `${dims.width} / ${dims.height}` : '16 / 9'
 
   return (
