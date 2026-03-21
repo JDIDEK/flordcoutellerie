@@ -3,7 +3,7 @@
 import { visionTool } from '@sanity/vision'
 import { defineConfig } from 'sanity'
 import { structureTool } from 'sanity/structure'
-import { media } from 'sanity-plugin-media'
+import { media, mediaAssetSource } from 'sanity-plugin-media'
 import { Iframe } from 'sanity-plugin-iframe-pane'
 
 import { apiVersion, dataset, projectId } from './sanity/env'
@@ -12,20 +12,20 @@ import { structure } from './sanity/structure'
 
 // Configuration de l'aperçu (Site à droite, Formulaire à gauche)
 function defaultDocumentNode(S: any, { schemaType }: any) {
-  if (['piece', 'galleryImage'].includes(schemaType)) {
+  if (['piece', 'galleryCollection'].includes(schemaType)) {
     return S.document().views([
       S.view.form(),
       S.view
         .component(Iframe)
         .options({
           url: (doc: any) => {
-             const domain = process.env.NEXT_PUBLIC_APP_URL || 'https://flordcoutellerie.fr'
-             const slug = doc?.slug?.current
-             
-             if (schemaType === 'piece' && slug) return `${domain}/pieces/${slug}`
-             if (schemaType === 'galleryImage') return `${domain}/galerie`
-             
-             return domain
+            const domain = process.env.NEXT_PUBLIC_APP_URL || 'https://flordcoutellerie.fr'
+            const slug = doc?.slug?.current
+
+            if (schemaType === 'piece' && slug) return `${domain}/pieces/${slug}`
+            if (schemaType === 'galleryCollection' && slug) return `${domain}/galerie/${slug}`
+
+            return domain
           },
           reload: { button: true },
         })
@@ -40,6 +40,13 @@ export default defineConfig({
   projectId,
   dataset,
   schema,
+  form: {
+    image: {
+      assetSources: (previousAssetSources) => {
+        return previousAssetSources.filter((assetSource) => assetSource !== mediaAssetSource)
+      },
+    },
+  },
   plugins: [
     structureTool({ structure, defaultDocumentNode }),
     media(),

@@ -29,23 +29,35 @@ export type PieceDetail = PieceListItem & {
   gallery?: SanityImageSource[]
 }
 
-export type GalleryCategory = 'cuisine' | 'pliants' | 'outdoors' | 'chasse'
-
 export type GalleryImage = {
-  _id: string
-  image: SanityImageSource
-  label?: string
-  category?: GalleryCategory
-  createdAt: string
+  _key?: string
+  asset: SanityImageSource
+  alt?: string
+  hotspot?: { x: number; y: number; height: number; width: number }
+  crop?: { top: number; bottom: number; left: number; right: number }
 }
 
-export type SignaturePiece = {
+export type GalleryCollection = {
   _id: string
-  slug: string
   title: string
-  steelSummary?: string
-  status?: SanityPieceStatus
-  reservationExpiresAt?: string
-  price?: number
-  mainImage?: SanityImageSource
+  slug: string
+  description?: string
+  coverImage?: GalleryImage
+  entryCount: number
+  isLegacy?: boolean
+}
+
+export type GalleryKnifeImage = GalleryImage & {
+  _key: string
+}
+
+export type GalleryKnife = {
+  _id: string
+  name: string
+  description?: string
+  category?: string
+  collection?: Pick<GalleryCollection, '_id' | 'title' | 'slug'> | null
+  images: GalleryKnifeImage[]
+  featured?: boolean
+  createdAt: string
 }

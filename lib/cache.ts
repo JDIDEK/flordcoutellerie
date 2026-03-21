@@ -4,7 +4,8 @@ const IMMEDIATE_EXPIRY = { expire: 0 } as const
 
 export const SANITY_TAGS_BY_TYPE = {
   piece: ['piece'],
-  galleryImage: ['galleryImage'],
+  galleryCollection: ['galleryCollection', 'galleryKnife'],
+  galleryKnife: ['galleryKnife'],
 } as const
 
 export type RevalidatableSanityType = keyof typeof SANITY_TAGS_BY_TYPE
@@ -19,8 +20,12 @@ export function revalidatePieceTag() {
   revalidateTags(['piece'])
 }
 
-export function revalidateGalleryImageTag() {
-  revalidateTags(['galleryImage'])
+export function revalidateGalleryKnifeTag() {
+  revalidateTags(['galleryKnife'])
+}
+
+export function revalidateGalleryCollectionTag() {
+  revalidateTags(['galleryCollection', 'galleryKnife'])
 }
 
 export function revalidateSanityType(type?: string | null) {

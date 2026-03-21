@@ -8,15 +8,14 @@ export const piece = defineType({
   name: 'piece',
   title: 'Pièce',
   type: 'document',
-  // Définition des onglets
   groups: [
     { name: 'main', title: 'Infos', default: true },
     { name: 'tech', title: 'Technique' },
     { name: 'sales', title: 'Vente & Stock' },
-    { name: 'home', title: 'Accueil' },
   ],
   fields: [
     orderRankField({ type: 'piece', hidden: true }),
+
     // --- ONGLET INFOS ---
     defineField({
       name: 'title',
@@ -147,21 +146,6 @@ export const piece = defineType({
       of: [{ type: 'string' }],
       group: 'tech',
     }),
-
-    // --- ONGLET ACCUEIL ---
-    defineField({
-      name: 'highlightOnHome',
-      title: 'Afficher dans "Signature Knives" (Accueil)',
-      type: 'boolean',
-      initialValue: false,
-      group: 'home',
-    }),
-    defineField({
-      name: 'homeOrder',
-      title: 'Ordre d’affichage',
-      type: 'number',
-      group: 'home',
-    }),
   ],
   orderings: [orderRankOrdering],
   preview: {
@@ -172,11 +156,11 @@ export const piece = defineType({
       media: 'mainImage',
     },
     prepare({ title, status, price, media }) {
-      const emojis = { available: '🟢', reserved: '🟠', sold: '🔴' }
+      const emojis: Record<string, string> = { available: '🟢', reserved: '🟠', sold: '🔴' }
       return {
-        title: title,
-        subtitle: `${emojis[status as keyof typeof emojis] || ''} ${price ? price + '€' : ''}`,
-        media: media,
+        title,
+        subtitle: `${emojis[status] || ''} ${price ? price + '€' : ''}`,
+        media,
       }
     },
   },

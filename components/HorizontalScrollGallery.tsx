@@ -7,7 +7,7 @@ import { TransitionLink } from '@/components/TransitionLink'
 import { useIsMobile } from '@/hooks/use-mobile'
 
 interface Collection {
-  id: number
+  id: string
   title: string
   subtitle: string
   meta: string
@@ -15,6 +15,7 @@ interface Collection {
   category?: string
   image: string
   description: string
+  categorySlug: string
 }
 
 interface HorizontalScrollGalleryProps {
@@ -29,17 +30,17 @@ const subtitleTextShadow = { textShadow: '0 4px 14px rgba(0, 0, 0, 0.92)' } as c
 
 export function HorizontalScrollGallery({ collections }: HorizontalScrollGalleryProps) {
   const isMobile = useIsMobile()
-  
+
   // All hooks must be called before any conditional returns
   const containerRef = useRef<HTMLDivElement>(null)
   const viewportRef = useRef<HTMLDivElement>(null)
   const scrollRef = useRef<HTMLDivElement>(null)
-  const [hoveredId, setHoveredId] = useState<number | null>(null)
+  const [hoveredId, setHoveredId] = useState<string | null>(null)
   const [isDragging, setIsDragging] = useState(false)
-  const stateRef = useRef({ 
-    current: 0, 
+  const stateRef = useRef({
+    current: 0,
     target: 0,
-    lastRendered: -1 
+    lastRendered: -1,
   })
   const dragStateRef = useRef({
     startX: 0,
@@ -56,11 +57,11 @@ export function HorizontalScrollGallery({ collections }: HorizontalScrollGallery
     const rect = containerRef.current.getBoundingClientRect()
     const scrollTop = window.scrollY || document.documentElement.scrollTop
     const offsetTop = rect.top + scrollTop
-    
+
     boundsRef.current = {
       top: offsetTop,
       height: rect.height,
-      scrollRange: Math.max(rect.height - window.innerHeight, 1)
+      scrollRange: Math.max(rect.height - window.innerHeight, 1),
     }
   }, [])
 
@@ -88,7 +89,6 @@ export function HorizontalScrollGallery({ collections }: HorizontalScrollGallery
       stateRef.current.target = clampProgress(relativeScroll / scrollRange)
     }
 
-    // Cache des positions des cartes pour éviter les recalculs
     let cachedCardData: { offsetLeft: number; width: number }[] = []
     let cachedViewportCenter = window.innerWidth / 2
     let cachedTranslateRange = { min: 0, max: 0 }
@@ -96,21 +96,23 @@ export function HorizontalScrollGallery({ collections }: HorizontalScrollGallery
     const cacheCardPositions = () => {
       const scrollContent = scrollRef.current
       if (!scrollContent) return
-      
+
       cachedViewportCenter = window.innerWidth / 2
       const cards = Array.from(scrollContent.children) as HTMLElement[]
-      
-      cachedCardData = cards.map(card => ({
+
+      cachedCardData = cards.map((card) => ({
         offsetLeft: card.offsetLeft,
-        width: card.offsetWidth
+        width: card.offsetWidth,
       }))
-      
+
       if (cachedCardData.length > 0) {
         const firstCenter = cachedCardData[0].offsetLeft + cachedCardData[0].width / 2
-        const lastCenter = cachedCardData[cachedCardData.length - 1].offsetLeft + cachedCardData[cachedCardData.length - 1].width / 2
+        const lastCenter =
+          cachedCardData[cachedCardData.length - 1].offsetLeft +
+          cachedCardData[cachedCardData.length - 1].width / 2
         cachedTranslateRange = {
           min: cachedViewportCenter - firstCenter,
-          max: cachedViewportCenter - lastCenter
+          max: cachedViewportCenter - lastCenter,
         }
       }
     }
@@ -118,25 +120,24 @@ export function HorizontalScrollGallery({ collections }: HorizontalScrollGallery
     cacheCardPositions()
     window.addEventListener('resize', cacheCardPositions)
 
-    // Paramètres adaptés mobile/desktop
     const slopeStrength = isMobile ? 80 : 250
     const rotateYMultiplier = isMobile ? -8 : -15
     const rotateZMultiplier = isMobile ? 2 : 5
 
     const animate = () => {
       const state = stateRef.current
-      
-      // Ease factor dynamique : plus lent quand proche de la cible pour une décélération douce
+
       const distance = Math.abs(state.target - state.current)
       const easeFactor = distance > 0.1 ? 0.12 : 0.06 + distance * 0.6
-      
+
       state.current = lerp(state.current, state.target, easeFactor)
-      
-      // Seuil très petit pour éviter les micro-saccades
+
       const threshold = 0.0002
-      if (state.lastRendered !== -1 && 
-          Math.abs(state.current - state.lastRendered) < threshold && 
-          Math.abs(state.target - state.current) < threshold) {
+      if (
+        state.lastRendered !== -1 &&
+        Math.abs(state.current - state.lastRendered) < threshold &&
+        Math.abs(state.target - state.current) < threshold
+      ) {
         requestRef.current = requestAnimationFrame(animate)
         return
       }
@@ -151,20 +152,19 @@ export function HorizontalScrollGallery({ collections }: HorizontalScrollGallery
         scrollContent.style.transform = `translate3d(${currentTranslateX}px, 0, 0)`
 
         const cards = Array.from(scrollContent.children) as HTMLElement[]
-        
+
         cards.forEach((card, i) => {
           const cardData = cachedCardData[i]
           if (!cardData) return
-          
-          // Calculer la position estimée de la carte
+
           const cardCenterX = cardData.offsetLeft + cardData.width / 2 + currentTranslateX
           const distanceNorm = (cardCenterX - cachedViewportCenter) / cachedViewportCenter
-          
+
           const translateY = -distanceNorm * slopeStrength
 
           const distanceAbs = Math.abs(distanceNorm)
           const baseScale = isMobile ? 0.85 : 0.9
-          const scale = baseScale + (Math.exp(-distanceAbs * 2) * (isMobile ? 0.15 : 0.1))
+          const scale = baseScale + Math.exp(-distanceAbs * 2) * (isMobile ? 0.15 : 0.1)
 
           const rotateY = distanceNorm * rotateYMultiplier
           const rotateZ = distanceNorm * rotateZMultiplier
@@ -244,7 +244,7 @@ export function HorizontalScrollGallery({ collections }: HorizontalScrollGallery
         viewport.removeEventListener('lostpointercapture', resetDragState)
       }
     }
-    
+
     requestRef.current = requestAnimationFrame(animate)
 
     return () => {
@@ -259,23 +259,22 @@ export function HorizontalScrollGallery({ collections }: HorizontalScrollGallery
     }
   }, [collections.length, isMobile, measure])
 
-  // Unified horizontal scroll for both mobile and desktop
   return (
     <div
       ref={containerRef}
       className="relative"
-      style={{ 
-        height: isMobile ? '100svh' : '400vh'
+      style={{
+        height: isMobile ? '100svh' : '400vh',
       }}
     >
-      <div 
+      <div
         ref={viewportRef}
         className={`sticky top-0 flex items-center overflow-hidden bg-background select-none ${
           isMobile ? 'touch-pan-x' : ''
         } ${isDragging ? 'cursor-grabbing' : 'cursor-grab'}`}
         onDragStartCapture={handleNativeDragStart}
         style={{
-          height: isMobile ? '100svh' : '100vh'
+          height: isMobile ? '100svh' : '100vh',
         }}
       >
         <div
@@ -284,32 +283,35 @@ export function HorizontalScrollGallery({ collections }: HorizontalScrollGallery
           style={{
             paddingLeft: isMobile ? '10vw' : '20vw',
             paddingRight: isMobile ? '10vw' : '20vw',
-            gap: isMobile ? '1.5rem' : '5rem' 
+            gap: isMobile ? '1.5rem' : '5rem',
           }}
         >
           {collections.map((collection, index) => {
             const isHovered = hoveredId === collection.id
             const showWaveLayer = !isHovered && !isMobile
-            const collectionMeta = [collection.category, collection.meta].filter(Boolean).join(' • ')
+            const collectionMeta = [collection.category, collection.meta]
+              .filter(Boolean)
+              .join(' • ')
+
+            // Résoudre le href de destination
+            const href = `/galerie/${collection.categorySlug}`
 
             return (
               <article
                 key={collection.id}
                 data-collection-card
                 className={`relative flex-shrink-0 transform-gpu cursor-pointer origin-center ${
-                  isMobile 
-                    ? 'w-[80vw] aspect-[3/4]' 
-                    : 'w-[60vw] max-w-5xl aspect-[16/9]'
+                  isMobile ? 'w-[80vw] aspect-[3/4]' : 'w-[60vw] max-w-5xl aspect-[16/9]'
                 }`}
                 onMouseEnter={() => setHoveredId(collection.id)}
                 onMouseLeave={() => setHoveredId(null)}
                 style={{
                   transformStyle: 'preserve-3d',
-                  willChange: 'transform'
+                  willChange: 'transform',
                 }}
               >
                 <TransitionLink
-                  href="/galerie"
+                  href={href}
                   className="block w-full h-full group focus-visible:outline-none"
                   style={{ transformStyle: 'preserve-3d' }}
                   onClickCapture={handleCardClickCapture}
@@ -317,9 +319,9 @@ export function HorizontalScrollGallery({ collections }: HorizontalScrollGallery
                   onBlur={() => setHoveredId(null)}
                   draggable={false}
                 >
-                  <div 
+                  <div
                     className="absolute inset-0 w-full h-full overflow-hidden rounded-sm bg-black shadow-2xl"
-                    style={{ transform: 'translateZ(0px)' }} 
+                    style={{ transform: 'translateZ(0px)' }}
                   >
                     <div className="relative w-full h-full">
                       <Image
@@ -355,31 +357,50 @@ export function HorizontalScrollGallery({ collections }: HorizontalScrollGallery
                     </div>
                   </div>
 
-                  <div 
+                  <div
                     className={`absolute inset-0 flex flex-col items-center justify-center text-center pointer-events-none ${
                       isMobile ? 'px-4 justify-end pb-8' : 'px-4'
                     }`}
-                    style={{ 
+                    style={{
                       transform: isMobile ? 'translateZ(40px)' : 'translateZ(80px)',
                     }}
                   >
-                    <p className={`tracking-[0.3em] uppercase text-white/90 ${
-                      isMobile ? 'text-[0.6rem] mb-2' : 'text-xs mb-4'
-                    }`} style={metaTextShadow}>
+                    <p
+                      className={`tracking-[0.3em] uppercase text-white/90 ${
+                        isMobile ? 'text-[0.6rem] mb-2' : 'text-xs mb-4'
+                      }`}
+                      style={metaTextShadow}
+                    >
                       {collectionMeta}
                     </p>
-                    
-                    <h2 className={`font-serif font-light tracking-[0.05em] text-white ${
-                      isMobile ? 'text-3xl mb-2' : 'text-6xl lg:text-7xl mb-3'
-                    }`} style={titleTextShadow}>
+
+                    <h2
+                      className={`font-serif font-light tracking-[0.05em] text-white ${
+                        isMobile ? 'text-3xl mb-2' : 'text-6xl lg:text-7xl mb-3'
+                      }`}
+                      style={titleTextShadow}
+                    >
                       {collection.title}
                     </h2>
-                    
-                    <p className={`text-white/95 leading-relaxed ${
-                      isMobile ? 'text-xs max-w-[80%]' : 'text-sm max-w-md'
-                    }`} style={subtitleTextShadow}>
+
+                    <p
+                      className={`text-white/95 leading-relaxed ${
+                        isMobile ? 'text-xs max-w-[80%]' : 'text-sm max-w-md'
+                      }`}
+                      style={subtitleTextShadow}
+                    >
                       {collection.subtitle}
                     </p>
+
+                    {/* Indicateur "Voir" sur hover desktop */}
+                    {!isMobile && collection.pieces > 0 && (
+                      <p
+                        className="mt-6 text-[0.6rem] uppercase tracking-[0.35em] text-white/70 opacity-0 group-hover:opacity-100 transition-opacity duration-300"
+                        style={metaTextShadow}
+                      >
+                        Voir la collection →
+                      </p>
+                    )}
                   </div>
                 </TransitionLink>
               </article>
@@ -391,9 +412,13 @@ export function HorizontalScrollGallery({ collections }: HorizontalScrollGallery
       {/* SVG Filters */}
       <svg className="absolute h-0 w-0 pointer-events-none" xmlns="http://www.w3.org/2000/svg">
         <defs>
-          {/* Desktop filter - stronger effect */}
           <filter id="wave-distortion-filter" x="-20%" y="-20%" width="140%" height="140%">
-            <feTurbulence type="fractalNoise" baseFrequency="0.01 0.005" numOctaves="1" result="warp">
+            <feTurbulence
+              type="fractalNoise"
+              baseFrequency="0.01 0.005"
+              numOctaves="1"
+              result="warp"
+            >
               <animate
                 attributeName="baseFrequency"
                 values="0.01 0.005; 0.02 0.009; 0.01 0.005"
@@ -402,12 +427,22 @@ export function HorizontalScrollGallery({ collections }: HorizontalScrollGallery
                 keyTimes="0; 0.5; 1"
               />
             </feTurbulence>
-            <feDisplacementMap xChannelSelector="R" yChannelSelector="G" scale="60" in="SourceGraphic" in2="warp" />
+            <feDisplacementMap
+              xChannelSelector="R"
+              yChannelSelector="G"
+              scale="60"
+              in="SourceGraphic"
+              in2="warp"
+            />
           </filter>
 
-          {/* Mobile filter - lighter effect for better performance */}
           <filter id="wave-distortion-filter-mobile" x="-10%" y="-10%" width="120%" height="120%">
-            <feTurbulence type="fractalNoise" baseFrequency="0.008 0.004" numOctaves="1" result="warp">
+            <feTurbulence
+              type="fractalNoise"
+              baseFrequency="0.008 0.004"
+              numOctaves="1"
+              result="warp"
+            >
               <animate
                 attributeName="baseFrequency"
                 values="0.008 0.004; 0.012 0.006; 0.008 0.004"
@@ -416,7 +451,13 @@ export function HorizontalScrollGallery({ collections }: HorizontalScrollGallery
                 keyTimes="0; 0.5; 1"
               />
             </feTurbulence>
-            <feDisplacementMap xChannelSelector="R" yChannelSelector="G" scale="30" in="SourceGraphic" in2="warp" />
+            <feDisplacementMap
+              xChannelSelector="R"
+              yChannelSelector="G"
+              scale="30"
+              in="SourceGraphic"
+              in2="warp"
+            />
           </filter>
         </defs>
       </svg>

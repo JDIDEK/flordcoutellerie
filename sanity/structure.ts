@@ -1,30 +1,11 @@
 import type { StructureResolver } from 'sanity/structure'
 import { orderableDocumentListDeskItem } from '@sanity/orderable-document-list'
-import { 
-  ShoppingBag, 
-  Images, 
-  Star, 
-  Hammer,
-  Eye
-} from 'lucide-react'
+import { Eye, FolderOpen, Hammer, Image, Images, ShoppingBag } from 'lucide-react'
 
 export const structure: StructureResolver = (S, context) =>
   S.list()
     .title('Atelier Flo RD')
     .items([
-      // --- COUTEAUX SIGNATURE (ACCUEIL) ---
-      orderableDocumentListDeskItem({
-        id: 'orderable-piece-signature',
-        title: 'Couteaux Signature (Accueil)',
-        icon: Star,
-        type: 'piece',
-        filter: '_type == "piece" && highlightOnHome == true',
-        S,
-        context,
-      }),
-
-      S.divider(),
-
       // --- BOUTIQUE ---
       S.listItem()
         .title('Boutique')
@@ -33,7 +14,6 @@ export const structure: StructureResolver = (S, context) =>
           S.list()
             .title('Gestion Boutique')
             .items([
-              // Tout le stock
               orderableDocumentListDeskItem({
                 id: 'orderable-piece-all',
                 title: 'Tous les Couteaux',
@@ -42,8 +22,6 @@ export const structure: StructureResolver = (S, context) =>
                 S,
                 context,
               }),
-
-              // Filtre rapide : Disponibles
               S.listItem()
                 .title('En Stock uniquement')
                 .icon(Eye)
@@ -59,12 +37,55 @@ export const structure: StructureResolver = (S, context) =>
       S.divider(),
 
       // --- GALERIE PHOTOS ---
-      orderableDocumentListDeskItem({
-        id: 'orderable-gallery',
-        title: 'Galerie Photos',
-        icon: Images,
-        type: 'galleryImage',
-        S,
-        context,
-      }),
+      S.listItem()
+        .title('Galerie Photos')
+        .icon(Images)
+        .child(
+          S.list()
+            .title('Galerie Photos')
+            .items([
+              S.listItem()
+                .title('Collections')
+                .icon(FolderOpen)
+                .child(
+                  S.documentTypeList('galleryCollection')
+                    .title('Collections')
+                    .defaultOrdering([{ field: 'orderRank', direction: 'asc' }])
+                ),
+
+              S.listItem()
+                .title('Entrées de galerie')
+                .icon(Image)
+                .child(
+                  S.documentTypeList('galleryKnife')
+                    .title('Entrées de galerie')
+                    .defaultOrdering([
+                      { field: 'featured', direction: 'desc' },
+                      { field: 'orderRank', direction: 'asc' },
+                    ])
+                ),
+
+              S.divider(),
+
+              S.listItem()
+                .title('Entrées par collection')
+                .icon(FolderOpen)
+                .child(
+                  S.documentTypeList('galleryCollection')
+                    .title('Collections')
+                    .child((collectionId) =>
+                      collectionId
+                        ? S.documentList()
+                            .title('Entrées de la collection')
+                            .filter('_type == "galleryKnife" && references($collectionId)')
+                            .params({ collectionId })
+                            .defaultOrdering([
+                              { field: 'featured', direction: 'desc' },
+                              { field: 'orderRank', direction: 'asc' },
+                            ])
+                        : S.documentList().title('Entrées de la collection')
+                    )
+                ),
+            ])
+        ),
     ])
