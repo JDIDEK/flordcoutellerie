@@ -2,6 +2,10 @@ import { orderRankField, orderRankOrdering } from '@sanity/orderable-document-li
 import { defineField, defineType } from 'sanity'
 
 import { AutoSlugInput } from '../components/autoSlugInput'
+import {
+  supportedStudioImageAccept,
+  supportedStudioImageFormatsDescription,
+} from '../lib/imageUpload'
 import { slugifyString } from '../lib/slugify'
 
 export const galleryCollection = defineType({
@@ -37,7 +41,10 @@ export const galleryCollection = defineType({
       name: 'coverImage',
       title: 'Image de couverture',
       type: 'image',
-      options: { hotspot: true },
+      options: {
+        hotspot: true,
+        accept: supportedStudioImageAccept,
+      },
       validation: (rule) => rule.required(),
       fields: [
         defineField({
@@ -46,7 +53,7 @@ export const galleryCollection = defineType({
           type: 'string',
         }),
       ],
-      description: 'Image affichée sur la page principale de la galerie.',
+      description: `Image affichee sur la page principale de la galerie. ${supportedStudioImageFormatsDescription}`,
     }),
 
     defineField({

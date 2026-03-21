@@ -31,7 +31,7 @@ export type PieceDetail = PieceListItem & {
 
 export type GalleryImage = {
   _key?: string
-  asset: SanityImageSource
+  asset?: SanityImageSource | null
   alt?: string
   hotspot?: { x: number; y: number; height: number; width: number }
   crop?: { top: number; bottom: number; left: number; right: number }

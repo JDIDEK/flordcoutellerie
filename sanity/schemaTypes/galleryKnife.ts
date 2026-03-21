@@ -1,6 +1,11 @@
 import { defineType, defineField } from 'sanity'
 import { orderRankField, orderRankOrdering } from '@sanity/orderable-document-list'
 
+import {
+  supportedStudioImageAccept,
+  supportedStudioImageFormatsDescription,
+} from '../lib/imageUpload'
+
 export const galleryKnife = defineType({
   name: 'galleryKnife',
   title: 'Entrée de galerie',
@@ -58,24 +63,15 @@ export const galleryKnife = defineType({
         {
           type: 'image',
           options: {
-            hotspot: true,
-            metadata: ['blurhash', 'lqip', 'palette', 'dimensions'],
+            accept: supportedStudioImageAccept,
           },
-          fields: [
-            {
-              name: 'alt',
-              title: 'Texte alternatif',
-              type: 'string',
-              description: "Description courte pour l'accessibilité.",
-            },
-          ],
         },
       ],
       options: {
         layout: 'grid',
       },
       validation: (rule) => rule.min(1).error('Au moins une photo est requise.'),
-      description: 'Ajoutez plusieurs photos. La première sera la grande image principale.',
+      description: `Meme logique que la galerie boutique. Ajoutez plusieurs photos et la premiere sera la grande image principale. ${supportedStudioImageFormatsDescription}`,
     }),
 
     defineField({

@@ -3,7 +3,6 @@
 import { visionTool } from '@sanity/vision'
 import { defineConfig } from 'sanity'
 import { structureTool } from 'sanity/structure'
-import { media, mediaAssetSource } from 'sanity-plugin-media'
 import { Iframe } from 'sanity-plugin-iframe-pane'
 
 import { apiVersion, dataset, projectId } from './sanity/env'
@@ -40,16 +39,8 @@ export default defineConfig({
   projectId,
   dataset,
   schema,
-  form: {
-    image: {
-      assetSources: (previousAssetSources) => {
-        return previousAssetSources.filter((assetSource) => assetSource !== mediaAssetSource)
-      },
-    },
-  },
   plugins: [
     structureTool({ structure, defaultDocumentNode }),
-    media(),
     visionTool({ defaultApiVersion: apiVersion }),
   ],
 })

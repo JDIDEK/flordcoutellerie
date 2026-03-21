@@ -78,13 +78,13 @@ const galleryCollectionsQuery = groq`
     title,
     description,
     "slug": slug.current,
-    "coverImage": coverImage{
+    "coverImage": select(defined(coverImage.asset) => coverImage{
       _key,
       alt,
       "asset": asset,
       hotspot,
       crop
-    },
+    }),
     "entryCount": count(*[_type == "galleryKnife" && references(^._id)])
   }
 `
@@ -95,13 +95,13 @@ const galleryCollectionBySlugQuery = groq`
     title,
     description,
     "slug": slug.current,
-    "coverImage": coverImage{
+    "coverImage": select(defined(coverImage.asset) => coverImage{
       _key,
       alt,
       "asset": asset,
       hotspot,
       crop
-    },
+    }),
     "entryCount": count(*[_type == "galleryKnife" && references(^._id)])
   }
 `
@@ -121,7 +121,7 @@ const legacyGalleryCollectionsQuery = groq`
   *[_type == "galleryKnife" && !defined(collection._ref) && defined(category)]
     | order(featured desc, orderRank asc){
     category,
-    "coverImage": images[0]{
+    "coverImage": images[defined(asset)][0]{
       _key,
       alt,
       "asset": asset,
@@ -135,7 +135,7 @@ const legacyGalleryCollectionRowsByCategoryQuery = groq`
   *[_type == "galleryKnife" && !defined(collection._ref) && category == $category]
     | order(featured desc, orderRank asc){
     category,
-    "coverImage": images[0]{
+    "coverImage": images[defined(asset)][0]{
       _key,
       alt,
       "asset": asset,
@@ -164,10 +164,18 @@ const galleryKnivesSelection = groq`
       title,
       "slug": slug.current
     },
-    images[]{
+    images[defined(asset)][]{
       _key,
       alt,
-      "asset": asset,
+      "asset": asset->{
+        _id,
+        metadata {
+          dimensions {
+            width,
+            height
+          }
+        }
+      },
       hotspot,
       crop
     }

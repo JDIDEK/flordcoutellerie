@@ -2,6 +2,10 @@ import { defineField, defineType } from 'sanity'
 import { orderRankField, orderRankOrdering } from '@sanity/orderable-document-list'
 
 import { AutoSlugInput } from '../components/autoSlugInput'
+import {
+  supportedStudioImageAccept,
+  supportedStudioImageFormatsDescription,
+} from '../lib/imageUpload'
 import { slugifyString } from '../lib/slugify'
 
 export const piece = defineType({
@@ -28,16 +32,28 @@ export const piece = defineType({
       name: 'mainImage',
       title: 'Photo principale',
       type: 'image',
-      options: { hotspot: true },
+      options: {
+        hotspot: true,
+        accept: supportedStudioImageAccept,
+      },
       group: 'main',
+      description: supportedStudioImageFormatsDescription,
     }),
     defineField({
       name: 'gallery',
       title: 'Galerie photos',
       type: 'array',
-      of: [{ type: 'image' }],
+      of: [
+        {
+          type: 'image',
+          options: {
+            accept: supportedStudioImageAccept,
+          },
+        },
+      ],
       options: { layout: 'grid' },
       group: 'main',
+      description: supportedStudioImageFormatsDescription,
     }),
     defineField({
       name: 'description',

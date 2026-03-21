@@ -2,6 +2,10 @@ import type { StructureResolver } from 'sanity/structure'
 import { orderableDocumentListDeskItem } from '@sanity/orderable-document-list'
 import { Eye, FolderOpen, Hammer, Image, Images, ShoppingBag } from 'lucide-react'
 
+import { apiVersion } from '../sanity/env'
+
+const structureApiVersion = apiVersion ?? '2025-01-01'
+
 export const structure: StructureResolver = (S, context) =>
   S.list()
     .title('Atelier Flo RD')
@@ -27,6 +31,7 @@ export const structure: StructureResolver = (S, context) =>
                 .icon(Eye)
                 .child(
                   S.documentList()
+                    .apiVersion(structureApiVersion)
                     .title('Pièces Disponibles')
                     .filter('_type == "piece" && status == "available"')
                     .defaultOrdering([{ field: 'orderRank', direction: 'asc' }])
@@ -76,6 +81,7 @@ export const structure: StructureResolver = (S, context) =>
                     .child((collectionId) =>
                       collectionId
                         ? S.documentList()
+                            .apiVersion(structureApiVersion)
                             .title('Entrées de la collection')
                             .filter('_type == "galleryKnife" && references($collectionId)')
                             .params({ collectionId })

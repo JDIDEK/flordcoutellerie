@@ -5,7 +5,7 @@ import { PageTransitionWrapper } from '@/components/PageTransitionWrapper'
 import { HorizontalScrollGallery } from '@/components/HorizontalScrollGallery'
 import { TransitionLink } from '@/components/TransitionLink'
 import { getGalleryCollections } from '@/lib/sanity/queries'
-import { urlFor } from '@/sanity/lib/image'
+import { hasImageAsset, urlFor } from '@/sanity/lib/image'
 
 export const metadata: Metadata = {
   title: 'Galerie | Flo RD Coutellerie',
@@ -22,7 +22,7 @@ export default async function WorksPage() {
   const galleryCollections = await getGalleryCollections()
 
   const collections = galleryCollections.map((collection) => {
-    const imageUrl = collection.coverImage
+    const imageUrl = hasImageAsset(collection.coverImage)
       ? urlFor(collection.coverImage.asset).width(2000).height(1200).fit('crop').url()
       : '/placeholder.svg'
 
