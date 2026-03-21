@@ -30,9 +30,10 @@ const nextConfig = {
       ? { exclude: ['error', 'warn'] }
       : false,
   },
-  // Optimize CSS
+  // Disabled because Next 16 dev currently tries to require `critters`
+  // in this project setup and crashes the dev server.
   experimental: {
-    optimizeCss: true,
+    optimizeCss: false,
   },
   // Security & performance headers
   async headers() {

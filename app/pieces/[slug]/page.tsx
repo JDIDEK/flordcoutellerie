@@ -237,7 +237,7 @@ export default async function PieceDetailPage({
                           }}
                         />
 
-                        <BuyNowButton pieceId={piece._id} />
+                        <BuyNowButton piece={cartPiece} />
                       </div>
                     </>
                   ) : (

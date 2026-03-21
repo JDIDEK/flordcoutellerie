@@ -6,6 +6,7 @@ import type Stripe from 'stripe'
 import { z } from 'zod'
 
 import { revalidatePieceTag } from '@/lib/cache'
+import { releaseCheckoutReservation } from '@/lib/checkout-reservation-server'
 import { logger } from '@/lib/logger'
 import {
   createReservationExpiry,
@@ -215,7 +216,7 @@ export async function POST(req: Request) {
 
     const stripe = getStripeClient()
     if (!stripe) {
-      await releaseReservation({
+      await releaseCheckoutReservation({
         sanity,
         pieceIds: uniqueIds,
         reservationId,
@@ -259,9 +260,10 @@ export async function POST(req: Request) {
         url: session.url,
         id: session.id,
         expiresAt: reservationExpiresAtIso,
+        reservationId,
       })
     } catch (error) {
-      await releaseReservation({
+      await releaseCheckoutReservation({
         sanity,
         pieceIds: uniqueIds,
         reservationId,
@@ -283,64 +285,6 @@ export async function POST(req: Request) {
       { error: 'Erreur lors de la creation de la session de paiement.' },
       { status: 500 }
     )
-  }
-}
-
-async function releaseReservation({
-  sanity,
-  pieceIds,
-  reservationId,
-}: {
-  sanity: ReturnType<typeof getSanityWriteClient>
-  pieceIds: string[]
-  reservationId: string
-}) {
-  try {
-    const pieces = await sanity.fetch<
-      Array<{
-        _id: string
-        _rev: string
-        status?: string
-        reservationId?: string
-      }>
-    >(
-      groq`
-        *[_type == "piece" && _id in $ids]{
-          _id,
-          _rev,
-          status,
-          reservationId
-        }
-      `,
-      { ids: pieceIds },
-      { cache: 'no-store' }
-    )
-
-    const releasablePieces = pieces.filter(
-      (piece) => piece.status === 'reserved' && piece.reservationId === reservationId
-    )
-
-    if (releasablePieces.length === 0) {
-      return
-    }
-
-    const tx = sanity.transaction()
-    releasablePieces.forEach((piece) => {
-      tx.patch(piece._id, (patch) =>
-        patch
-          .ifRevisionId(piece._rev)
-          .set({ status: 'available' })
-          .unset(['reservationId', 'reservedAt', 'reservationExpiresAt'])
-      )
-    })
-
-    await tx.commit({ visibility: 'sync' })
-    revalidatePieceTag()
-  } catch (error) {
-    logger.error('Failed to release reservation after checkout error', error, {
-      pieceIds,
-      reservationId,
-    })
   }
 }
 

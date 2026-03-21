@@ -5,13 +5,22 @@ import { Loader2 } from 'lucide-react'
 
 import { CheckoutConsentDialog } from '@/components/CheckoutConsentDialog'
 import { Button } from '@/components/ui/button'
+import { useCart } from '@/hooks/use-cart'
+import { storeActiveCheckoutReservation } from '@/lib/checkout-reservation'
 
 type BuyNowButtonProps = {
-  pieceId: string
+  piece: {
+    id: string
+    name: string
+    price?: number
+    image?: string
+    slug?: string
+  }
   disabled?: boolean
 }
 
-export function BuyNowButton({ pieceId, disabled }: BuyNowButtonProps) {
+export function BuyNowButton({ piece, disabled }: BuyNowButtonProps) {
+  const { addItem } = useCart()
   const [isLoading, setIsLoading] = useState(false)
   const [error, setError] = useState<string | null>(null)
   const [isConsentOpen, setIsConsentOpen] = useState(false)
@@ -24,7 +33,7 @@ export function BuyNowButton({ pieceId, disabled }: BuyNowButtonProps) {
       const response = await fetch('/api/checkout', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ productIds: [pieceId] }),
+        body: JSON.stringify({ productIds: [piece.id] }),
       })
 
       const data = await response.json()
@@ -33,7 +42,25 @@ export function BuyNowButton({ pieceId, disabled }: BuyNowButtonProps) {
         throw new Error(data.error || 'Erreur lors du paiement')
       }
 
-      if (data.url) {
+      if (data.url && data.expiresAt) {
+        addItem({
+          id: piece.id,
+          name: piece.name,
+          price: piece.price,
+          image: piece.image,
+          slug: piece.slug,
+          quantity: 1,
+        })
+
+        storeActiveCheckoutReservation({
+          expiresAt: data.expiresAt,
+          productIds: [piece.id],
+          itemCount: 1,
+          reservationId: typeof data.reservationId === 'string' ? data.reservationId : undefined,
+          sessionId: typeof data.id === 'string' ? data.id : undefined,
+          checkoutUrl: data.url,
+        })
+
         window.location.href = data.url
         return
       }

@@ -86,18 +86,18 @@ export function SiteLoader() {
             <Image
               src="/assets/images/Logo-Noir-Grand.svg"
               alt="Flo RD Coutellerie"
-              width={200}
-              height={80}
+              width={918}
+              height={845}
               priority
-              className="block dark:hidden"
+              className="block h-20 w-auto dark:hidden"
             />
             <Image
               src="/assets/images/Logo-Clair-Grand.svg"
               alt="Flo RD Coutellerie"
-              width={200}
-              height={80}
+              width={918}
+              height={846}
               priority
-              className="hidden dark:block"
+              className="hidden h-20 w-auto dark:block"
             />
           </div>
         </div>

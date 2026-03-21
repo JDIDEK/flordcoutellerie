@@ -30,4 +30,3 @@ export function resolvePieceStatus(
 
   return status
 }
-

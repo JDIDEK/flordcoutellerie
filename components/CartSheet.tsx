@@ -1,8 +1,8 @@
 'use client'
 
 import Image from 'next/image'
-import { ShoppingBag, Trash2, Loader2 } from 'lucide-react'
-import { useState } from 'react'
+import { ShoppingBag, Trash2, Loader2, Clock3 } from 'lucide-react'
+import { useEffect, useState, useSyncExternalStore } from 'react'
 
 import { CheckoutConsentDialog } from '@/components/CheckoutConsentDialog'
 import { Button } from '@/components/ui/button'
@@ -19,6 +19,12 @@ import {
 import { ScrollArea } from '@/components/ui/scroll-area'
 import { Separator } from '@/components/ui/separator'
 import { useCart } from '@/hooks/use-cart'
+import {
+  clearActiveCheckoutReservation,
+  readActiveCheckoutReservation,
+  storeActiveCheckoutReservation,
+  subscribeToActiveCheckoutReservation,
+} from '@/lib/checkout-reservation'
 import { cn, formatCurrency } from '@/lib/utils'
 
 type CartSheetProps = {
@@ -32,6 +38,12 @@ export function CartSheet({ className, triggerClassName }: CartSheetProps) {
   const [isLoading, setIsLoading] = useState(false)
   const [error, setError] = useState<string | null>(null)
   const [isConsentOpen, setIsConsentOpen] = useState(false)
+  const reservation = useSyncExternalStore(
+    subscribeToActiveCheckoutReservation,
+    readActiveCheckoutReservation,
+    () => null
+  )
+  const [now, setNow] = useState(Date.now())
 
   const totalItems = items.reduce((sum, item) => sum + item.quantity, 0)
   const totalPrice = items.reduce(
@@ -39,18 +51,75 @@ export function CartSheet({ className, triggerClassName }: CartSheetProps) {
     0
   )
   const totalLabel = formatCurrency(totalPrice) ?? '0'
+  const remainingMs = reservation ? Date.parse(reservation.expiresAt) - now : null
+  const reservationLabel =
+    remainingMs && remainingMs > 0 ? formatRemainingTime(remainingMs) : null
+
+  useEffect(() => {
+    if (!reservation) {
+      return
+    }
+
+    const interval = window.setInterval(() => {
+      setNow(Date.now())
+    }, 1000)
+
+    return () => window.clearInterval(interval)
+  }, [reservation])
+
+  useEffect(() => {
+    if (remainingMs !== null && remainingMs <= 0) {
+      clearActiveCheckoutReservation()
+    }
+  }, [remainingMs])
+
+  const cancelReservation = async () => {
+    if (!reservation?.reservationId) {
+      clearActiveCheckoutReservation()
+      return
+    }
+
+    const response = await fetch('/api/checkout/cancel', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({
+        reservationId: reservation.reservationId,
+        productIds: reservation.productIds,
+        sessionId: reservation.sessionId,
+      }),
+    })
+
+    const data = await response.json().catch(() => ({}))
+
+    if (!response.ok) {
+      throw new Error(data.error || 'Erreur lors de la liberation de la reservation')
+    }
+
+    clearActiveCheckoutReservation()
+  }
 
   const handleCheckout = async () => {
     if (items.length === 0) return
+
+    const productIds = items.flatMap((item) =>
+      Array(item.quantity).fill(item.id)
+    )
+
+    if (
+      reservation?.checkoutUrl &&
+      areProductIdsMatchingReservation(productIds, reservation.productIds)
+    ) {
+      window.location.href = reservation.checkoutUrl
+      return
+    }
 
     setIsLoading(true)
     setError(null)
 
     try {
-      // Build array of product IDs (repeat for quantity)
-      const productIds = items.flatMap((item) =>
-        Array(item.quantity).fill(item.id)
-      )
+      if (reservation) {
+        await cancelReservation()
+      }
 
       const response = await fetch('/api/checkout', {
         method: 'POST',
@@ -64,7 +133,16 @@ export function CartSheet({ className, triggerClassName }: CartSheetProps) {
         throw new Error(data.error || 'Erreur lors du paiement')
       }
 
-      if (data.url) {
+      if (data.url && data.expiresAt) {
+        storeActiveCheckoutReservation({
+          expiresAt: data.expiresAt,
+          productIds,
+          itemCount: totalItems,
+          reservationId: typeof data.reservationId === 'string' ? data.reservationId : undefined,
+          sessionId: typeof data.id === 'string' ? data.id : undefined,
+          checkoutUrl: data.url,
+        })
+
         window.location.href = data.url
         return
       }
@@ -72,6 +150,36 @@ export function CartSheet({ className, triggerClassName }: CartSheetProps) {
       setError(err instanceof Error ? err.message : 'Erreur inattendue')
     } finally {
       setIsLoading(false)
+    }
+  }
+
+  const handleRemoveItem = async (itemId: string) => {
+    try {
+      if (reservation?.productIds.includes(itemId)) {
+        setError(null)
+        await cancelReservation()
+      }
+
+      removeItem(itemId)
+    } catch (err) {
+      setError(
+        err instanceof Error ? err.message : 'Erreur lors de la mise a jour du panier'
+      )
+    }
+  }
+
+  const handleClear = async () => {
+    try {
+      if (reservation) {
+        setError(null)
+        await cancelReservation()
+      }
+
+      clear()
+    } catch (err) {
+      setError(
+        err instanceof Error ? err.message : 'Erreur lors de la mise a jour du panier'
+      )
     }
   }
 
@@ -87,6 +195,9 @@ export function CartSheet({ className, triggerClassName }: CartSheetProps) {
           aria-label="Ouvrir le panier"
         >
           <ShoppingBag className="h-5 w-5 md:h-7 md:w-7" />
+          {reservationLabel && (
+            <span className="absolute -left-1 -top-1 flex h-2.5 w-2.5 rounded-full bg-amber-500 ring-2 ring-background" />
+          )}
           {totalItems > 0 && (
             <span className="absolute -right-1 -top-1 flex h-5 min-w-5 items-center justify-center rounded-full bg-primary px-1 text-[10px] font-semibold leading-none text-primary-foreground">
               {totalItems}
@@ -113,6 +224,19 @@ export function CartSheet({ className, triggerClassName }: CartSheetProps) {
               : 'Votre panier est vide'}
           </SheetDescription>
         </SheetHeader>
+
+        {reservation && reservationLabel && (
+          <div className="mx-4 rounded-xl border border-amber-200 bg-amber-50 px-4 py-3 text-sm text-amber-950">
+            <div className="flex items-center justify-between gap-3">
+              <div className="flex items-center gap-2">
+                <span className="font-medium">Reservation en cours</span>
+              </div>
+            </div>
+            <p className="mt-2 text-xs leading-relaxed text-amber-900/80">
+              Il vous reste <span className="font-bold text-amber-950 text-lg">{reservationLabel}</span> pour finaliser votre achat avant que les articles ne soient remis en vente. Pensez à finaliser votre paiement rapidement pour ne pas perdre votre sélection.
+            </p>
+          </div>
+        )}
 
         <div className="flex-1 px-4 pb-2">
           {items.length === 0 ? (
@@ -174,7 +298,7 @@ export function CartSheet({ className, triggerClassName }: CartSheetProps) {
                               size="icon"
                               variant="ghost"
                               className="h-8 w-8"
-                              onClick={() => removeItem(item.id)}
+                              onClick={() => void handleRemoveItem(item.id)}
                               aria-label="Supprimer cet article"
                               type="button"
                             >
@@ -232,7 +356,7 @@ export function CartSheet({ className, triggerClassName }: CartSheetProps) {
               size="sm"
               variant="ghost"
               className="text-muted-foreground"
-              onClick={clear}
+              onClick={() => void handleClear()}
               type="button"
             >
               Vider le panier
@@ -250,4 +374,23 @@ export function CartSheet({ className, triggerClassName }: CartSheetProps) {
       />
     </Sheet>
   )
+}
+
+function formatRemainingTime(remainingMs: number) {
+  const totalSeconds = Math.max(0, Math.ceil(remainingMs / 1000))
+  const minutes = Math.floor(totalSeconds / 60)
+  const seconds = totalSeconds % 60
+
+  return `${String(minutes).padStart(2, '0')}:${String(seconds).padStart(2, '0')}`
+}
+
+function areProductIdsMatchingReservation(currentProductIds: string[], reservedProductIds: string[]) {
+  if (currentProductIds.length !== reservedProductIds.length) {
+    return false
+  }
+
+  const current = [...currentProductIds].sort()
+  const reserved = [...reservedProductIds].sort()
+
+  return current.every((value, index) => value === reserved[index])
 }

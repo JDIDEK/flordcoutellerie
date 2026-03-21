@@ -14,6 +14,7 @@ import { PageTransitionWrapper } from '@/components/PageTransitionWrapper'
 import { TransitionLink } from '@/components/TransitionLink'
 import { Button } from '@/components/ui/button'
 import type { VerifiedOrderSummary } from '@/lib/order-summary'
+import { clearActiveCheckoutReservation } from '@/lib/checkout-reservation'
 import { formatAmountFromMinorUnits } from '@/lib/utils'
 import { useCart } from '@/hooks/use-cart'
 
@@ -91,6 +92,7 @@ export function MerciContent({ state, orderSummary }: MerciContentProps) {
   useEffect(() => {
     if (state === 'paid') {
       clear()
+      clearActiveCheckoutReservation()
     }
   }, [clear, state])
 
