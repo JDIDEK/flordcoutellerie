@@ -40,7 +40,7 @@ export default async function PiecesPage() {
 
             {/* ---------- TITRE ---------- */}
             <h1 className="text-3xl md:text-6xl font-serif font-light text-center tracking-tight text-foreground mb-12 md:mb-24 md:animate-fade-in-up">
-              Les pièces
+              Pièces Disponibles
             </h1>
 
             {/* ---------- DISPONIBLES ---------- */}

@@ -13,7 +13,7 @@ type QuickAccessLink = {
 const quickAccessLinks: QuickAccessLink[] = [
   {
     href: '/pieces',
-    label: 'Pièces disponibles',
+    label: 'Pièces Disponibles',
     cta: 'Ouvrir la boutique',
     featured: true,
     icon: ShoppingBag,

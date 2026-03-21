@@ -126,7 +126,7 @@ export function Navigation({ alwaysVisible = false }: NavigationProps) {
   }, [])
 
   const navLinks = [
-    { href: '/pieces', label: 'Pièces disponibles' },
+    { href: '/pieces', label: 'Pièces Disponibles' },
     { href: '/sur-mesure', label: 'Sur Mesure' },
     { href: '/galerie', label: 'Galerie' },
     { href: '/formation', label: 'Formation' },
