@@ -2,6 +2,7 @@ import { NextResponse } from 'next/server'
 import { Resend } from 'resend'
 import { z } from 'zod'
 
+import { createContactEmailTemplate } from '@/lib/email-templates'
 import { logger } from '@/lib/logger'
 import { rateLimit } from '@/lib/rate-limit'
 import { getClientIp } from '@/lib/request'
@@ -93,21 +94,41 @@ export async function POST(req: Request) {
   }
 
   const resend = new Resend(resendApiKey)
+  const emailContent = createContactEmailTemplate({
+    name,
+    email,
+    phone,
+    message,
+  })
 
   try {
-    await resend.emails.send({
+    const { data, error } = await resend.emails.send({
       from: fromEmail,
       to: recipientEmail,
       replyTo: email,
-      subject: `Contact depuis le site — ${name}`,
-      text: [
-        `Nom : ${name}`,
-        `Email : ${email}`,
-        `Téléphone : ${phone || 'Non renseigné'}`,
-        '',
-        'Message :',
-        message,
-      ].join('\n'),
+      subject: emailContent.subject,
+      html: emailContent.html,
+      text: emailContent.text,
+    })
+
+    if (error) {
+      logger.error('Resend rejected contact email', error, {
+        recipientEmail,
+        fromEmail,
+        senderEmail: email,
+      })
+
+      return NextResponse.json(
+        { error: "Erreur lors de l'envoi du message. Veuillez reessayer." },
+        { status: 502 }
+      )
+    }
+
+    logger.info('Contact email sent', {
+      resendEmailId: data?.id ?? null,
+      recipientEmail,
+      fromEmail,
+      senderEmail: email,
     })
 
     return NextResponse.json({ success: true })

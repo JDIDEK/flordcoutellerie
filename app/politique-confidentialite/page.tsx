@@ -1,4 +1,5 @@
 import type { Metadata } from 'next'
+import { CookiePreferencesButton } from '@/components/CookiePreferencesButton'
 import { Navigation } from '@/components/Navigation'
 import { PageTransitionWrapper } from '@/components/PageTransitionWrapper'
 import { TransitionLink } from '@/components/TransitionLink'
@@ -100,21 +101,26 @@ export default function PolitiqueConfidentialitePage() {
               <section>
                 <h2 className="text-lg font-medium mb-3 text-foreground">5. Cookies</h2>
                 <div className="text-muted-foreground leading-relaxed space-y-4">
-                  <p>Notre site utilise les cookies suivants :</p>
+                  <p>Notre site utilise des cookies et autres traceurs locaux (localStorage) pour les usages suivants :</p>
                   <ul className="list-disc pl-5 space-y-2">
                     <li>
-                      <strong className="text-foreground">Cookies essentiels</strong> : nécessaires au 
-                      fonctionnement du panier et du paiement
+                      <strong className="text-foreground">Traceurs essentiels</strong> : nécessaires au 
+                      fonctionnement du panier, à la mémorisation du thème d'affichage et à la conservation de votre choix de consentement
                     </li>
                     <li>
-                      <strong className="text-foreground">Cookies analytiques</strong> : Vercel Analytics, 
+                      <strong className="text-foreground">Traceurs analytiques</strong> : Vercel Analytics, 
                       pour mesurer l'audience et améliorer le site (avec votre consentement)
                     </li>
                   </ul>
                   <p>
-                    Vous pouvez gérer vos préférences de cookies à tout moment via la bannière de 
-                    consentement ou les paramètres de votre navigateur.
+                    Votre choix concernant les traceurs analytiques est conservé pendant 6 mois maximum.
                   </p>
+                  <p>
+                    Vous pouvez gérer vos préférences à tout moment :
+                  </p>
+                  <CookiePreferencesButton variant="outline" size="sm">
+                    Gerer mes cookies
+                  </CookiePreferencesButton>
                 </div>
               </section>
 
@@ -124,6 +130,9 @@ export default function PolitiqueConfidentialitePage() {
                   <ul className="list-disc pl-5 space-y-2">
                     <li>
                       <strong className="text-foreground">Données de navigation</strong> : 26 mois maximum
+                    </li>
+                    <li>
+                      <strong className="text-foreground">Choix de consentement cookies</strong> : 6 mois maximum
                     </li>
                     <li>
                       <strong className="text-foreground">Données de commande</strong> : 10 ans (obligation 

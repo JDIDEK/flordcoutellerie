@@ -7,16 +7,50 @@ import { TransitionLink } from '@/components/TransitionLink'
 
 const COOKIE_CONSENT_KEY = 'cookie-consent'
 const COOKIE_CONSENT_CHANGE_EVENT = 'cookie-consent-change'
+const COOKIE_CONSENT_OPEN_EVENT = 'cookie-consent-open'
+const COOKIE_CONSENT_MAX_AGE_MS = 180 * 24 * 60 * 60 * 1000
 
 type ConsentState = 'pending' | 'accepted' | 'rejected'
+type StoredConsent = {
+  status: Exclude<ConsentState, 'pending'>
+  updatedAt: number
+}
 
-function readConsentSnapshot(): ConsentState {
+function readStoredConsent(): StoredConsent | null {
   if (typeof window === 'undefined') {
-    return 'pending'
+    return null
   }
 
-  const saved = localStorage.getItem(COOKIE_CONSENT_KEY)
-  return saved === 'accepted' || saved === 'rejected' ? saved : 'pending'
+  const raw = localStorage.getItem(COOKIE_CONSENT_KEY)
+
+  if (!raw) {
+    return null
+  }
+
+  try {
+    const parsed = JSON.parse(raw) as Partial<StoredConsent>
+
+    if (
+      (parsed.status === 'accepted' || parsed.status === 'rejected') &&
+      typeof parsed.updatedAt === 'number'
+    ) {
+      if (Date.now() - parsed.updatedAt > COOKIE_CONSENT_MAX_AGE_MS) {
+        localStorage.removeItem(COOKIE_CONSENT_KEY)
+        return null
+      }
+
+      return parsed as StoredConsent
+    }
+  } catch {
+    // Ignore legacy or malformed values and ask again.
+  }
+
+  localStorage.removeItem(COOKIE_CONSENT_KEY)
+  return null
+}
+
+function readConsentSnapshot(): ConsentState {
+  return readStoredConsent()?.status ?? 'pending'
 }
 
 function subscribeToConsent(callback: () => void) {
@@ -41,8 +75,21 @@ function subscribeToConsent(callback: () => void) {
 }
 
 function setCookieConsent(value: Exclude<ConsentState, 'pending'>) {
-  localStorage.setItem(COOKIE_CONSENT_KEY, value)
+  const payload: StoredConsent = {
+    status: value,
+    updatedAt: Date.now(),
+  }
+
+  localStorage.setItem(COOKIE_CONSENT_KEY, JSON.stringify(payload))
   window.dispatchEvent(new Event(COOKIE_CONSENT_CHANGE_EVENT))
+}
+
+export function openCookiePreferences() {
+  if (typeof window === 'undefined') {
+    return
+  }
+
+  window.dispatchEvent(new Event(COOKIE_CONSENT_OPEN_EVENT))
 }
 
 export function useCookieConsent() {
@@ -60,6 +107,16 @@ export function CookieBanner() {
     return () => clearTimeout(timer)
   }, [consent])
 
+  useEffect(() => {
+    const handleOpenPreferences = () => setIsVisible(true)
+
+    window.addEventListener(COOKIE_CONSENT_OPEN_EVENT, handleOpenPreferences)
+
+    return () => {
+      window.removeEventListener(COOKIE_CONSENT_OPEN_EVENT, handleOpenPreferences)
+    }
+  }, [])
+
   const handleAccept = () => {
     setCookieConsent('accepted')
     setIsVisible(false)
@@ -71,12 +128,15 @@ export function CookieBanner() {
   }
 
   const handleClose = () => {
-    // Closing without choice = reject (conservative approach for GDPR)
-    handleReject()
+    if (consent === 'pending') {
+      handleReject()
+      return
+    }
+
+    setIsVisible(false)
   }
 
-  // Don't render if consent already given or banner not yet visible
-  if (consent !== 'pending' || !isVisible) {
+  if (!isVisible) {
     return null
   }
 
@@ -104,14 +164,15 @@ export function CookieBanner() {
                 id="cookie-banner-title" 
                 className="text-base font-medium text-foreground"
               >
-                🍪 Nous utilisons des cookies
+                Cookies et traceurs
               </h2>
               <p 
                 id="cookie-banner-description" 
                 className="text-sm text-muted-foreground leading-relaxed"
               >
-                Ce site utilise des cookies analytiques pour mesurer l'audience et améliorer votre expérience. 
-                Aucune donnée personnelle n'est vendue à des tiers.{' '}
+                Nous utilisons des traceurs essentiels pour memoriser vos preferences d'interface et
+                votre panier, ainsi que des traceurs analytiques optionnels pour mesurer l'audience.
+                Votre choix est conserve pendant 6 mois.{' '}
                 <TransitionLink 
                   href="/politique-confidentialite" 
                   className="text-primary underline-offset-4 hover:underline"
@@ -128,7 +189,7 @@ export function CookieBanner() {
                 onClick={handleReject}
                 className="text-sm"
               >
-                Refuser
+                Refuser l'analytique
               </Button>
               <Button
                 size="sm"

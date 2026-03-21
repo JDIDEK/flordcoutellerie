@@ -1,6 +1,10 @@
 import type { StepId, WizardConfig, WizardStep, DamasteelScale } from './types'
 import { kitchenForms, outdoorFormsModerate, outdoorFormsIntensive } from './data'
 
+function isValidEmail(value: string) {
+  return /\S+@\S+\.\S+/.test(value.trim())
+}
+
 export function isStepComplete(step: StepId, config: WizardConfig): boolean {
   switch (step) {
     case 'usage':
@@ -40,7 +44,7 @@ export function isStepComplete(step: StepId, config: WizardConfig): boolean {
     case 'personalization':
       return !config.engraving || Boolean(config.engravingText)
     case 'summary':
-      return Boolean(config.firstName && config.lastName && config.email)
+      return Boolean(config.firstName && config.lastName && isValidEmail(config.email))
     default:
       return false
   }

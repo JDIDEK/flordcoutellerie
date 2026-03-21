@@ -6,22 +6,9 @@ import { ChevronLeft, ChevronRight } from 'lucide-react'
 import { Card } from '@/components/ui/card'
 import { Button } from '@/components/ui/button'
 
-import type { WizardStep } from './types'
+import type { Action, WizardStep } from './types'
 import { wizardReducer, initialConfig } from './reducer'
 import { isStepComplete, getSteps } from './helpers'
-import {
-  usageOptions,
-  kitchenForms,
-  pliantMechanisms,
-  pliantFormsByMechanism,
-  outdoorUseCases,
-  outdoorFormsModerate,
-  outdoorFormsIntensive,
-  chasseForms,
-  handleFamilies,
-  getSteelOptionsForUsage,
-  damasteelPatterns,
-} from './data'
 import {
   UsageStep,
   CuisineFormStep,
@@ -43,8 +30,23 @@ import {
 } from './steps'
 
 export function CustomOrderWizard() {
-  const [config, dispatch] = useReducer(wizardReducer, initialConfig)
+  const [config, baseDispatch] = useReducer(wizardReducer, initialConfig)
   const [activeStepIndex, setActiveStepIndex] = useState(0)
+  const [isSubmitting, setIsSubmitting] = useState(false)
+  const [submitSuccess, setSubmitSuccess] = useState(false)
+  const [submitError, setSubmitError] = useState<string | null>(null)
+
+  const dispatch: React.Dispatch<Action> = (action) => {
+    if (submitSuccess) {
+      setSubmitSuccess(false)
+    }
+
+    if (submitError) {
+      setSubmitError(null)
+    }
+
+    baseDispatch(action)
+  }
 
   const steps = useMemo(() => getSteps(config), [config])
   const safeActiveStepIndex = Math.min(activeStepIndex, Math.max(steps.length - 1, 0))
@@ -64,82 +66,37 @@ export function CustomOrderWizard() {
     }
   }
 
-  const mailtoBody = useMemo(() => {
-    const usageLabel = usageOptions.find((u) => u.id === config.usage)?.label ?? 'Sur-mesure'
-    const lines = [
-      `Usage : ${usageLabel}`,
-    ]
+  const handleSubmit = async () => {
+    if (!isStepComplete('summary', config) || isSubmitting) {
+      return
+    }
 
-    if (config.usage === 'cuisine') {
-      const form = kitchenForms.find((f) => f.id === config.cuisineForm)
-      if (form) lines.push(`Forme cuisine : ${form.label} (${form.length})`)
-      if (config.guillochageCentral) {
-        lines.push(`Guillochage dos de lame : ${config.guillochageCentral}`)
+    setIsSubmitting(true)
+    setSubmitError(null)
+
+    try {
+      const response = await fetch('/api/sur-mesure', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify(config),
+      })
+
+      if (!response.ok) {
+        const data = await response.json().catch(() => ({}))
+        throw new Error(data.error || "Erreur lors de l'envoi.")
       }
-    }
-    if (config.usage === 'pliant') {
-      const mech = pliantMechanisms.find((m) => m.id === config.pliantMechanism)
-      const form = config.pliantMechanism
-        ? pliantFormsByMechanism[config.pliantMechanism]?.find((f) => f.id === config.pliantForm)
-        : undefined
-      if (mech) lines.push(`Mécanisme : ${mech.label}`)
-      if (form) lines.push(`Forme pliant : ${form.label}`)
-      if (config.guillochageCentral) {
-        lines.push(`Guillochage dos de lame : ${config.guillochageCentral}`)
-      }
-      if (config.guillochagePlatineLeft || config.guillochagePlatineRight) {
-        lines.push(`Guillochage platines : ${config.guillochagePlatineLeft ?? '-'} / ${config.guillochagePlatineRight ?? '-'}`)
-      }
-    }
-    if (config.usage === 'outdoor') {
-      const intensity = outdoorUseCases.find((o) => o.id === config.outdoorUse)
-      const allForms = [...outdoorFormsModerate, ...outdoorFormsIntensive]
-      const form = allForms.find((f) => f.id === config.outdoorForm)
-      if (intensity) lines.push(`Utilisation : ${intensity.label}`)
-      if (form) lines.push(`Forme outdoor : ${form.label}`)
-      if (config.guillochageCentral) {
-        lines.push(`Guillochage dos de lame : ${config.guillochageCentral}`)
-      }
-      if (config.sheath) lines.push(`Étui : ${config.sheath === 'kydex' ? 'Kydex' : 'Cuir'}`)
-    }
-    if (config.usage === 'chasse') {
-      const form = chasseForms.find((f) => f.id === config.chasseForm)
-      if (form) lines.push(`Forme chasse : ${form.label} (${form.length})`)
-      if (config.guillochageCentral) {
-        lines.push(`Guillochage dos de lame : ${config.guillochageCentral}`)
-      }
-      if (config.sheath) lines.push(`Étui : ${config.sheath === 'kydex' ? 'Kydex' : 'Cuir'}`)
-    }
 
-    if (config.steel) {
-      const steel = getSteelOptionsForUsage(config.usage).find((s) => s.id === config.steel)
-      lines.push(`Acier : ${steel?.label ?? config.steel}`)
+      setSubmitSuccess(true)
+    } catch (error) {
+      setSubmitError(
+        error instanceof Error ? error.message : "Erreur lors de l'envoi de la demande."
+      )
+    } finally {
+      setIsSubmitting(false)
     }
-    if (config.steel === 'damasteel' && config.damasteelPattern) {
-      const pattern = damasteelPatterns.find((p) => p.id === config.damasteelPattern)
-      lines.push(`Motif Damasteel : ${pattern?.label ?? config.damasteelPattern}`)
-    }
-
-    if (config.handleFamily) {
-      const handle = handleFamilies.find((h) => h.id === config.handleFamily)
-      const variant = handle?.variants?.find((v) => v.id === config.handleVariant)
-      lines.push(`Manche : ${handle?.label ?? config.handleFamily}${variant ? ` - ${variant.label}` : ''}`)
-    }
-
-    lines.push(`Rivet mosaïque : ${config.mosaicRivet ? 'Oui' : 'Non'}`)
-    lines.push(`Gravure : ${config.engraving ? config.engravingText || 'Oui' : 'Non'}`)
-    lines.push(`Commentaires : ${config.notes || 'Aucun'}`)
-    lines.push('')
-    lines.push(`Prénom : ${config.firstName || '-'}`)
-    lines.push(`Nom : ${config.lastName || '-'}`)
-    lines.push(`Email : ${config.email || '-'}`)
-
-    return encodeURIComponent(lines.join('\n'))
-  }, [config])
-
-  const mailtoSubject = encodeURIComponent(
-    `Demande sur-mesure - ${usageOptions.find((u) => u.id === config.usage)?.label ?? 'Couteau'}`
-  )
+  }
 
   const renderStepContent = () => {
     switch (currentStep?.id) {
@@ -178,7 +135,16 @@ export function CustomOrderWizard() {
       case 'personalization':
         return <PersonalizationStep config={config} dispatch={dispatch} />
       case 'summary':
-        return <SummaryStep config={config} dispatch={dispatch} mailtoSubject={mailtoSubject} mailtoBody={mailtoBody} />
+        return (
+          <SummaryStep
+            config={config}
+            dispatch={dispatch}
+            isSubmitting={isSubmitting}
+            submitSuccess={submitSuccess}
+            submitError={submitError}
+            onSubmit={handleSubmit}
+          />
+        )
       default:
         return null
     }

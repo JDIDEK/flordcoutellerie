@@ -25,11 +25,20 @@ import type { WizardConfig, Action } from '../types'
 interface SummaryStepProps {
   config: WizardConfig
   dispatch: React.Dispatch<Action>
-  mailtoSubject: string
-  mailtoBody: string
+  isSubmitting: boolean
+  submitSuccess: boolean
+  submitError: string | null
+  onSubmit: () => void
 }
 
-export function SummaryStep({ config, dispatch, mailtoSubject, mailtoBody }: SummaryStepProps) {
+export function SummaryStep({
+  config,
+  dispatch,
+  isSubmitting,
+  submitSuccess,
+  submitError,
+  onSubmit,
+}: SummaryStepProps) {
   return (
     <div className="space-y-6">
       <StepHeader
@@ -110,18 +119,22 @@ export function SummaryStep({ config, dispatch, mailtoSubject, mailtoBody }: Sum
             <p>Gravure : {config.engraving ? config.engravingText || 'Oui' : 'Non'}</p>
             <p>Commentaires : {config.notes || 'Aucun'}</p>
           </div>
+          <div className="space-y-3">
+            {submitSuccess && (
+              <p className="text-sm text-emerald-600 dark:text-emerald-400">
+                Votre demande a bien ete envoyee. Nous reviendrons vers vous rapidement.
+              </p>
+            )}
+            {submitError && <p className="text-sm text-destructive">{submitError}</p>}
+          </div>
           <Button
             className="w-full"
             size="lg"
-            onClick={() =>
-              window.location.assign(
-                `mailto:floribadeaudumas@gmail.com?subject=${mailtoSubject}&body=${mailtoBody}`
-              )
-            }
-            disabled={!isStepComplete('summary', config)}
+            onClick={onSubmit}
+            disabled={isSubmitting || !isStepComplete('summary', config)}
           >
             <Mail className="h-4 w-4 mr-2" />
-            Envoyer la demande
+            {isSubmitting ? 'Envoi en cours...' : 'Envoyer la demande'}
           </Button>
         </Card>
       </div>

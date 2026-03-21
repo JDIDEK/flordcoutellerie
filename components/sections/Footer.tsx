@@ -1,5 +1,6 @@
 'use client'
 
+import { CookiePreferencesButton } from '@/components/CookiePreferencesButton'
 import { TransitionLink } from '@/components/TransitionLink'
 
 export function HomeFooter() {
@@ -30,6 +31,12 @@ export function HomeFooter() {
             <TransitionLink href="/politique-confidentialite" className="hover:text-primary transition-colors">
               Confidentialité
             </TransitionLink>
+            <CookiePreferencesButton
+              variant="link"
+              className="h-auto p-0 text-sm text-foreground hover:text-primary"
+            >
+              Gerer mes cookies
+            </CookiePreferencesButton>
           </nav>
 
           <div className="flex flex-col items-center md:items-end gap-1 text-xs text-muted-foreground">
