@@ -1,6 +1,7 @@
 export type Usage = 'cuisine' | 'pliant' | 'outdoor' | 'chasse'
 export type OutdoorUse = 'moderee' | 'intensive'
 export type DamasteelScale = 'large' | 'small'
+export type RivetColor = 'cuivre' | 'laiton' | 'inox'
 
 export type StepId =
   | 'usage'
@@ -48,6 +49,7 @@ export interface PliantForm {
   label: string
   profile: string
   description: string
+  disabled?: boolean
 }
 
 export interface OutdoorForm {
@@ -56,6 +58,7 @@ export interface OutdoorForm {
   length: string
   description: string
   patternScale: DamasteelScale
+  disabled?: boolean
 }
 
 export interface OutdoorUseCase {
@@ -129,6 +132,7 @@ export interface WizardConfig {
   handleFamily?: string
   handleVariant?: string
   handleComposition?: 'simple' | 'compose'
+  rivetColor?: RivetColor
   mosaicRivet: boolean
   engraving: boolean
   engravingText: string
@@ -156,6 +160,7 @@ export type Action =
   | { type: 'setSheath'; sheath: 'kydex' | 'cuir' }
   | { type: 'setHandle'; family: string; variant?: string }
   | { type: 'setHandleComposition'; composition: 'simple' | 'compose' }
+  | { type: 'setRivetColor'; color: RivetColor }
   | { type: 'toggleMosaic'; enabled: boolean }
   | { type: 'toggleEngraving'; enabled: boolean }
   | { type: 'setEngravingText'; text: string }

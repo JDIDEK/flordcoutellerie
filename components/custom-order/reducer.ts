@@ -44,6 +44,8 @@ export function wizardReducer(state: WizardConfig, action: Action): WizardConfig
       return { ...state, handleFamily: action.family, handleVariant: action.variant }
     case 'setHandleComposition':
       return { ...state, handleComposition: action.composition }
+    case 'setRivetColor':
+      return { ...state, rivetColor: action.color }
     case 'toggleMosaic':
       return { ...state, mosaicRivet: action.enabled }
     case 'toggleEngraving':

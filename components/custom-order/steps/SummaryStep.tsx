@@ -16,10 +16,11 @@ import {
   outdoorFormsIntensive,
   chasseForms,
   handleFamilies,
+  rivetColors,
   getSteelOptionsForUsage,
   damasteelPatterns,
 } from '../data'
-import { isStepComplete } from '../helpers'
+import { isStepComplete, requiresRivetColor } from '../helpers'
 import type { WizardConfig, Action } from '../types'
 
 interface SummaryStepProps {
@@ -115,6 +116,9 @@ export function SummaryStep({
             )}
             <p>Manche : {config.handleFamily ? `${handleFamilies.find((h) => h.id === config.handleFamily)?.label ?? config.handleFamily}${config.handleVariant ? ` - ${handleFamilies.find((h) => h.id === config.handleFamily)?.variants?.find((v) => v.id === config.handleVariant)?.label ?? config.handleVariant}` : ''}` : '—'}</p>
             <p>Composition : {config.handleComposition === 'simple' ? 'Simple' : config.handleComposition === 'compose' ? 'Composé' : '—'}</p>
+            {requiresRivetColor(config) && (
+              <p>Couleur du rivet : {rivetColors.find((color) => color.id === config.rivetColor)?.label ?? '—'}</p>
+            )}
             <p>Rivet mosaïque : {config.mosaicRivet ? 'Oui' : 'Non'}</p>
             <p>Gravure : {config.engraving ? config.engravingText || 'Oui' : 'Non'}</p>
             <p>Commentaires : {config.notes || 'Aucun'}</p>

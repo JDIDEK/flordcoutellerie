@@ -50,6 +50,7 @@ const customOrderSchema = z
     handleFamily: optionalString(80),
     handleVariant: optionalString(80),
     handleComposition: optionalEnum(['simple', 'compose']),
+    rivetColor: optionalEnum(['cuivre', 'laiton', 'inox']),
     mosaicRivet: z.boolean(),
     engraving: z.boolean(),
     engravingText: optionalString(120),

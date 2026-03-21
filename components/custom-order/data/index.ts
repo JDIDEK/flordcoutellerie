@@ -14,3 +14,4 @@ export { damasteelPatterns, damasteelPatternsLarge, damasteelPatternsSmall } fro
 export { handleFamilies } from './handle-options'
 export { sheathOptions } from './sheath-options'
 export { guillochageMotifs, guillochageMotifsPrincipale, guillochageMotifsPlatines, guillochageSets } from './guillochage-options'
+export { rivetColors } from './rivet-options'

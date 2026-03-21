@@ -43,7 +43,7 @@ export function SteelStep({ config, dispatch }: SteelStepProps) {
                 <div className="mt-2 space-y-0.5">
                   {config.usage !== 'pliant' && steel.tech && (
                     <>
-                      <MetricLine label="Tenue" value={steel.tech.retention} />
+                      <MetricLine label="Dureté" value={steel.tech.retention} />
                       <MetricLine label="Affûtage" value={steel.tech.sharpening} />
                       <MetricLine label="Flexibilité" value={steel.tech.flexibility} />
                     </>

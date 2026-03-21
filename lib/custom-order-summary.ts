@@ -11,6 +11,7 @@ import {
   outdoorUseCases,
   pliantFormsByMechanism,
   pliantMechanisms,
+  rivetColors,
   sheathOptions,
   usageOptions,
 } from '@/components/custom-order/data'
@@ -177,13 +178,26 @@ export function buildCustomOrderSummarySections(config: WizardConfig): SummarySe
   }
 
   const personalizationItems: SummaryItem[] = [
+  ]
+
+  if (
+    (config.usage === 'cuisine' || config.usage === 'outdoor') &&
+    config.rivetColor
+  ) {
+    personalizationItems.push({
+      label: 'Couleur du rivet',
+      value: rivetColors.find((item) => item.id === config.rivetColor)?.label ?? config.rivetColor,
+    })
+  }
+
+  personalizationItems.push(
     { label: 'Rivet mosaique', value: config.mosaicRivet ? 'Oui' : 'Non' },
     {
       label: 'Gravure',
       value: config.engraving ? config.engravingText || 'Oui, sans texte precise' : 'Non',
     },
     { label: 'Commentaires', value: config.notes || 'Aucun commentaire' },
-  ]
+  )
 
   const contactItems: SummaryItem[] = [
     { label: 'Prenom', value: config.firstName },

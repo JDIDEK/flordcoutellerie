@@ -2,10 +2,8 @@
 
 import {
   StepHeader,
-  PlaceholderVisual,
   getOptionCardClassName,
   optionCardContentClassName,
-  optionCardVisualClassName,
 } from '../ui'
 import { outdoorUseCases } from '../data'
 import type { WizardConfig, Action } from '../types'
@@ -28,7 +26,7 @@ export function OutdoorIntensityStep({ config, dispatch }: OutdoorIntensityStepP
           return (
             <div
               key={option.id}
-              className={getOptionCardClassName(isSelected, 'flex items-stretch')}
+              className={getOptionCardClassName(isSelected)}
               onClick={() => dispatch({ type: 'setOutdoorUse', usage: option.id })}
             >
               <div className={optionCardContentClassName}>
@@ -57,12 +55,6 @@ export function OutdoorIntensityStep({ config, dispatch }: OutdoorIntensityStepP
                     {option.note}
                   </p>
                 )}
-              </div>
-              <div className={optionCardVisualClassName}>
-                <PlaceholderVisual
-                  label="Photo"
-                  className="h-full rounded-none border-0 bg-transparent"
-                />
               </div>
             </div>
           )

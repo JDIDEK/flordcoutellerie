@@ -1,6 +1,7 @@
 'use client'
 
 import { Card } from '@/components/ui/card'
+import { Badge } from '@/components/ui/badge'
 import {
   StepHeader,
   PlaceholderVisual,
@@ -33,15 +34,26 @@ export function PliantFormStep({ config, dispatch }: PliantFormStepProps) {
         <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
           {forms?.map((form) => {
             const isSelected = config.pliantForm === form.id
+            const isDisabled = Boolean(form.disabled)
             return (
               <div
                 key={form.id}
-                className={getOptionCardClassName(isSelected, 'flex items-stretch')}
-                onClick={() => dispatch({ type: 'setPliantForm', form: form.id })}
+                className={getOptionCardClassName(
+                  isSelected,
+                  `flex items-stretch ${isDisabled ? 'cursor-not-allowed opacity-40' : ''}`
+                )}
+                onClick={() => {
+                  if (isDisabled) return
+                  dispatch({ type: 'setPliantForm', form: form.id })
+                }}
               >
                 <div className={optionCardContentClassName}>
-                  <span className={`font-medium ${isSelected ? 'text-primary' : ''}`}>{form.label}</span>
-                  <span className="text-xs text-muted-foreground">{form.profile}</span>
+                  <div className="flex items-center gap-2">
+                    <span className={`font-medium ${isSelected ? 'text-primary' : ''}`}>{form.label}</span>
+                  </div>
+                  {form.profile ? (
+                    <span className="text-xs text-muted-foreground">{form.profile}</span>
+                  ) : null}
                 </div>
                 <div className={optionCardVisualClassName}>
                   <PlaceholderVisual

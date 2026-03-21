@@ -5,6 +5,12 @@ function isValidEmail(value: string) {
   return /\S+@\S+\.\S+/.test(value.trim())
 }
 
+export function requiresRivetColor(
+  config: Pick<WizardConfig, 'usage'>
+) {
+  return config.usage === 'cuisine' || config.usage === 'outdoor'
+}
+
 export function isStepComplete(step: StepId, config: WizardConfig): boolean {
   switch (step) {
     case 'usage':
@@ -42,7 +48,10 @@ export function isStepComplete(step: StepId, config: WizardConfig): boolean {
     case 'handle-composition':
       return Boolean(config.handleComposition)
     case 'personalization':
-      return !config.engraving || Boolean(config.engravingText)
+      return (
+        (!config.engraving || Boolean(config.engravingText)) &&
+        (!requiresRivetColor(config) || Boolean(config.rivetColor))
+      )
     case 'summary':
       return Boolean(config.firstName && config.lastName && isValidEmail(config.email))
     default:

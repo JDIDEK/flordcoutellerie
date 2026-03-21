@@ -17,10 +17,11 @@ export const pliantFormsByMechanism: Record<string, PliantForm[]> = {
   'cran-plat': [
     { id: 'forme-1-c', label: 'Forme 1', profile: 'forme1', description: 'description forme1' },
     { id: 'forme-2-c', label: 'Forme 2', profile: 'forme2', description: 'description forme2' },
-    { id: 'a-venir-c', label: 'A venir', profile: 'à venir', description: 'description "à venir"' },
+    { id: 'outdoor-c', label: 'Outdoor', profile: '', description: '', disabled: true },
   ],
   'piemontais': [
     { id: 'forme-1-p', label: 'Forme 1', profile: 'forme1', description: 'description forme1' },
     { id: 'forme-2-p', label: 'Forme 2', profile: 'forme2', description: 'description forme2' },
+    { id: 'outdoor-p', label: 'À venir', profile: '', description: '', disabled: true },
   ],
 }

@@ -23,11 +23,12 @@ export const outdoorFormsModerate: OutdoorForm[] = [
     patternScale: 'small',
   },
   {
-    id: 'moderee-forme2',
-    label: 'Forme 2',
+    id: 'a-venir',
+    label: 'À venir',
     length: '',
     description: '',
     patternScale: 'small',
+    disabled: true,
   },
 ]
 
@@ -40,10 +41,11 @@ export const outdoorFormsIntensive: OutdoorForm[] = [
     patternScale: 'large',
   },
   {
-    id: 'intensive-forme2',
-    label: 'Forme 2',
+    id: 'a-venir',
+    label: 'À venir',
     length: '',
     description: '',
     patternScale: 'large',
+    disabled: true,
   },
 ]

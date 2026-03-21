@@ -5,50 +5,48 @@ import { PageTransitionWrapper } from '@/components/PageTransitionWrapper'
 import { TransitionLink } from '@/components/TransitionLink'
 
 export const metadata: Metadata = {
-  title: 'Conditions Generales de Vente | Flo RD Coutellerie',
+  title: 'Conditions Générales de Vente | Flo RD Coutellerie',
   description:
-    'Conditions Generales de Vente de Flo RD Coutellerie : commande, paiement Stripe, livraison, retractation et garanties.',
+    'Conditions Générales de Vente de Flo RD Coutellerie : commande, paiement Stripe, livraison, rétractation et garanties.',
 }
 
 const sections = [
   {
-    title: '1. Identite du vendeur',
+    title: '1. Identité du vendeur',
     content: (
       <>
         <p>
-          Le site <strong className="text-foreground">Flo RD Coutellerie</strong> est
-          exploite par Florent B. Dumas, artisan coutelier, SIRET 914 141 684 00011,
-          joignable a l&apos;adresse{' '}
+          Le site <strong className="font-medium text-foreground">Flo RD Coutellerie</strong> est
+          exploité par Florent B. Dumas, artisan coutelier, SIRET 914 141 684 00011, joignable à
+          l&apos;adresse{' '}
           <a
             href="mailto:floribadeaudumas@gmail.com"
-            className="underline underline-offset-4"
+            className="text-foreground underline underline-offset-4 hover:text-muted-foreground transition-colors"
           >
             floribadeaudumas@gmail.com
           </a>
           .
         </p>
         <p>
-          Les presentes CGV regissent les ventes conclues a distance sur le site pour
-          les pieces disponibles en ligne et, plus largement, les echanges prealables
-          aux commandes sur mesure.
+          Les présentes CGV régissent les ventes conclues à distance sur le site pour les pièces
+          disponibles en ligne et, plus largement, les échanges préalables aux commandes sur mesure.
         </p>
       </>
     ),
   },
   {
-    title: '2. Produits proposes',
+    title: '2. Produits proposés',
     content: (
       <>
         <p>
-          Les produits presentes sont des couteaux artisanaux, fabriques en piece
-          unique ou en tres petite serie. Les visuels et descriptions sont fournis avec
-          le plus grand soin, mais de legeres variations de teinte, de veinage ou de
-          texture peuvent exister.
+          Les produits présentés sont des couteaux artisanaux, fabriqués en pièce unique ou en très
+          petite série. Les visuels et descriptions sont fournis avec le plus grand soin, mais de
+          légères variations de teinte, de veinage ou de texture peuvent exister.
         </p>
         <p>
-          Les demandes sur mesure font l&apos;objet d&apos;un echange specifique et, sauf
-          mention contraire, ne sont pas achetables directement via le tunnel de
-          paiement instantane du site.
+          Les demandes sur mesure font l&apos;objet d&apos;un échange spécifique et, sauf mention
+          contraire, ne sont pas achetables directement via le tunnel de paiement instantané du
+          site.
         </p>
       </>
     ),
@@ -58,31 +56,29 @@ const sections = [
     content: (
       <>
         <p>
-          Les prix affiches sur le site sont exprimes en euros TTC. Les frais de
-          livraison, lorsqu&apos;ils s&apos;appliquent, sont precises avant validation du
-          paiement.
+          Les prix affichés sur le site sont exprimés en euros TTC. Les frais de livraison,
+          lorsqu&apos;ils s&apos;appliquent, sont précisés avant validation du paiement.
         </p>
         <p>
-          Flo RD Coutellerie se reserve le droit de modifier ses prix a tout moment,
-          etant entendu que le prix facture est celui affiche au moment de la
-          validation de la commande.
+          Flo RD Coutellerie se réserve le droit de modifier ses prix à tout moment, étant entendu
+          que le prix facturé est celui affiché au moment de la validation de la commande.
         </p>
       </>
     ),
   },
   {
-    title: '4. Commande et disponibilite',
+    title: '4. Commande et disponibilité',
     content: (
       <>
         <p>
-          La commande est formee apres validation du paiement par Stripe et reception
-          de la confirmation correspondante. Avant cette validation, une piece peut etre
-          temporairement reservee pendant la session de paiement.
+          La commande est formée après validation du paiement par Stripe et réception de la
+          confirmation correspondante. Avant cette validation, une pièce peut être temporairement
+          réservée pendant la session de paiement.
         </p>
         <p>
           En cas d&apos;incident de paiement, d&apos;expiration de session ou d&apos;erreur
-          manifeste de disponibilite, Flo RD Coutellerie pourra annuler la commande et
-          remettre la piece en vente apres information du client.
+          manifeste de disponibilité, Flo RD Coutellerie pourra annuler la commande et remettre la
+          pièce en vente après information du client.
         </p>
       </>
     ),
@@ -92,13 +88,13 @@ const sections = [
     content: (
       <>
         <p>
-          Les paiements en ligne sont traites via Stripe. Le site n&apos;enregistre pas
-          les donnees bancaires completes du client.
+          Les paiements en ligne sont traités via{' '}
+          <strong className="font-medium text-foreground">Stripe</strong>. Le site
+          n&apos;enregistre pas les données bancaires complètes du client.
         </p>
         <p>
-          Le montant total est du en une seule fois au moment de la commande pour les
-          pieces disponibles en ligne. Toute commande non valablement reglee ne pourra
-          pas etre expediée.
+          Le montant total est dû en une seule fois au moment de la commande pour les pièces
+          disponibles en ligne. Toute commande non valablement réglée ne pourra pas être expédiée.
         </p>
       </>
     ),
@@ -108,34 +104,31 @@ const sections = [
     content: (
       <>
         <p>
-          La livraison est effectuee a l&apos;adresse communiquee par le client lors de la
-          commande. Sauf mention particuliere, le delai d&apos;expedition est indicatif et
-          peut varier selon les finitions a realiser, les contraintes logistiques et la
-          charge de l&apos;atelier.
+          La livraison est effectuée à l&apos;adresse communiquée par le client lors de la commande.
+          Sauf mention particulière, le délai d&apos;expédition est indicatif et peut varier selon
+          les finitions à réaliser, les contraintes logistiques et la charge de l&apos;atelier.
         </p>
         <p>
-          A titre indicatif, les envois sont prepares sous 2 a 4 semaines apres
-          confirmation du paiement. Le client doit verifier l&apos;exactitude de ses
-          coordonnees avant validation.
+          À titre indicatif, les envois sont préparés sous 2 à 4 semaines après confirmation du
+          paiement. Le client doit vérifier l&apos;exactitude de ses coordonnées avant validation.
         </p>
       </>
     ),
   },
   {
-    title: '7. Droit de retractation',
+    title: '7. Droit de rétractation',
     content: (
       <>
         <p>
-          Pour les pieces standards achetees a distance, le client consommateur dispose,
-          en principe, d&apos;un droit de retractation de 14 jours a compter de la
-          reception, sous reserve que le produit soit retourne complet, non utilise et
-          dans son etat d&apos;origine.
+          Pour les pièces standards achetées à distance, le client consommateur dispose, en
+          principe, d&apos;un droit de rétractation de 14 jours à compter de la réception, sous
+          réserve que le produit soit retourné complet, non utilisé et dans son état d&apos;origine.
         </p>
         <p>
-          Conformement a l&apos;article L221-28 du Code de la consommation, le droit de
-          retractation ne s&apos;applique pas aux biens confectionnes selon les
-          specifications du consommateur ou nettement personnalises. Les commandes sur
-          mesure et personnalisations specifiques sont donc exclues de retractation.
+          Conformément à l&apos;article L221-28 du Code de la consommation, le droit de rétractation
+          ne s&apos;applique pas aux biens confectionnés selon les spécifications du consommateur ou
+          nettement personnalisés. Les commandes sur mesure et personnalisations spécifiques sont
+          donc exclues de rétractation.
         </p>
       </>
     ),
@@ -145,13 +138,13 @@ const sections = [
     content: (
       <>
         <p>
-          Les produits beneficient des garanties legales de conformite et des vices
-          caches dans les conditions prevues par le droit francais.
+          Les produits bénéficient des garanties légales de conformité et des vices cachés dans les
+          conditions prévues par le droit français.
         </p>
         <p>
-          La garantie ne couvre pas l&apos;usure normale, les chocs, une mauvaise
-          utilisation, un entretien inapproprie, les modifications realisees par un
-          tiers ou le non-respect des consignes d&apos;usage.
+          La garantie ne couvre pas l&apos;usure normale, les chocs, une mauvaise utilisation, un
+          entretien inapproprié, les modifications réalisées par un tiers ou le non-respect des
+          consignes d&apos;usage.
         </p>
       </>
     ),
@@ -161,49 +154,46 @@ const sections = [
     content: (
       <>
         <p>
-          La vente est reservee aux personnes majeures. Flo RD Coutellerie peut refuser
-          ou annuler une commande en cas de doute legitime sur l&apos;age ou l&apos;usage
-          prevu.
+          La vente est réservée aux personnes majeures. Flo RD Coutellerie peut refuser ou annuler
+          une commande en cas de doute légitime sur l&apos;âge ou l&apos;usage prévu.
         </p>
         <p>
-          Les couteaux vendus sont des objets tranchants dont le port et le transport
-          hors du domicile peuvent etre reglementes ou interdits sans motif legitime.
-          Le client est seul responsable du respect de la legislation applicable a son
-          lieu de residence, de transport, de detention et d&apos;usage.
+          Les couteaux vendus sont des objets tranchants dont le port et le transport hors du
+          domicile peuvent être réglementés ou interdits sans motif légitime. Le client est seul
+          responsable du respect de la législation applicable à son lieu de résidence, de transport,
+          de détention et d&apos;usage.
         </p>
       </>
     ),
   },
   {
-    title: '10. Responsabilite',
+    title: '10. Responsabilité',
     content: (
       <>
         <p>
-          Flo RD Coutellerie ne pourra etre tenue responsable d&apos;un dommage indirect,
+          Flo RD Coutellerie ne pourra être tenue responsable d&apos;un dommage indirect,
           d&apos;une mauvaise utilisation du produit ou d&apos;un non-respect par le client des
-          regles de securite, d&apos;entretien ou de droit applicable.
+          règles de sécurité, d&apos;entretien ou de droit applicable.
         </p>
         <p>
-          La responsabilite du vendeur est en toute hypothese limitee au montant de la
-          commande effectivement reglee, sauf disposition legale d&apos;ordre public
-          contraire.
+          La responsabilité du vendeur est en toute hypothèse limitée au montant de la commande
+          effectivement réglée, sauf disposition légale d&apos;ordre public contraire.
         </p>
       </>
     ),
   },
   {
-    title: '11. Litiges, droit applicable et mediation',
+    title: '11. Litiges, droit applicable et médiation',
     content: (
       <>
         <p>
-          Les presentes CGV sont soumises au droit francais. En cas de difficulte, le
-          client est invite a contacter en priorite Flo RD Coutellerie afin de
-          rechercher une solution amiable.
+          Les présentes CGV sont soumises au droit français. En cas de difficulté, le client est
+          invité à contacter en priorité Flo RD Coutellerie afin de rechercher une solution amiable.
         </p>
         <p>
-          Si aucun accord amiable n&apos;est trouve, le client consommateur peut solliciter
-          un dispositif de mediation de la consommation. A defaut de resolution
-          amiable, les juridictions francaises competentes pourront etre saisies.
+          Si aucun accord amiable n&apos;est trouvé, le client consommateur peut solliciter un
+          dispositif de médiation de la consommation. À défaut de résolution amiable, les
+          juridictions françaises compétentes pourront être saisies.
         </p>
       </>
     ),
@@ -216,50 +206,56 @@ export default function CGVPage() {
       <Navigation />
 
       <PageTransitionWrapper>
-        <main className="min-h-screen bg-background pb-20 pt-32">
+        <main className="min-h-screen flex flex-col justify-center bg-background pb-20 pt-32 text-foreground font-body">
           <div className="container mx-auto px-6">
-            <div className="mx-auto max-w-3xl">
-              <div className="mb-12 text-center">
-                <p className="mb-2 text-xs uppercase tracking-[0.4em] text-muted-foreground">
+            <div className="mx-auto max-w-2xl animate-fade-in-up">
+
+              {/* En-tête */}
+              <div className="mb-24 text-center">
+                <p className="mb-3 text-xs uppercase tracking-[0.4em] text-muted-foreground">
                   Informations contractuelles
                 </p>
-                <h1 className="text-4xl font-light text-foreground md:text-5xl">
-                  Conditions Generales de Vente
+                <h1 className="font-serif text-3xl font-light tracking-tight text-foreground md:text-6xl">
+                  Conditions Générales de Vente
                 </h1>
-                <p className="mx-auto mt-4 max-w-2xl text-sm leading-relaxed text-muted-foreground md:text-base">
-                  Ces conditions doivent etre lues avant tout paiement. Elles
-                  complettent les informations figurant sur les fiches produit, les{' '}
+                <p className="mx-auto mt-6 max-w-2xl leading-relaxed text-muted-foreground sm:text-lg">
+                  Ces conditions doivent être lues avant tout paiement. Elles complètent les
+                  informations figurant sur les fiches produit, les{' '}
                   <TransitionLink
                     href="/mentions-legales"
-                    className="underline underline-offset-4"
+                    className="text-foreground underline underline-offset-4 hover:text-muted-foreground transition-colors"
                   >
-                    mentions legales
+                    mentions légales
                   </TransitionLink>{' '}
                   et la{' '}
                   <TransitionLink
                     href="/politique-confidentialite"
-                    className="underline underline-offset-4"
+                    className="text-foreground underline underline-offset-4 hover:text-muted-foreground transition-colors"
                   >
-                    politique de confidentialite
+                    politique de confidentialité
                   </TransitionLink>
                   .
                 </p>
               </div>
 
-              <div className="space-y-10">
+              {/* Sections */}
+              <div className="space-y-20 text-center">
                 {sections.map((section) => (
-                  <section key={section.title} className="space-y-3">
-                    <h2 className="text-lg font-medium text-foreground">{section.title}</h2>
-                    <div className="space-y-3 text-sm leading-relaxed text-muted-foreground md:text-base">
+                  <section key={section.title} className="space-y-6">
+                    <h2 className="font-serif text-2xl font-light text-foreground sm:text-3xl">
+                      {section.title}
+                    </h2>
+                    <div className="space-y-4 leading-relaxed text-muted-foreground sm:text-lg">
                       {section.content}
                     </div>
                   </section>
                 ))}
 
-                <p className="border-t border-border pt-8 text-center text-sm text-muted-foreground">
-                  Derniere mise a jour : 13 mars 2026
+                <p className="border-t border-border pt-10 text-center text-sm text-muted-foreground sm:text-base">
+                  Dernière mise à jour : 13 mars 2026
                 </p>
               </div>
+
             </div>
           </div>
         </main>
