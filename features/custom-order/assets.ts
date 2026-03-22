@@ -13,6 +13,11 @@ const formAssetsByUsage: Partial<Record<Usage, Record<string, string>>> = {
     petty: `${CUSTOM_ORDER_BASE}/cuisine/forms/petty.webp`,
     yanagiba: `${CUSTOM_ORDER_BASE}/cuisine/forms/yanagiba.webp`,
   },
+  pliant: {
+    'cran-force-forme-1': `${CUSTOM_ORDER_BASE}/pliant/forms/cran-forcé/cran-forcé-1.webp`,
+    'cran-force-forme-2': `${CUSTOM_ORDER_BASE}/pliant/forms/cran-forcé/cran-forcé-2.webp`,
+    'piemontais-coupage': `${CUSTOM_ORDER_BASE}/pliant/forms/piémontais/piémontais.webp`,
+  },
   outdoor: {
     'moderee-forme1': `${CUSTOM_ORDER_BASE}/outdoor/forms/moderee.webp`,
     'intensive-forme1': `${CUSTOM_ORDER_BASE}/outdoor/forms/intensive.webp`,

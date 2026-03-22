@@ -3,31 +3,78 @@
 import { useEffect } from 'react'
 
 function setAppHeight() {
-  const h = window.innerHeight
-  document.documentElement.style.setProperty('--app-height', `${h}px`)
+  const visualViewportHeight = window.visualViewport?.height
+  const viewportHeight =
+    typeof visualViewportHeight === 'number' && visualViewportHeight > 0
+      ? visualViewportHeight
+      : window.innerHeight
+
+  // Round up to avoid 1px gaps where the next section peeks through.
+  document.documentElement.style.setProperty('--app-height', `${Math.ceil(viewportHeight)}px`)
 }
 
 export function ViewportHeight() {
   useEffect(() => {
     if (typeof window === 'undefined') return
 
-    setAppHeight()
+    let frameId: number | null = null
+    const timeoutIds: number[] = []
 
-    const onOrientation = () => {
-      setTimeout(() => setAppHeight(), 50)
-      setTimeout(() => setAppHeight(), 250)
+    const syncHeight = () => {
+      if (frameId !== null) {
+        cancelAnimationFrame(frameId)
+      }
+
+      frameId = requestAnimationFrame(() => {
+        setAppHeight()
+        frameId = null
+      })
     }
 
-    const onPageShow = () => {
-      setTimeout(() => setAppHeight(), 50)
+    const syncHeightSettled = () => {
+      syncHeight()
+
+      while (timeoutIds.length > 0) {
+        const timeoutId = timeoutIds.pop()
+        if (timeoutId !== undefined) {
+          window.clearTimeout(timeoutId)
+        }
+      }
+
+      timeoutIds.push(window.setTimeout(syncHeight, 120))
+      timeoutIds.push(window.setTimeout(syncHeight, 320))
     }
 
-    window.addEventListener('orientationchange', onOrientation, { passive: true })
-    window.addEventListener('pageshow', onPageShow as any, { passive: true })
+    syncHeightSettled()
+
+    const visualViewport = window.visualViewport
+    const onViewportChange = () => syncHeightSettled()
+    const onPageShow = () => syncHeightSettled()
+    const onLoaderFinished = () => syncHeightSettled()
+
+    window.addEventListener('resize', onViewportChange, { passive: true })
+    window.addEventListener('orientationchange', onViewportChange, { passive: true })
+    window.addEventListener('pageshow', onPageShow as EventListener, { passive: true })
+    window.addEventListener('site-loader-finished', onLoaderFinished as EventListener)
+    visualViewport?.addEventListener('resize', onViewportChange, { passive: true })
 
     return () => {
-      window.removeEventListener('orientationchange', onOrientation as any)
+      window.removeEventListener('resize', onViewportChange)
+      window.removeEventListener('orientationchange', onViewportChange as EventListener)
       window.removeEventListener('pageshow', onPageShow as any)
+      window.removeEventListener('site-loader-finished', onLoaderFinished as EventListener)
+      visualViewport?.removeEventListener('resize', onViewportChange)
+
+      while (timeoutIds.length > 0) {
+        const timeoutId = timeoutIds.pop()
+        if (timeoutId !== undefined) {
+          window.clearTimeout(timeoutId)
+        }
+      }
+
+      if (frameId !== null) {
+        cancelAnimationFrame(frameId)
+      }
     }
   }, [])
 

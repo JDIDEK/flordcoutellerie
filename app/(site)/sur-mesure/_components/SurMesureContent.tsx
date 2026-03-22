@@ -2,8 +2,14 @@
 
 import { useEffect, useRef } from 'react'
 import { CustomOrderWizard } from '@/features/custom-order'
+import { SiteNoticeBanner } from '@/components/site/SiteNoticeBanner'
+import type { SiteNotice } from '@/lib/sanity/types'
 
-export function SurMesureContent() {
+type SurMesureContentProps = {
+  notice?: SiteNotice | null
+}
+
+export function SurMesureContent({ notice }: SurMesureContentProps) {
   const contentRef = useRef<HTMLDivElement | null>(null)
 
   useEffect(() => {
@@ -42,6 +48,12 @@ export function SurMesureContent() {
               Si un point vous échappe, nous en discutons simplement.
             </p>
           </div>
+
+          {notice ? (
+            <div className="mb-12">
+              <SiteNoticeBanner notice={notice} />
+            </div>
+          ) : null}
 
           {/* Wizard */}
           <CustomOrderWizard />

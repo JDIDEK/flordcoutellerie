@@ -61,3 +61,10 @@ export type GalleryKnife = {
   featured?: boolean
   createdAt: string
 }
+
+export type SiteNotice = {
+  _id: string
+  enabled: boolean
+  title?: string
+  message?: string
+}

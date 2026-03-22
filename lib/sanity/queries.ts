@@ -7,6 +7,7 @@ import type {
   GalleryKnife,
   PieceDetail,
   PieceListItem,
+  SiteNotice,
 } from '@/lib/sanity/types'
 import { client } from '@/sanity/lib/client'
 
@@ -67,6 +68,15 @@ const pieceDetailQuery = groq`
 
 const pieceSlugsQuery = groq`
   *[_type == "piece" && defined(slug.current)]{ "slug": slug.current }
+`
+
+const siteNoticeQuery = groq`
+  *[_type == "siteNotice" && _id == "siteNotice"][0]{
+    _id,
+    enabled,
+    title,
+    message
+  }
 `
 
 // ─── Galerie collections ────────────────────────────────────────────────────
@@ -255,6 +265,24 @@ export async function getPieceBySlug(slug: string) {
 export async function getAllPieceSlugs() {
   const slugs = await client.fetch<{ slug?: string }[]>(pieceSlugsQuery)
   return slugs.map((entry) => entry.slug).filter((slug): slug is string => typeof slug === 'string')
+}
+
+export async function getActiveSiteNotice() {
+  const notice = await client.fetch<SiteNotice | null>(
+    siteNoticeQuery,
+    {},
+    { next: { tags: ['siteNotice'] } }
+  )
+
+  if (!notice?.enabled || !notice.message?.trim()) {
+    return null
+  }
+
+  return {
+    ...notice,
+    title: notice.title?.trim() || 'Information atelier',
+    message: notice.message.trim(),
+  }
 }
 
 export async function getGalleryCollections() {

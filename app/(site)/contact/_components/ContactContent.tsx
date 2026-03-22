@@ -2,6 +2,8 @@
 
 import { useState } from 'react'
 import { Facebook, Instagram, Youtube } from 'lucide-react'
+import { SiteNoticeBanner } from '@/components/site/SiteNoticeBanner'
+import type { SiteNotice } from '@/lib/sanity/types'
 
 function TikTokIcon(props: React.SVGProps<SVGSVGElement>) {
   return (
@@ -11,7 +13,11 @@ function TikTokIcon(props: React.SVGProps<SVGSVGElement>) {
   )
 }
 
-export function ContactContent() {
+type ContactContentProps = {
+  notice?: SiteNotice | null
+}
+
+export function ContactContent({ notice }: ContactContentProps) {
   const [formData, setFormData] = useState({
     name: '',
     email: '',
@@ -103,6 +109,12 @@ export function ContactContent() {
         <h1 className="text-3xl md:text-6xl font-serif font-light text-foreground text-center tracking-tight mb-24 animate-fade-in-up">
           Contact
         </h1>
+
+        {notice ? (
+          <div className="mx-auto mb-12 max-w-3xl animate-fade-in-up">
+            <SiteNoticeBanner notice={notice} />
+          </div>
+        ) : null}
       </div>
       <div className="container mx-auto px-6 max-w-6xl grid md:grid-cols-2 gap-16 items-start">
         {/* Colonne gauche : texte */}

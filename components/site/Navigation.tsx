@@ -23,6 +23,7 @@ export function Navigation({ alwaysVisible = false }: NavigationProps) {
   const mobileMenuId = 'primary-mobile-menu'
   const isHomePage = pathname === '/'
   const useHomeHeroPalette = isHomePage && !hasBackground
+  const useMobileHeroPalette = useHomeHeroPalette && !isMobileMenuOpen
 
   const desktopLinkClassName = useHomeHeroPalette
     ? 'text-lg font-medium tracking-wide text-white hover:text-neutral-300 transition-colors relative group'
@@ -33,25 +34,31 @@ export function Navigation({ alwaysVisible = false }: NavigationProps) {
   const actionClassName = useHomeHeroPalette
     ? 'text-white hover:text-neutral-300'
     : 'text-foreground hover:text-neutral-600 dark:hover:text-neutral-300'
+  const mobileActionClassName = useMobileHeroPalette
+    ? 'text-white hover:text-neutral-300'
+    : 'text-foreground hover:text-neutral-600 dark:hover:text-neutral-300'
   const cartTriggerClassName = useHomeHeroPalette
     ? '!text-white hover:!text-neutral-300'
     : ''
-  const mobileMenuBackdropClassName = useHomeHeroPalette
+  const mobileCartTriggerClassName = isHomePage
+    ? '!text-white hover:!text-neutral-300'
+    : cartTriggerClassName
+  const mobileMenuBackdropClassName = useMobileHeroPalette
     ? 'absolute inset-0 bg-neutral-950/96 backdrop-blur-xl'
     : 'absolute inset-0 bg-background/98 backdrop-blur-xl'
-  const mobileMenuGradientClassName = useHomeHeroPalette
+  const mobileMenuGradientClassName = useMobileHeroPalette
     ? 'absolute inset-0 bg-gradient-to-b from-white/5 via-transparent to-transparent pointer-events-none'
     : 'absolute inset-0 bg-gradient-to-b from-primary/5 via-transparent to-transparent pointer-events-none'
-  const mobileMenuLinkClassName = useHomeHeroPalette
+  const mobileMenuLinkClassName = useMobileHeroPalette
     ? 'text-3xl sm:text-4xl font-serif font-light text-white tracking-wide transition-colors duration-200 group-hover:text-neutral-300'
     : 'text-3xl sm:text-4xl font-serif font-light text-foreground tracking-wide transition-colors duration-200 group-hover:text-neutral-500 dark:group-hover:text-neutral-300'
-  const mobileMenuSeparatorClassName = useHomeHeroPalette
+  const mobileMenuSeparatorClassName = useMobileHeroPalette
     ? 'h-[1px] w-full bg-white/10 origin-left'
     : 'h-[1px] w-full bg-foreground/10 origin-left'
-  const mobileMenuFooterSeparatorClassName = useHomeHeroPalette
+  const mobileMenuFooterSeparatorClassName = useMobileHeroPalette
     ? 'h-[1px] w-full bg-gradient-to-r from-transparent via-white/20 to-transparent'
     : 'h-[1px] w-full bg-gradient-to-r from-transparent via-foreground/20 to-transparent'
-  const mobileMenuFooterTextClassName = useHomeHeroPalette
+  const mobileMenuFooterTextClassName = useMobileHeroPalette
     ? 'text-xs uppercase tracking-[0.4em] text-white/50'
     : 'text-xs uppercase tracking-[0.4em] text-muted-foreground/50'
 
@@ -266,7 +273,7 @@ export function Navigation({ alwaysVisible = false }: NavigationProps) {
                     alt="Flo RD Coutellerie"
                     width={140}
                     height={60}
-                    className={`${useHomeHeroPalette ? 'hidden' : 'block dark:hidden'} h-12 w-auto transition-opacity ${
+                    className={`${useMobileHeroPalette ? 'hidden' : 'block dark:hidden'} h-12 w-auto transition-opacity ${
                       isMobileMenuOpen ? 'opacity-70' : 'opacity-100 group-hover:opacity-50'
                     }`}
                   />
@@ -275,7 +282,7 @@ export function Navigation({ alwaysVisible = false }: NavigationProps) {
                     alt="Flo RD Coutellerie"
                     width={140}
                     height={60}
-                    className={`${useHomeHeroPalette ? 'block' : 'hidden dark:block'} h-12 w-auto transition-opacity ${
+                    className={`${useMobileHeroPalette ? 'block' : 'hidden dark:block'} h-12 w-auto transition-opacity ${
                       isMobileMenuOpen ? 'opacity-90' : 'opacity-100 group-hover:opacity-50'
                     }`}
                   />
@@ -330,14 +337,14 @@ export function Navigation({ alwaysVisible = false }: NavigationProps) {
                 <ThemeToggle />
               </div>
               <div className={`flex shrink-0 items-center justify-center w-8 h-8 transition-opacity duration-300 ${isMobileMenuOpen ? 'opacity-0 pointer-events-none hidden' : 'opacity-100'}`}>
-                <CartSheet triggerClassName={`!h-8 !w-8 ${cartTriggerClassName}`} />
+                <CartSheet triggerClassName={`!h-8 !w-8 ${mobileCartTriggerClassName}`} />
               </div>
               <div className={`flex shrink-0 items-center justify-center w-8 h-8 transition-opacity duration-300 ${isMobileMenuOpen ? 'opacity-100' : 'opacity-0 pointer-events-none hidden'}`}>
                 <ThemeToggle />
               </div>
               <button
                 onClick={toggleMenu}
-                className={`relative flex shrink-0 h-8 w-8 items-center justify-center transition-colors ${actionClassName}`}
+                className={`relative flex shrink-0 h-8 w-8 items-center justify-center transition-colors ${mobileActionClassName}`}
                 aria-label={isMobileMenuOpen ? 'Fermer le menu' : 'Ouvrir le menu'}
                 aria-controls={mobileMenuId}
                 aria-expanded={isMobileMenuOpen}
@@ -348,7 +355,7 @@ export function Navigation({ alwaysVisible = false }: NavigationProps) {
                   <span
                     className={`absolute block h-[2px] w-6 bg-current transition-all duration-300 ease-out ${
                       isMobileMenuOpen 
-                        ? 'translate-y-0 rotate-45 bg-background' 
+                        ? 'translate-y-0 rotate-45 bg-foreground' 
                         : '-translate-y-[6px]'
                     }`}
                   />
@@ -362,7 +369,7 @@ export function Navigation({ alwaysVisible = false }: NavigationProps) {
                   <span
                     className={`absolute block h-[2px] w-6 bg-current transition-all duration-300 ease-out ${
                       isMobileMenuOpen 
-                        ? 'translate-y-0 -rotate-45 bg-background' 
+                        ? 'translate-y-0 -rotate-45 bg-foreground' 
                         : 'translate-y-[6px]'
                     }`}
                   />

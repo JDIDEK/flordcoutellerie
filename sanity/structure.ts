@@ -1,6 +1,6 @@
 import type { StructureResolver } from 'sanity/structure'
 import { orderableDocumentListDeskItem } from '@sanity/orderable-document-list'
-import { Eye, FolderOpen, Hammer, Image, Images, ShoppingBag } from 'lucide-react'
+import { Eye, FolderOpen, Hammer, Image, Images, MessageSquare, ShoppingBag } from 'lucide-react'
 
 import { apiVersion } from '../sanity/env'
 
@@ -10,6 +10,18 @@ export const structure: StructureResolver = (S, context) =>
   S.list()
     .title('Atelier Flo RD')
     .items([
+      S.listItem()
+        .title('Message d\'information')
+        .icon(MessageSquare)
+        .child(
+          S.document()
+            .schemaType('siteNotice')
+            .documentId('siteNotice')
+            .title('Message d\'information')
+        ),
+
+      S.divider(),
+
       // --- BOUTIQUE ---
       S.listItem()
         .title('Boutique')

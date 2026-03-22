@@ -1,6 +1,7 @@
 import type { Metadata } from 'next'
 import { Navigation } from '@/components/site/Navigation'
 import { PageTransitionWrapper } from '@/components/site/PageTransitionWrapper'
+import { getActiveSiteNotice } from '@/lib/sanity/queries'
 import { ContactContent } from './_components/ContactContent'
 
 export const metadata: Metadata = {
@@ -13,13 +14,15 @@ export const metadata: Metadata = {
   },
 }
 
-export default function ContactPage() {
+export default async function ContactPage() {
+  const notice = await getActiveSiteNotice()
+
   return (
     <>
       <Navigation />
 
       <PageTransitionWrapper>
-        <ContactContent />
+        <ContactContent notice={notice} />
       </PageTransitionWrapper>
     </>
   )

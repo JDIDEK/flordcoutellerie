@@ -1,6 +1,7 @@
 import type { Metadata } from 'next'
 import { Navigation } from '@/components/site/Navigation'
 import { PageTransitionWrapper } from '@/components/site/PageTransitionWrapper'
+import { getActiveSiteNotice } from '@/lib/sanity/queries'
 import { SurMesureContent } from './_components/SurMesureContent'
 
 export const metadata: Metadata = {
@@ -13,13 +14,15 @@ export const metadata: Metadata = {
   },
 }
 
-export default function SurMesurePage() {
+export default async function SurMesurePage() {
+  const notice = await getActiveSiteNotice()
+
   return (
     <>
       <Navigation />
 
       <PageTransitionWrapper>
-        <SurMesureContent />
+        <SurMesureContent notice={notice} />
       </PageTransitionWrapper>
     </>
   )

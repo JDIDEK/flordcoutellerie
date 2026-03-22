@@ -6,6 +6,7 @@ export const SANITY_TAGS_BY_TYPE = {
   piece: ['piece'],
   galleryCollection: ['galleryCollection', 'galleryKnife'],
   galleryKnife: ['galleryKnife'],
+  siteNotice: ['siteNotice'],
 } as const
 
 export type RevalidatableSanityType = keyof typeof SANITY_TAGS_BY_TYPE

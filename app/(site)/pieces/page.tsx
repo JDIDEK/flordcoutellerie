@@ -2,8 +2,9 @@
 import type { Metadata } from 'next'
 import { Navigation } from '@/components/site/Navigation'
 import { PageTransitionWrapper } from '@/components/site/PageTransitionWrapper'
+import { SiteNoticeBanner } from '@/components/site/SiteNoticeBanner'
 import { resolvePieceStatus } from '@/lib/pieces'
-import { getPieces } from '@/lib/sanity/queries'
+import { getActiveSiteNotice, getPieces } from '@/lib/sanity/queries'
 import { ProductCard } from './_components/ProductCard'
 
 export const metadata: Metadata = {
@@ -17,7 +18,7 @@ export const metadata: Metadata = {
 }
 
 export default async function PiecesPage() {
-  const pieces = await getPieces()
+  const [pieces, notice] = await Promise.all([getPieces(), getActiveSiteNotice()])
   const normalizedPieces = pieces.map((piece) => ({
     ...piece,
     status: resolvePieceStatus(piece.status, piece.reservationExpiresAt),
@@ -42,6 +43,12 @@ export default async function PiecesPage() {
             <h1 className="text-3xl md:text-6xl font-serif font-light text-center tracking-tight text-foreground mb-12 md:mb-24 md:animate-fade-in-up">
               Pièces Disponibles
             </h1>
+
+            {notice ? (
+              <div className="mx-auto mb-10 max-w-3xl md:mb-14 md:animate-fade-in-up">
+                <SiteNoticeBanner notice={notice} />
+              </div>
+            ) : null}
 
             {/* ---------- DISPONIBLES ---------- */}
             {available.length > 0 ? (

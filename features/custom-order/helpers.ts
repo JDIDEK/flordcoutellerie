@@ -85,7 +85,7 @@ export function getSteps(config: WizardConfig): WizardStep[] {
   // PLIANT: mecanisme - forme - acier - motifs - guillochage principal - guillochage platines - manche - personnalisation
   if (config.usage === 'pliant') {
     base.push(
-      { id: 'pliant-mechanism', title: 'Mécanisme', description: 'Cran plat vs Piémontais' },
+      { id: 'pliant-mechanism', title: 'Mécanisme', description: 'Cran forcé vs Piémontais' },
       { id: 'pliant-form', title: 'Forme', description: 'Silhouette selon le mécanisme' },
       { id: 'steel', title: 'Acier', description: 'Visuel & gamme' },
     )

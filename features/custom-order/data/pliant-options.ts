@@ -1,13 +1,13 @@
 import type { PliantMechanism, PliantForm } from '../types'
-import { getCustomOrderMechanismAsset } from '../assets'
+import { getCustomOrderFormAsset, getCustomOrderMechanismAsset } from '../assets'
 
 export const pliantMechanisms: PliantMechanism[] = [
   {
     id: 'cran-plat',
-    label: 'Cran plat',
+    label: 'Cran forcé',
     description: 'Un ressort maintient la lame en position\nouverte ou fermée',
     imageSrc: getCustomOrderMechanismAsset('cran-plat'),
-    imageAlt: 'Mécanisme cran plat',
+    imageAlt: 'Mécanisme cran forcé',
   },
   {
     id: 'piemontais',
@@ -23,31 +23,31 @@ export const pliantFormsByMechanism: Record<string, PliantForm[]> = {
     {
       id: 'forme-1-c',
       label: 'Forme 1',
-      profile: 'forme1',
-      description: 'description forme1',
+      profile: '',
+      description: '',
+      imageSrc: getCustomOrderFormAsset('pliant', 'cran-force-forme-1'),
+      imageAlt: 'Forme 1 cran forcé',
     },
     {
       id: 'forme-2-c',
       label: 'Forme 2',
-      profile: 'forme2',
-      description: 'description forme2',
+      profile: '',
+      description: '',
+      imageSrc: getCustomOrderFormAsset('pliant', 'cran-force-forme-2'),
+      imageAlt: 'Forme 2 cran forcé',
     },
   ],
   'piemontais': [
     {
-      id: 'forme-1-p',
-      label: 'Forme 1',
-      profile: 'forme1',
-      description: 'description forme1',
+      id: 'coupage-p',
+      label: 'Coupage',
+      profile: '',
+      description: '',
+      imageSrc: getCustomOrderFormAsset('pliant', 'piemontais-coupage'),
+      imageAlt: 'Forme Coupage piémontais',
     },
     {
-      id: 'forme-2-p',
-      label: 'Forme 2',
-      profile: 'forme2',
-      description: 'description forme2',
-    },
-    {
-      id: 'outdoor-p',
+      id: 'a-venir-p',
       label: 'À venir',
       profile: '',
       description: '',
