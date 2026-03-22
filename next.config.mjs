@@ -1,4 +1,5 @@
 import { withNextVideo } from 'next-video/process'
+import { legacyAssetRewrites } from './config/legacy-asset-rewrites.mjs'
 /** @type {import('next').NextConfig} */
 const scriptSrc = ["'self'", "'unsafe-inline'", 'https://va.vercel-scripts.com']
 
@@ -51,6 +52,11 @@ const nextConfig = {
     optimizeCss: false,
   },
   // Security & performance headers
+  async rewrites() {
+    return {
+      beforeFiles: legacyAssetRewrites,
+    }
+  },
   async headers() {
     const studioHeaders = [
       {

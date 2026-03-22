@@ -4,7 +4,7 @@ import {
   getCustomOrderSubject,
   type SummarySection,
 } from '@/lib/custom-order-summary'
-import type { WizardConfig } from '@/components/custom-order/types'
+import type { WizardConfig } from '@/features/custom-order/types'
 
 type ContactEmailInput = {
   name: string

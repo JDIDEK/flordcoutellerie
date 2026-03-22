@@ -1,12 +1,12 @@
 'use client'
 
 import Image from 'next/image'
-import { ShoppingBag, Trash2, Loader2, Clock3 } from 'lucide-react'
+import { ShoppingBag, Trash2, Loader2 } from 'lucide-react'
 import { useEffect, useState, useSyncExternalStore } from 'react'
 
 import { CheckoutConsentDialog } from '@/components/CheckoutConsentDialog'
 import { Button } from '@/components/ui/button'
-import { TransitionLink } from '@/components/TransitionLink'
+import { TransitionLink } from '@/components/site/TransitionLink'
 import {
   Sheet,
   SheetContent,

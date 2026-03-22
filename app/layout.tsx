@@ -1,9 +1,10 @@
 import type { Metadata } from 'next'
 import { Cormorant_Garamond } from 'next/font/google'
-import { ClientProviders } from '@/components/ClientProviders'
-import { SiteLoader } from '@/components/Loader'
-import { ViewportHeight } from '@/components/ViewportHeight'
-import { AnalyticsGate } from '@/components/AnalyticsGate'
+import { AnalyticsGate } from '@/components/site/AnalyticsGate'
+import { ClientProviders } from '@/components/site/ClientProviders'
+import { SiteLoader } from '@/components/site/Loader'
+import { ViewportHeight } from '@/components/site/ViewportHeight'
+import { brandAssets } from '@/lib/assets/brand'
 import '@/styles/globals.css'
 
 const themeInitScript = `
@@ -32,10 +33,10 @@ export const metadata: Metadata = {
   keywords: ['coutellerie artisanale', 'couteaux sur mesure', 'damasteel', 'forge française', 'lames artisanales'],
   icons: {
     icon: [
-      { url: '/assets/images/Logo-Clair-Petit.svg', media: '(prefers-color-scheme: light)' },
-      { url: '/assets/images/Logo-Clair-Petit.svg', media: '(prefers-color-scheme: dark)' },
+      { url: brandAssets.logos.darkSmall, media: '(prefers-color-scheme: light)' },
+      { url: brandAssets.logos.lightSmall, media: '(prefers-color-scheme: dark)' },
     ],
-    apple: '/assets/images/flo/flo.png',
+    apple: brandAssets.apple.icon,
   },
 }
 

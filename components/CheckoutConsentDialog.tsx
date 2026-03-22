@@ -4,7 +4,7 @@ import { useId, useState } from 'react'
 import * as Dialog from '@radix-ui/react-dialog'
 import { AlertTriangle, Loader2, X } from 'lucide-react'
 
-import { TransitionLink } from '@/components/TransitionLink'
+import { TransitionLink } from '@/components/site/TransitionLink'
 import { Button } from '@/components/ui/button'
 import { cn } from '@/lib/utils'
 

@@ -1,6 +1,6 @@
-import { Navigation } from '@/components/Navigation'
+import { Navigation } from '@/components/site/Navigation'
+import { TransitionLink } from '@/components/site/TransitionLink'
 import { Button } from '@/components/ui/button'
-import { TransitionLink } from '@/components/TransitionLink'
 
 export default function NotFound() {
   return (

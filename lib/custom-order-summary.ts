@@ -14,8 +14,8 @@ import {
   rivetColors,
   sheathOptions,
   usageOptions,
-} from '@/components/custom-order/data'
-import type { WizardConfig } from '@/components/custom-order/types'
+} from '@/features/custom-order/data'
+import type { WizardConfig } from '@/features/custom-order/types'
 
 export type SummaryItem = {
   label: string
