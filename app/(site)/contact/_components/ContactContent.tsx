@@ -3,6 +3,7 @@
 import { useState } from 'react'
 import { Facebook, Instagram, Youtube } from 'lucide-react'
 import { SiteNoticeBanner } from '@/components/site/SiteNoticeBanner'
+import { createInternalJsonHeaders } from '@/lib/internal-api'
 import type { SiteNotice } from '@/lib/sanity/types'
 
 function TikTokIcon(props: React.SVGProps<SVGSVGElement>) {
@@ -84,7 +85,7 @@ export function ContactContent({ notice }: ContactContentProps) {
     try {
       const res = await fetch('/api/contact', {
         method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
+        headers: createInternalJsonHeaders(),
         body: JSON.stringify(safeData),
       })
 

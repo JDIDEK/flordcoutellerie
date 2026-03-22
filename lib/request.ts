@@ -1,14 +1,17 @@
 export function getClientIp(req: Request) {
-  const forwardedFor = req.headers.get('x-forwarded-for')
-  if (forwardedFor) {
-    return forwardedFor.split(',')[0]?.trim() || 'unknown'
+  for (const headerName of [
+    'x-vercel-forwarded-for',
+    'cf-connecting-ip',
+    'x-real-ip',
+    'x-forwarded-for',
+  ]) {
+    const candidate = parseIpHeader(req.headers.get(headerName))
+    if (candidate) {
+      return candidate
+    }
   }
 
-  return (
-    req.headers.get('x-real-ip') ??
-    req.headers.get('cf-connecting-ip') ??
-    'unknown'
-  )
+  return 'unknown'
 }
 
 export function escapeJsonForHtml(value: unknown) {
@@ -20,3 +23,27 @@ export function escapeJsonForHtml(value: unknown) {
     .replace(/\u2029/g, '\\u2029')
 }
 
+function parseIpHeader(value: string | null) {
+  if (!value) {
+    return null
+  }
+
+  const candidate = value
+    .split(',')
+    .map((part) => part.trim())
+    .find(Boolean)
+
+  if (!candidate) {
+    return null
+  }
+
+  return isValidIp(candidate) ? candidate : null
+}
+
+function isValidIp(value: string) {
+  const ipv4Pattern =
+    /^(25[0-5]|2[0-4]\d|1\d\d|[1-9]?\d)(\.(25[0-5]|2[0-4]\d|1\d\d|[1-9]?\d)){3}$/
+  const ipv6Pattern = /^[a-f0-9:]+$/i
+
+  return ipv4Pattern.test(value) || ipv6Pattern.test(value)
+}

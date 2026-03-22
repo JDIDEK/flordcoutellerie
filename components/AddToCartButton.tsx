@@ -1,8 +1,9 @@
 'use client'
 
-import { useEffect, useState, type ComponentProps } from 'react'
+import { type ComponentProps } from 'react'
 
 import { Button } from '@/components/ui/button'
+import { useHydrated } from '@/hooks/use-hydrated'
 import { useCart } from '@/hooks/use-cart'
 
 type AddToCartButtonProps = {
@@ -19,14 +20,10 @@ type AddToCartButtonProps = {
 
 export function AddToCartButton({ piece, buttonProps }: AddToCartButtonProps) {
   const { addItem, isInCart } = useCart()
-  const [hasMounted, setHasMounted] = useState(false)
-
-  useEffect(() => {
-    setHasMounted(true)
-  }, [])
+  const hasHydrated = useHydrated()
 
   const isUnavailable = piece.status && piece.status !== 'available'
-  const alreadyInCart = hasMounted && isInCart(piece.id)
+  const alreadyInCart = hasHydrated && isInCart(piece.id)
   const disabled = isUnavailable || alreadyInCart || buttonProps?.disabled
   const { children, ...restButtonProps } = buttonProps ?? {}
 

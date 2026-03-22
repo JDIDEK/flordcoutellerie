@@ -2,6 +2,7 @@
 
 import { useEffect, useRef, useState } from 'react'
 import { createPortal } from 'react-dom'
+import { useHydrated } from '@/hooks/use-hydrated'
 
 export type ThumbEntry =
   | { type: 'single'; src: string; alt: string; targetId: string }
@@ -14,12 +15,7 @@ interface ScrollNavSidebarProps {
 export function ScrollNavSidebar({ thumbs }: ScrollNavSidebarProps) {
   const innerRef = useRef<HTMLDivElement>(null)
   const [frameStyle, setFrameStyle] = useState({ top: 0, height: 60 })
-  const [mounted, setMounted] = useState(false)
-
-  useEffect(() => {
-    setMounted(true)
-    return () => setMounted(false)
-  }, [])
+  const mounted = useHydrated()
 
   useEffect(() => {
     function update() {

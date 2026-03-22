@@ -7,6 +7,7 @@ import { z } from 'zod'
 
 import { revalidatePieceTag } from '@/lib/cache'
 import { releaseCheckoutReservation } from '@/lib/checkout-reservation-server'
+import { getRequiredSiteOrigin } from '@/lib/app-origin'
 import { logger } from '@/lib/logger'
 import {
   createReservationExpiry,
@@ -15,6 +16,7 @@ import {
 } from '@/lib/pieces'
 import { rateLimit } from '@/lib/rate-limit'
 import { getClientIp } from '@/lib/request'
+import { validateInternalJsonRequest } from '@/lib/request-security'
 import { getStripeClient } from '@/lib/stripe'
 import { getSanityWriteClient } from '@/sanity/lib/write-client'
 
@@ -58,8 +60,13 @@ export const runtime = 'nodejs'
 export const dynamic = 'force-dynamic'
 
 export async function POST(req: Request) {
+  const securityError = validateInternalJsonRequest(req)
+  if (securityError) {
+    return securityError
+  }
+
   const ip = getClientIp(req)
-  const ipLimit = rateLimit({
+  const ipLimit = await rateLimit({
     key: `checkout:${ip}`,
     ...CHECKOUT_RATE_LIMIT,
   })
@@ -228,7 +235,7 @@ export async function POST(req: Request) {
       )
     }
 
-    const origin = process.env.NEXT_PUBLIC_APP_URL ?? new URL(req.url).origin
+    const origin = getRequiredSiteOrigin()
     const pieceIdsValue = uniqueIds.join(',')
 
     try {

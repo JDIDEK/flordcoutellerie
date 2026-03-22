@@ -1,9 +1,10 @@
 'use client'
 
-import { useEffect, useState, useSyncExternalStore } from 'react'
+import { useEffect, useSyncExternalStore } from 'react'
 import { Clock3 } from 'lucide-react'
 
 import { Badge } from '@/components/ui/badge'
+import { useCurrentTime } from '@/hooks/use-current-time'
 import {
   clearActiveCheckoutReservation,
   readActiveCheckoutReservation,
@@ -24,20 +25,8 @@ export function ReservationTimerBanner() {
     readActiveCheckoutReservation,
     () => null
   )
-  const [now, setNow] = useState(Date.now())
+  const now = useCurrentTime(Boolean(reservation))
   const remainingMs = reservation ? Date.parse(reservation.expiresAt) - now : null
-
-  useEffect(() => {
-    if (!reservation) {
-      return
-    }
-
-    const interval = window.setInterval(() => {
-      setNow(Date.now())
-    }, 1000)
-
-    return () => window.clearInterval(interval)
-  }, [reservation])
 
   useEffect(() => {
     if (remainingMs !== null && remainingMs <= 0) {

@@ -5,9 +5,10 @@ import { z } from 'zod'
 import { getSteps, isStepComplete } from '@/features/custom-order/helpers'
 import type { WizardConfig } from '@/features/custom-order/types'
 import { createCustomOrderEmailTemplate } from '@/lib/email-templates'
-import { logger } from '@/lib/logger'
+import { logger, maskEmailForLogs } from '@/lib/logger'
 import { rateLimit } from '@/lib/rate-limit'
 import { getClientIp } from '@/lib/request'
+import { validateInternalJsonRequest } from '@/lib/request-security'
 
 export const runtime = 'nodejs'
 export const dynamic = 'force-dynamic'
@@ -81,8 +82,13 @@ const customOrderSchema = z
   })
 
 export async function POST(req: Request) {
+  const securityError = validateInternalJsonRequest(req)
+  if (securityError) {
+    return securityError
+  }
+
   const ip = getClientIp(req)
-  const ipLimit = rateLimit({
+  const ipLimit = await rateLimit({
     key: `sur-mesure:${ip}`,
     ...CUSTOM_ORDER_IP_RATE_LIMIT,
   })
@@ -120,7 +126,7 @@ export async function POST(req: Request) {
   }
 
   const config = parsed.data as WizardConfig
-  const emailLimit = rateLimit({
+  const emailLimit = await rateLimit({
     key: `sur-mesure-email:${config.email.toLowerCase()}`,
     ...CUSTOM_ORDER_EMAIL_RATE_LIMIT,
   })
@@ -167,9 +173,9 @@ export async function POST(req: Request) {
 
     if (error) {
       logger.error('Resend rejected custom order email', error, {
-        recipientEmail,
-        fromEmail,
-        customerEmail: config.email,
+        recipientEmail: maskEmailForLogs(recipientEmail),
+        fromEmail: maskEmailForLogs(fromEmail),
+        customerEmail: maskEmailForLogs(config.email),
         usage: config.usage,
       })
 
@@ -181,9 +187,9 @@ export async function POST(req: Request) {
 
     logger.info('Custom order email sent', {
       resendEmailId: data?.id ?? null,
-      recipientEmail,
-      fromEmail,
-      customerEmail: config.email,
+      recipientEmail: maskEmailForLogs(recipientEmail),
+      fromEmail: maskEmailForLogs(fromEmail),
+      customerEmail: maskEmailForLogs(config.email),
       usage: config.usage,
     })
 
@@ -191,7 +197,7 @@ export async function POST(req: Request) {
   } catch (error) {
     logger.error('Failed to send custom order email', error, {
       usage: config.usage,
-      email: config.email,
+      email: maskEmailForLogs(config.email),
     })
 
     return NextResponse.json(

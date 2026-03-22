@@ -1,9 +1,13 @@
 import { withNextVideo } from 'next-video/process'
 import { legacyAssetRewrites } from './config/legacy-asset-rewrites.mjs'
 /** @type {import('next').NextConfig} */
-const scriptSrc = ["'self'", "'unsafe-inline'", 'https://va.vercel-scripts.com']
-
-const studioScriptSrc = [...scriptSrc, 'https://core.sanity-cdn.com', 'https://vercel.live']
+const studioScriptSrc = [
+  "'self'",
+  "'unsafe-inline'",
+  'https://va.vercel-scripts.com',
+  'https://core.sanity-cdn.com',
+  'https://vercel.live',
+]
 
 const connectSrc = [
   "'self'",
@@ -24,7 +28,6 @@ const studioConnectSrc = [
 ]
 
 if (process.env.NODE_ENV !== 'production') {
-  scriptSrc.push("'unsafe-eval'")
   studioScriptSrc.push("'unsafe-eval'")
 }
 
@@ -105,23 +108,6 @@ const nextConfig = {
           {
             key: 'Strict-Transport-Security',
             value: 'max-age=63072000; includeSubDomains; preload',
-          },
-          {
-            key: 'Content-Security-Policy',
-            value: [
-              "default-src 'self'",
-              `script-src ${scriptSrc.join(' ')}`,
-              "style-src 'self' 'unsafe-inline' https://fonts.googleapis.com",
-              "img-src 'self' data: blob: https://cdn.sanity.io https://image.mux.com https://*.public.blob.vercel-storage.com",
-              "font-src 'self' https://fonts.gstatic.com",
-              `connect-src ${connectSrc.join(' ')}`,
-              "frame-src 'self'",
-              "media-src 'self' https://stream.mux.com https://*.public.blob.vercel-storage.com blob:",
-              "object-src 'none'",
-              "base-uri 'self'",
-              "form-action 'self'",
-              "frame-ancestors 'self'",
-            ].join('; '),
           },
         ],
       },

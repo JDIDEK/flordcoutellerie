@@ -3,9 +3,10 @@ import { Resend } from 'resend'
 import { z } from 'zod'
 
 import { createContactEmailTemplate } from '@/lib/email-templates'
-import { logger } from '@/lib/logger'
+import { logger, maskEmailForLogs } from '@/lib/logger'
 import { rateLimit } from '@/lib/rate-limit'
 import { getClientIp } from '@/lib/request'
+import { validateInternalJsonRequest } from '@/lib/request-security'
 
 export const runtime = 'nodejs'
 export const dynamic = 'force-dynamic'
@@ -30,8 +31,13 @@ const contactSchema = z
   .strict()
 
 export async function POST(req: Request) {
+  const securityError = validateInternalJsonRequest(req)
+  if (securityError) {
+    return securityError
+  }
+
   const ip = getClientIp(req)
-  const ipLimit = rateLimit({
+  const ipLimit = await rateLimit({
     key: `contact:${ip}`,
     ...CONTACT_IP_RATE_LIMIT,
   })
@@ -64,7 +70,7 @@ export async function POST(req: Request) {
   }
 
   const { name, email, phone, message } = parsed.data
-  const emailLimit = rateLimit({
+  const emailLimit = await rateLimit({
     key: `contact-email:${email.toLowerCase()}`,
     ...CONTACT_EMAIL_RATE_LIMIT,
   })
@@ -113,9 +119,9 @@ export async function POST(req: Request) {
 
     if (error) {
       logger.error('Resend rejected contact email', error, {
-        recipientEmail,
-        fromEmail,
-        senderEmail: email,
+        recipientEmail: maskEmailForLogs(recipientEmail),
+        fromEmail: maskEmailForLogs(fromEmail),
+        senderEmail: maskEmailForLogs(email),
       })
 
       return NextResponse.json(
@@ -126,9 +132,9 @@ export async function POST(req: Request) {
 
     logger.info('Contact email sent', {
       resendEmailId: data?.id ?? null,
-      recipientEmail,
-      fromEmail,
-      senderEmail: email,
+      recipientEmail: maskEmailForLogs(recipientEmail),
+      fromEmail: maskEmailForLogs(fromEmail),
+      senderEmail: maskEmailForLogs(email),
     })
 
     return NextResponse.json({ success: true })

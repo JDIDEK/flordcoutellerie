@@ -41,6 +41,8 @@ export default defineConfig({
   schema,
   plugins: [
     structureTool({ structure, defaultDocumentNode }),
-    visionTool({ defaultApiVersion: apiVersion }),
+    ...(process.env.NODE_ENV === 'production'
+      ? []
+      : [visionTool({ defaultApiVersion: apiVersion })]),
   ],
 })

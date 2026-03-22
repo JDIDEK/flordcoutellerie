@@ -25,6 +25,7 @@ import {
   storeActiveCheckoutReservation,
   subscribeToActiveCheckoutReservation,
 } from '@/lib/checkout-reservation'
+import { createInternalJsonHeaders } from '@/lib/internal-api'
 import { cn, formatCurrency } from '@/lib/utils'
 
 type CartSheetProps = {
@@ -81,7 +82,7 @@ export function CartSheet({ className, triggerClassName }: CartSheetProps) {
 
     const response = await fetch('/api/checkout/cancel', {
       method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
+      headers: createInternalJsonHeaders(),
       body: JSON.stringify({
         reservationId: reservation.reservationId,
         productIds: reservation.productIds,
@@ -123,7 +124,7 @@ export function CartSheet({ className, triggerClassName }: CartSheetProps) {
 
       const response = await fetch('/api/checkout', {
         method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
+        headers: createInternalJsonHeaders(),
         body: JSON.stringify({ productIds }),
       })
 

@@ -3,11 +3,19 @@ import { z } from 'zod'
 
 import { releaseCheckoutReservation } from '@/lib/checkout-reservation-server'
 import { logger } from '@/lib/logger'
+import { rateLimit } from '@/lib/rate-limit'
+import { getClientIp } from '@/lib/request'
+import { validateInternalJsonRequest } from '@/lib/request-security'
 import { getStripeClient } from '@/lib/stripe'
 import { getSanityWriteClient } from '@/sanity/lib/write-client'
 
 export const runtime = 'nodejs'
 export const dynamic = 'force-dynamic'
+
+const CHECKOUT_CANCEL_RATE_LIMIT = {
+  limit: 20,
+  windowMs: 10 * 60 * 1000,
+} as const
 
 const cancelCheckoutSchema = z
   .object({
@@ -18,6 +26,29 @@ const cancelCheckoutSchema = z
   .strict()
 
 export async function POST(req: Request) {
+  const securityError = validateInternalJsonRequest(req)
+  if (securityError) {
+    return securityError
+  }
+
+  const ip = getClientIp(req)
+  const ipLimit = await rateLimit({
+    key: `checkout-cancel:${ip}`,
+    ...CHECKOUT_CANCEL_RATE_LIMIT,
+  })
+
+  if (!ipLimit.allowed) {
+    return NextResponse.json(
+      { error: 'Trop de demandes de liberation. Reessayez plus tard.' },
+      {
+        status: 429,
+        headers: {
+          'Retry-After': String(ipLimit.retryAfterSeconds),
+        },
+      }
+    )
+  }
+
   let body: unknown
 
   try {

@@ -1,4 +1,5 @@
 import type { Metadata } from 'next'
+import { headers } from 'next/headers'
 import { Cormorant_Garamond } from 'next/font/google'
 import { AnalyticsGate } from '@/components/site/AnalyticsGate'
 import { ClientProviders } from '@/components/site/ClientProviders'
@@ -46,11 +47,13 @@ export const viewport = {
   viewportFit: 'cover',
 }
 
-export default function RootLayout({ children }: { children: React.ReactNode }) {
+export default async function RootLayout({ children }: { children: React.ReactNode }) {
+  const nonce = (await headers()).get('x-nonce') ?? undefined
+
   return (
     <html lang="fr" suppressHydrationWarning>
       <head>
-        <script dangerouslySetInnerHTML={{ __html: themeInitScript }} />
+        <script nonce={nonce} dangerouslySetInnerHTML={{ __html: themeInitScript }} />
       </head>
       <body className={`${cormorant.variable} font-body antialiased`}>
         <ViewportHeight />

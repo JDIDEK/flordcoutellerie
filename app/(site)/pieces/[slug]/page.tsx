@@ -1,4 +1,5 @@
 import type { Metadata } from 'next'
+import { headers } from 'next/headers'
 import { notFound } from 'next/navigation'
 import { Check } from 'lucide-react'
 
@@ -72,6 +73,7 @@ export default async function PieceDetailPage({
 }: {
   params: Promise<{ slug: string }>
 }) {
+  const nonce = (await headers()).get('x-nonce') ?? undefined
   const { slug } = await params
   const piece = await getPieceBySlug(slug)
 
@@ -149,6 +151,7 @@ export default async function PieceDetailPage({
   return (
     <>
       <script
+        nonce={nonce}
         type="application/ld+json"
         dangerouslySetInnerHTML={{ __html: escapeJsonForHtml(jsonLd) }}
       />

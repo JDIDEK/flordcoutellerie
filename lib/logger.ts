@@ -31,11 +31,28 @@ export const logger = {
     if (error instanceof Error) {
       errorMeta.errorName = error.name
       errorMeta.errorMessage = error.message
-      errorMeta.stack = error.stack
+      if (process.env.NODE_ENV !== 'production') {
+        errorMeta.stack = error.stack
+      }
     } else if (error !== undefined) {
       errorMeta.errorValue = String(error)
     }
 
     console.error(JSON.stringify(formatEntry('error', message, errorMeta)))
   },
+}
+
+export function maskEmailForLogs(email?: string | null) {
+  if (!email) {
+    return null
+  }
+
+  const [localPart = '', domain = ''] = email.trim().toLowerCase().split('@')
+
+  if (!localPart || !domain) {
+    return '[redacted-email]'
+  }
+
+  const visibleLocal = localPart.length <= 2 ? localPart[0] ?? '*' : localPart.slice(0, 2)
+  return `${visibleLocal}***@${domain}`
 }

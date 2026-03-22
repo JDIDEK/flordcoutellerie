@@ -5,6 +5,7 @@ import { ChevronLeft, ChevronRight } from 'lucide-react'
 
 import { Card } from '@/components/ui/card'
 import { Button } from '@/components/ui/button'
+import { createInternalJsonHeaders } from '@/lib/internal-api'
 
 import type { Action, WizardStep } from './types'
 import { wizardReducer, initialConfig } from './reducer'
@@ -77,9 +78,7 @@ export function CustomOrderWizard() {
     try {
       const response = await fetch('/api/sur-mesure', {
         method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-        },
+        headers: createInternalJsonHeaders(),
         body: JSON.stringify(config),
       })
 

@@ -7,6 +7,7 @@ import { CheckoutConsentDialog } from '@/components/CheckoutConsentDialog'
 import { Button } from '@/components/ui/button'
 import { useCart } from '@/hooks/use-cart'
 import { storeActiveCheckoutReservation } from '@/lib/checkout-reservation'
+import { createInternalJsonHeaders } from '@/lib/internal-api'
 
 type BuyNowButtonProps = {
   piece: {
@@ -32,7 +33,7 @@ export function BuyNowButton({ piece, disabled }: BuyNowButtonProps) {
     try {
       const response = await fetch('/api/checkout', {
         method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
+        headers: createInternalJsonHeaders(),
         body: JSON.stringify({ productIds: [piece.id] }),
       })
 
