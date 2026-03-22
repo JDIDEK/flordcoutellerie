@@ -11,13 +11,13 @@ export const structure: StructureResolver = (S, context) =>
     .title('Atelier Flo RD')
     .items([
       S.listItem()
-        .title('Message d\'information')
+        .title("Message d'information")
         .icon(MessageSquare)
         .child(
           S.document()
             .schemaType('siteNotice')
             .documentId('siteNotice')
-            .title('Message d\'information')
+            .title("Message d'information")
         ),
 
       S.divider(),
